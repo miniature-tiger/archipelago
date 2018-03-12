@@ -1,0 +1,84 @@
+<style>
+
+  .boardMark {
+      text-align: center;
+  }
+
+  .board_row {
+      margin: 0px 0px 0px 0px;
+      padding: 0px 0px 0px 0px;
+      vertical-align: top;
+}
+
+  .square {
+      display: inline-block;
+      margin: 0px 0px 0px 0px;
+      padding: 0px 0px 0px 0px;
+      overflow: hidden;
+  }
+
+  .square_sea {
+      background: rgb(77, 210, 255);
+      border: 1px solid rgb(77, 210, 255);
+  }
+
+  .square_land, .square_base {
+      background: rgb(230, 230, 0);
+      border: 1px solid rgb(230, 230, 0);
+  }
+
+
+
+
+
+  .rotated_square {
+      display: inline-block;
+
+      margin: 0px 0px 0px 0px;
+      padding: 0px 0px 0px 0px;
+
+      transform: scale(0.98) translateX(-1px) translateY(-1px) rotate(45deg);
+      overflow: hidden;
+  }
+
+  .inner_square {
+      display: inline-block;
+
+
+      margin: 0px 0px 0px 0px;
+      padding: 0px 0px 0px 0px;
+      transform: scale(1) translateX(-2px) translateY(-2px) rotate(45deg);
+  }
+
+  .sea {
+      background: rgb(179, 237, 255);
+      border: 2px solid blue;
+  }
+
+  .land {
+      background: rgb(77, 210, 55);
+      border: 2px solid green;
+  }
+
+  .base{
+      background: rgb(255, 179, 102);
+      border: 2px solid brown;
+  }
+
+
+  body {
+    background-color: rgb(254,252,250);
+    font-family: "Baskerville", serif;
+    font-size: 15px;
+    margin: 0% 0% 0% 0%;
+        }
+
+  h1 {
+    color: rgb(250,105,0);
+    margin: 0.5% 1% 0.5% 1%;
+    font-size: 1.8em;
+        }
+
+
+
+</style>
