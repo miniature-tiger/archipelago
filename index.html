@@ -13,10 +13,52 @@
 
 <body>
 
-    <!-- A div used as a placeholder to which the dynamically generated board is added -->
-    <div class="boardMark"></div>
+  <!-- Fixed header with padding underneath-->
+    <div class="the_header over_text">
+        Archipelago!
+    </div>
 
-    <!-- The link to the main javascript file -->
+    <div class="the_header under_text">
+        -
+    </div>
+    <br>
+
+    <!-- A div used as a placeholder to which the dynamically generated board is added -->
+    <div class="boardmark"></div>
+    <br><br>
+
+    <!-- Fixed footer for buttons with padding underneath-->
+    <div class="the_footer over_text">
+
+        <!-- Buttons - temporary just to illustrate and aid with developing the board -->
+        <form class='contents_box'>
+            Size of the game board:
+            <select class="boardSizeSelect" name="boardSize">
+                <option value="31">small</option>
+                <option value="40">medium</option>
+                <option value="49">large</option>
+            </select>
+        </form>
+
+        <form class='contents_box'>
+            Shape of the game board:
+            <select class="boardShapeSelect" name="boardShape">
+                <option value="octagon">octagon</option>
+                <option value="square">square</option>
+            </select>
+        </form>
+
+    </div>
+
+    <!-- Padding for footer -->
+    <div class="the_footer under_text">
+        should not be seen
+    </div>
+
+    <!-- The game board object -->
+    <script src='board.js'></script>
+
+    <!-- The main javascript file -->
     <script src='main.js'></script>
 
 </body>
