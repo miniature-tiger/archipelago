@@ -1,134 +1,45 @@
-let gameBoard = {
+// Main script
 
-    boardArray: [],
-    //boardArray: [[{pos: 1, type: 1},{pos: 2, type: 2},{pos: 3, type: 3}],[{pos: 1, type: 4},{pos: 2, type: 5},{pos: 3, type: 6}]],
-
-    populateBoardArray: function(row, col) {
-        for (var y = 0; y < col; y++) {
-
-
-        let rowArray = [];
-        for (var x = 0; x < row; x++) {
-          //console.log('row ' + x);
-          if(Math.random() > 0.98) {
-
-              rowArray.push({pos: + x, type: 'land'});
-          } else {
-              rowArray.push({pos: + x, type: 'sea'});
-          }
-        }
-        console.log(rowArray);
-        this.boardArray.push(rowArray);
-      }
-    },
-
-    overlayBoardArray: function(row, col) {
-        this.overlayTiles(0, 6, 0, 6, 'sea');
-        this.overlayTiles(0, 6, col-6, col, 'sea');
-        this.overlayTiles(row-6, row, 0, 6, 'sea');
-        this.overlayTiles(row-6, row, col-6, col, 'sea');
-
-
-        this.boardArray[0][0].type = 'base';
-        this.boardArray[0][1].type = 'base';
-        this.boardArray[1][0].type = 'base';
-
-        this.boardArray[row-1][0].type = 'base';
-        this.boardArray[row-2][0].type = 'base';
-        this.boardArray[row-1][1].type = 'base';
-
-        this.boardArray[0][col-1].type = 'base';
-        this.boardArray[0][col-2].type = 'base';
-        this.boardArray[1][col-1].type = 'base';
-
-        this.boardArray[row-1][col-1].type = 'base';
-        this.boardArray[row-1][col-2].type = 'base';
-        this.boardArray[row-2][col-1].type = 'base';
-
-        //this.overlayTiles(15, 25, 15, 25, 'sea');
-        //this.overlayTiles(17, 23, 17, 23, 'land');
-
-
-
-
-    },
-
-    overlayTiles: function(startRow, endRow, startCol, endCol, overlayType) {
-      for (i = startRow; i < endRow; i++) {
-        for (j = startCol; j < endCol; j++) {
-          this.boardArray[i][j].type = overlayType;
-        }
-      }
-
-    },
-
-    createTile: function(squareType, i, j, gridSize) {
-
-        // Creating the item in form of a div
-        let newTile = document.createElement('div');
-        let innerTile = document.createElement('div');
-        let rotatedTile = document.createElement('div');
-
-        newTile.id = i + '-' + j;
-        //console.log(newTile.id);
-
-        newTile.setAttribute('class', 'square ' + 'square_' + this.boardArray[i][j].type);
-        newTile.style.height = (gridSize - 2) + 'px';
-        newTile.style.width = (gridSize - 2) + 'px';
-
-        rotatedTile.setAttribute('class', 'rotated_square ' + this.boardArray[i][j].type);
-        rotatedTile.style.height = (gridSize - 4) + 'px';
-        rotatedTile.style.width = (gridSize - 4) + 'px';
-
-        innerTile.setAttribute('class', 'inner_square ' + this.boardArray[i][j].type);
-        innerTile.style.height = (gridSize - 4) + 'px';
-        innerTile.style.width = (gridSize - 4) + 'px';
-
-
-        newTile.appendChild(rotatedTile);
-        rotatedTile.appendChild(innerTile);
-
-
-        /*
-        newTile.appendChild(document.createTextNode('squareType ' + squareType));
-        newTile.appendChild(document.createElement('br'));
-        newTile.appendChild(document.createTextNode('Class ' + newTile.className));
-        newTile.appendChild(document.createElement('br'));
-        newTile.appendChild(document.createTextNode('Id ' + newTile.id));
-        */
-        return newTile;
-
-    },
-
-    drawBoard: function(row, col, gridSize) {
-        // Delete existing board
-        document.querySelector('div.boardMark').innerHTML = '';
-        console.log(this.boardArray.length);
-
-        // Loop through each board square
-        for (var i = 0; i < this.boardArray.length; i++) {
-          //console.log(this.boardArray[i].length);
-          let newRow = document.createElement('div');
-          newRow.setAttribute('class', 'board_row');
-          newRow.style.width = col*gridSize + 'px';
-          newRow.style.height = gridSize + 'px';
-          newRow.id = 'rowID' + i + '-' + j;
-          //console.log(newRow.id);
-            for (var j = 0; j < this.boardArray[i].length; j++) {
-              //console.log(i, j);
-                let squareType = this.boardArray[i][j].type;
-                newRow.appendChild(this.createTile(squareType, i, j, gridSize));
-            }
-            // Add row
-            document.querySelector('div.boardMark').appendChild(newRow);
-        }
-    }
+// High level function to set up the game board
+// Calls the various methods of the game board object
+// -------------------------------------------------
+function boardSetUp(row, col, gridSize, boardShape) {
+    console.log('boardSetUp :' , row, col, gridSize, boardShape);
+    gameBoard.populateBoardArray(row, col, boardShape);
+    gameBoard.overlayBoardArray(row, col, boardShape);
+    gameBoard.drawBoard(row, col, gridSize);
 }
 
+// Some button handlers
+// --------------------
+// These buttons are unlikely to be part of the final gameBoard
+// But it is useful to allow the board to be varied dynamically while game play is being developed
 
-let row = 7, col = 7, gridSize = 35;
+// board size button handler
+var elSize = document.querySelector('select.boardSizeSelect');
+elSize.addEventListener('click', function() {
+    row = elSize.value;
+    col = elSize.value;
+    console.log('sizebutton', row, col, gridSize, boardShape);
+    boardSetUp(row, col, gridSize, boardShape);
 
-gameBoard.populateBoardArray(row, col);
-gameBoard.overlayBoardArray(row, col);
+});
 
-gameBoard.drawBoard(row, col, gridSize);
+// board shape button handler
+var elShape = document.querySelector('select.boardShapeSelect');
+elShape.addEventListener('click', function() {
+    boardShape = elShape.value;
+    console.log('shapebutton', row, col, gridSize, boardShape);
+    boardSetUp(row, col, gridSize, boardShape);
+
+});
+
+// PARAMETERS
+// ----------
+// Intial values for the board size and shape
+// Tile size (gridSize) is set here
+let row = 40, col = 40, gridSize = 25, boardShape='octagon';
+
+// Set up the board
+boardSetUp(row, col, gridSize, boardShape);
+
