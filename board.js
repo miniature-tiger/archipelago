@@ -39,7 +39,6 @@ let gameBoard = {
 
         // A octagon shaped board is obtained by making triangles of tiles invisible in the corners
         if (boardShape == 'octagon') {
-            console.log(boardShape);
             this.overlayTilesTri(0, 0, octagonCorner, 'TL', 'invis');
             this.overlayTilesTri(0, col-octagonCorner, octagonCorner, 'TR', 'invis');
             this.overlayTilesTri(row-octagonCorner, 0, octagonCorner, 'BL', 'invis');
