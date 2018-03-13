@@ -1,3 +1,4 @@
+
 // Game board object - methods to initialise board and array to store current state of board
 let gameBoard = {
 

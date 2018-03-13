@@ -16,7 +16,7 @@ function boardSetUp(row, col, gridSize, boardShape) {
 
 // board size button handler
 var elSize = document.querySelector('select.boardSizeSelect');
-elSize.addEventListener('click', function() {
+elSize.addEventListener('change', function() {
     row = elSize.value;
     col = elSize.value;
     boardSetUp(row, col, gridSize, boardShape);
@@ -25,7 +25,7 @@ elSize.addEventListener('click', function() {
 
 // board shape button handler
 var elShape = document.querySelector('select.boardShapeSelect');
-elShape.addEventListener('click', function() {
+elShape.addEventListener('change', function() {
     boardShape = elShape.value;
     boardSetUp(row, col, gridSize, boardShape);
 
@@ -35,8 +35,7 @@ elShape.addEventListener('click', function() {
 // ----------
 // Intial values for the board size and shape
 // Tile size (gridSize) is set here
-let row = 40, col = 40, gridSize = 25, boardShape='octagon';
+let row = elSize.value, col = elSize.value, gridSize = 25, boardShape=elShape.value;
 
 // Set up the board
 boardSetUp(row, col, gridSize, boardShape);
-
