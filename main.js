@@ -4,7 +4,6 @@
 // Calls the various methods of the game board object
 // -------------------------------------------------
 function boardSetUp(row, col, gridSize, boardShape) {
-    console.log('boardSetUp :' , row, col, gridSize, boardShape);
     gameBoard.populateBoardArray(row, col, boardShape);
     gameBoard.overlayBoardArray(row, col, boardShape);
     gameBoard.drawBoard(row, col, gridSize);
@@ -20,7 +19,6 @@ var elSize = document.querySelector('select.boardSizeSelect');
 elSize.addEventListener('click', function() {
     row = elSize.value;
     col = elSize.value;
-    console.log('sizebutton', row, col, gridSize, boardShape);
     boardSetUp(row, col, gridSize, boardShape);
 
 });
@@ -29,7 +27,6 @@ elSize.addEventListener('click', function() {
 var elShape = document.querySelector('select.boardShapeSelect');
 elShape.addEventListener('click', function() {
     boardShape = elShape.value;
-    console.log('shapebutton', row, col, gridSize, boardShape);
     boardSetUp(row, col, gridSize, boardShape);
 
 });
