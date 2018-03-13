@@ -3,6 +3,35 @@ A seafaring and trading turn-based strategy game.
  
 Web-based, built with javascript. 
 
+The game can currently be found here:
+https://miniature-tiger.github.io/archipelago/
+
+----------------------------------------------
+
+
+
+
+Road map (short term):
+----------------------
+
+Basics:
+o) Board set up - COMPLETE
+o) Basic ship creation: functionality and graphics
+o) Manual ship movement and board updating
+o) Basic compass creation: functionality and graphics
+o) Turn based activity of ship movement
+
+
+Road map (longer term):
+----------------------
+
+Land Squares and goods discovery:
+Trading centre:
+Conflicts:
+Pirates:
+Scoring: 
+
+
 
 
 
