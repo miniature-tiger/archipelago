@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 
 <!-- This is the main HTML file for the game -->
+<!-- ------------------------------------------>
 <html>
 
 <head>
     <meta charset="utf-8">
 
-    <!-- Link to style sheet for game board -->
-    <link rel="stylesheet" type="text/css" href="board.css">
+    <!-- Link to style sheets for game board and pieces-->
+    <link rel="stylesheet" type="text/css" href="board/board.css">
+    <link rel="stylesheet" type="text/css" href="pieces/pieces.css">
 
 </head>
 
 <body>
 
-  <!-- Fixed header with padding underneath-->
+    <!-- Fixed header with padding underneath-->
     <div class="the_header over_text">
         Archipelago!
     </div>
@@ -34,8 +36,8 @@
         <form class='contents_box'>
             Size of the game board:
             <select class="boardSizeSelect" name="boardSize">
-                <option value="31">small</option>
-                <option selected value="40">medium</option>
+                <option selected value="31">small</option>
+                <option value="40">medium</option>
                 <option value="49">large</option>
             </select>
         </form>
@@ -48,6 +50,12 @@
             </select>
         </form>
 
+        <!-- Commentary box - Again is temporary in this position just to aid any visitors to site-->
+        <div class='contents_box commentary'>
+            Commentary ...
+        </div>
+
+
     </div>
 
     <!-- Padding for footer -->
@@ -56,9 +64,15 @@
     </div>
 
     <!-- The game board object -->
-    <script src='board.js'></script>
+    <script src='board/board.js'></script>
+
+    <!-- The piece movement object -->
+    <script src='movement/movement.js'></script>
+
+    <!-- The game management object -->
+    <script src='main/gamemanagement.js'></script>
 
     <!-- The main javascript file -->
-    <script src='main.js'></script>
+    <script src='main/main.js'></script>
 
 </body>
