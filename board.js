@@ -19,14 +19,15 @@ let gameBoard = {
             for (var x = 0; x < row; x++) {
                 // A few random land tiles
                 if(Math.random() > 0.995) {
-                    rowArray.push({pos: + x, type: 'land'});
+                    rowArray.push({xpos: + x, ypos: + y, terrain: 'land', activeStatus: 'inactive', pieces: {populatedSquare: false, type: 'no piece', team: ''}});
                 // But mainly sea tiles
                 } else {
-                    rowArray.push({pos: + x, type: 'sea'});
+                    rowArray.push({xpos: + x, ypos: + y, terrain: 'sea', activeStatus: 'inactive', pieces: {populatedSquare: false, type: 'no piece', team: ''}});
                 }
             }
         this.boardArray.push(rowArray);
         }
+
     },
 
     // Method to overlay islands and bases
@@ -48,65 +49,77 @@ let gameBoard = {
 
         // Creation of triangle-shaped islands
         this.overlayTilesTri((row-1)/3-3, (row-1)/3-3, 3, 'BR', 'land');
-        this.boardArray[(row-1)/3-1][(row-1)/3-1].type = 'sea';
+        this.boardArray[(row-1)/3-1][(row-1)/3-1].terrain = 'sea';
 
         this.overlayTilesTri(2*((row-1)/3)+1, 2*((row-1)/3)+1, 3, 'TL', 'land');
-        this.boardArray[2*((row-1)/3)+1][2*((row-1)/3)+1].type = 'sea';
+        this.boardArray[2*((row-1)/3)+1][2*((row-1)/3)+1].terrain = 'sea';
 
         this.overlayTilesTri((row-1)/3-3, 2*((row-1)/3)+1, 3, 'BL', 'land');
-        this.boardArray[(row-1)/3-1][2*((row-1)/3)+1].type = 'sea';
+        this.boardArray[(row-1)/3-1][2*((row-1)/3)+1].terrain = 'sea';
 
         this.overlayTilesTri(2*((row-1)/3)+1, (row-1)/3-3, 3, 'TR', 'land');
-        this.boardArray[2*((row-1)/3)+1][(row-1)/3-1].type = 'sea';
+        this.boardArray[2*((row-1)/3)+1][(row-1)/3-1].terrain = 'sea';
 
         // Creation of central volcanic shaped island for trading post
         this.overlayTiles(boardCenter-1, boardCenter+2, boardCenter-1, boardCenter+2, 'land');
-        this.boardArray[boardCenter-1][boardCenter+1].type = 'sea';
-        this.boardArray[boardCenter-1][boardCenter-1].type = 'sea';
-        this.boardArray[boardCenter+1][boardCenter+1].type = 'sea';
-        this.boardArray[boardCenter+1][boardCenter-1].type = 'sea';
+        this.boardArray[boardCenter-1][boardCenter+1].terrain = 'sea';
+        this.boardArray[boardCenter-1][boardCenter-1].terrain = 'sea';
+        this.boardArray[boardCenter+1][boardCenter+1].terrain = 'sea';
+        this.boardArray[boardCenter+1][boardCenter-1].terrain = 'sea';
 
         // Creation of bay shaped islands
         this.overlayTiles(boardCenter-1, boardCenter+2, 2*((row-1)/3)+4, 2*((row-1)/3)+6, 'land');
-        this.boardArray[boardCenter][2*((row-1)/3)+5].type = 'sea';
+        this.boardArray[boardCenter][2*((row-1)/3)+5].terrain = 'sea';
 
         this.overlayTiles(boardCenter-1, boardCenter+2, (row-1)/3-5, (row-1)/3-3, 'land');
-        this.boardArray[boardCenter][(row-1)/3-5].type = 'sea';
+        this.boardArray[boardCenter][(row-1)/3-5].terrain = 'sea';
 
         this.overlayTiles(2*((row-1)/3)+4, 2*((row-1)/3)+6, boardCenter-1, boardCenter+2, 'land');
-        this.boardArray[2*((row-1)/3)+5][boardCenter].type = 'sea';
+        this.boardArray[2*((row-1)/3)+5][boardCenter].terrain = 'sea';
 
         this.overlayTiles((row-1)/3-5, (row-1)/3-3, boardCenter-1, boardCenter+2, 'land');
-        this.boardArray[(row-1)/3-5][boardCenter].type = 'sea';
+        this.boardArray[(row-1)/3-5][boardCenter].terrain = 'sea';
+
+        // Creation of land around bases
+        this.overlayTiles(row-1, row, boardCenter-1, boardCenter+2, 'land');
+        this.overlayTiles(0, 1, boardCenter-1, boardCenter+2, 'land');
+        this.overlayTiles(boardCenter-1, boardCenter+2, col-1, col, 'land');
+        this.overlayTiles(boardCenter-1, boardCenter+2, 0, 1, 'land');
 
         // Creation of bases
-        this.overlayTiles(row-1, row, boardCenter-1, boardCenter+2, 'base');
-        this.overlayTiles(0, 1, boardCenter-1, boardCenter+2, 'base');
-        this.overlayTiles(boardCenter-1, boardCenter+2, col-1, col, 'base');
-        this.overlayTiles(boardCenter-1, boardCenter+2, 0, 1, 'base');
+        this.boardArray[boardCenter][col-1].pieces = {populatedSquare: true, type: 'hut', team: 'teamOrange'};
+        this.boardArray[0][boardCenter].pieces = {populatedSquare: true, type: 'hut', team: 'teamLemon'};
+        this.boardArray[row-1][boardCenter].pieces = {populatedSquare: true, type: 'hut', team: 'teamLime'};
+        this.boardArray[boardCenter][0].pieces = {populatedSquare: true, type: 'hut', team: 'teamPlum'};
+
+        // Creation of ships
+        this.boardArray[boardCenter][col-2].pieces = {populatedSquare: true, type: 'cargoShip', team: 'teamOrange'};
+        this.boardArray[1][boardCenter].pieces = {populatedSquare: true, type: 'cargoShip', team: 'teamLemon'};
+        this.boardArray[row-2][boardCenter].pieces = {populatedSquare: true, type: 'cargoShip', team: 'teamLime'};
+        this.boardArray[boardCenter][1].pieces = {populatedSquare: true, type: 'cargoShip', team: 'teamPlum'};
     },
 
     // Method to create triangle shaped overlay
     // ----------------------------------------
-    // allows specification of size, position and type of tiles
+    // allows specification of size, position and terrain of tiles
     // TR = top right, BL = bottom left (for right angled corner)
-    overlayTilesTri: function(startRow, startCol, size, corner, overlayType) {
+    overlayTilesTri: function(startRow, startCol, size, corner, overlayTerrain) {
         for (i = startRow; i < startRow + size; i+=1) {
             if (corner == "TL") {
                 for (j = startCol; j < startCol + size - (i - startRow); j+=1) {
-                    this.boardArray[i][j].type = overlayType;
+                    this.boardArray[i][j].terrain = overlayTerrain;
                   }
             } else if (corner == "BL") {
                 for (j = startCol; j < startCol + (i - startRow) + 1; j+=1) {
-                    this.boardArray[i][j].type = overlayType;
+                    this.boardArray[i][j].terrain = overlayTerrain;
                 }
             } else if (corner == 'TR') {
                 for (j = startCol + (i - startRow); j < startCol + size; j+=1) {
-                    this.boardArray[i][j].type = overlayType;
+                    this.boardArray[i][j].terrain = overlayTerrain;
                 }
             } else if (corner == 'BR') {
                 for (j = startCol + size - (i - startRow) -1; j < startCol + size; j+=1) {
-                    this.boardArray[i][j].type = overlayType;
+                    this.boardArray[i][j].terrain = overlayTerrain;
                   }
             } else {
                 console.log('overlayTilesTri - triangle type not found');
@@ -116,11 +129,11 @@ let gameBoard = {
 
     // Method to create rectangular shaped overlay
     // -------------------------------------------
-    // allows specification of size, position and type of tiles
-    overlayTiles: function(startRow, endRow, startCol, endCol, overlayType) {
+    // allows specification of size, position and terrain of tiles
+    overlayTiles: function(startRow, endRow, startCol, endCol, overlayTerrain) {
         for (i = startRow; i < endRow; i++) {
             for (j = startCol; j < endCol; j++) {
-                this.boardArray[i][j].type = overlayType;
+                this.boardArray[i][j].terrain = overlayTerrain;
             }
         }
     },
@@ -135,20 +148,20 @@ let gameBoard = {
         let rotatedTile = document.createElement('div');
 
         // Adding an id for each tile - DECIDE IF NECESSARY IN NEXT STAGE
-        newTile.id = i + '-' + j;
+        newTile.id = i*1000 + j;
 
         // Creating the tile by dynamically allocating CSS classes
         // Tile size is set as a parameter but has functionality to be varied dynamically
         // (e.g. to zoom in or out of board map)
-        newTile.setAttribute('class', 'square ' + 'square_' + this.boardArray[i][j].type);
+        newTile.setAttribute('class', 'square' + ' ' + this.boardArray[i][j].terrain + ' ' + this.boardArray[i][j].activeStatus);
         newTile.style.height = (gridSize - 2) + 'px';
         newTile.style.width = (gridSize - 2) + 'px';
 
-        rotatedTile.setAttribute('class', 'rotated_square ' + this.boardArray[i][j].type);
+        rotatedTile.setAttribute('class', 'rotated_square' + ' ' + this.boardArray[i][j].terrain + ' ' + this.boardArray[i][j].activeStatus);
         rotatedTile.style.height = (gridSize - 4) + 'px';
         rotatedTile.style.width = (gridSize - 4) + 'px';
 
-        innerTile.setAttribute('class', 'inner_square ' + this.boardArray[i][j].type);
+        innerTile.setAttribute('class', 'inner_square' + ' ' + this.boardArray[i][j].terrain + ' ' + this.boardArray[i][j].activeStatus);
         innerTile.style.height = (gridSize - 4) + 'px';
         innerTile.style.width = (gridSize - 4) + 'px';
 
@@ -158,6 +171,39 @@ let gameBoard = {
         // tile is returned to drawBoard
         return newTile;
 
+    },
+
+    // Method to create a single action tile
+    // -------------------------------------
+    // gridSize is the size of the tile, squareType is the ship type of the tile
+    createActionTile: function(i, j, gridSize) {
+        // Creating the action tile shape
+        let newActionTile = document.createElement('div');
+        let innerActionTile = document.createElement('div');
+        let detailActionTile = document.createElement('div');
+
+        // Adding an id for each tile - DECIDE IF NECESSARY IN NEXT STAGE
+        newActionTile.id = i*1000 + j;
+
+        // Creating the tile by dynamically allocating CSS classes
+        //{populatedSquare: true, ship: 'cargoShip', team: 'teamPlum'}
+        newActionTile.setAttribute('class', 'square' + ' ' + this.boardArray[i][j].pieces.type + ' ' + this.boardArray[i][j].pieces.team + ' ' + this.boardArray[i][j].activeStatus);
+        newActionTile.style.height = (gridSize - 2) + 'px';
+        newActionTile.style.width = (gridSize - 2) + 'px';
+
+        innerActionTile.setAttribute('class', 'piece' + ' ' + this.boardArray[i][j].pieces.type + ' ' + this.boardArray[i][j].pieces.team + ' team_colours');
+        innerActionTile.style.height = (gridSize - 2) + 'px';
+        innerActionTile.style.width = (gridSize - 2) + 'px';
+
+        detailActionTile.setAttribute('class', 'detail' + ' ' + this.boardArray[i][j].pieces.type + ' ' + this.boardArray[i][j].pieces.team);
+        detailActionTile.style.height = (gridSize - 2) + 'px';
+        detailActionTile.style.width = (gridSize - 2) + 'px';
+
+        newActionTile.appendChild(innerActionTile);
+        innerActionTile.appendChild(detailActionTile);
+
+        // tile is returned to drawBoard
+        return newActionTile;
     },
 
     // Method to create the board display based on the boardArray
@@ -189,9 +235,15 @@ let gameBoard = {
 
             // Loop through each tile j of each board row i
             for (var j = 0; j < this.boardArray[i].length; j++) {
-                let squareType = this.boardArray[i][j].type;
-                // Create tile and add tile to row
-                newRow.appendChild(this.createTile(squareType, i, j, gridSize));
+                let squareType = this.boardArray[i][j].terrain;
+
+                if (this.boardArray[i][j].pieces.populatedSquare == true) {
+                    // Create action tile and add tile to row
+                    newRow.appendChild(this.createActionTile(i, j, gridSize));
+                } else {
+                    // Create empty tile and add tile to row
+                    newRow.appendChild(this.createTile(squareType, i, j, gridSize));
+                }
             }
             // Add row to board
             boardMarkNode.appendChild(newRow);

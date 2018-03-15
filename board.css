@@ -1,4 +1,5 @@
-
+/* styles for the game board */
+/* ------------------------- */
 
 html {
     background-color: rgb(254,252,250);
@@ -56,6 +57,11 @@ html {
     width: 10%;
 }
 
+/* colour for commentary box */
+.commentary {
+    color: rgb(77, 210, 255);
+}
+
 /* style for game board holder */
 .boardmark {
     background-color: rgb(251, 242, 234);
@@ -77,7 +83,6 @@ Tiles are nested squares (square - rotated square - inner square).
 The rotation and inner squares are used to create octagons and margins.
 The overflow hides the rotated square edges
 All tiles are set up to be dynamic so can be created in different sizes */
-
 .square {
     display: inline-block;
     margin: 0px 0px 0px 0px;
@@ -86,17 +91,17 @@ All tiles are set up to be dynamic so can be created in different sizes */
 }
 
 /* different colour tiles for sea, land, bases plus invisible tiles to change the overall board shape */
-.square_sea {
+.square.sea {
     background: rgb(77, 210, 255);
     border: 1px solid rgb(77, 210, 255);
 }
 
-.square_land, .square_base {
+.square.land.inactive, .square.base.inactive {
     background: rgb(230, 230, 0);
     border: 1px solid rgb(230, 230, 0);
 }
 
-.square_invis {
+.square.invis {
     background-color: rgb(247, 228, 212);
     border: 1px solid rgb(247, 228, 212);
 }
@@ -126,12 +131,18 @@ All tiles are set up to be dynamic so can be created in different sizes */
     border: 2px solid green;
 }
 
-.base{
+.base {
     background: rgb(255, 179, 102);
     border: 2px solid brown;
 }
 
-.invis{
+/* style for square not on the board */
+.invis {
     background-color: rgb(247, 228, 212);
     border: 2px solid rgb(247, 228, 212);
+}
+
+/* colour for activated squares on movement */
+.active {
+    border: 2px solid rgb(255, 77, 77);
 }
