@@ -15,11 +15,11 @@ Road map (short term):
 ----------------------
 
 Basics:
-o) Board set up - COMPLETE
-o) Basic ship creation: functionality and graphics
-o) Manual ship movement and board updating
-o) Basic compass creation: functionality and graphics
-o) Turn based activity of ship movement
+* Board set up - COMPLETE
+* Basic ship creation: functionality and graphics  - COMPLETE (graphics to be improved for turn and movement)
+* Manual ship movement and board updating  - COMPLETE
+* Basic compass creation: functionality and graphics
+* Turn based activity of ship movement - INITIAL WORK COMPLETE
 
 
 Road map (longer term):
