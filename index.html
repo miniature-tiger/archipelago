@@ -7,55 +7,112 @@
 <head>
     <meta charset="utf-8">
 
-    <!-- Link to style sheets for game board and pieces-->
+    <!-- Link to style sheets -->
+    <link rel="stylesheet" type="text/css" href="surround/surround.css">
     <link rel="stylesheet" type="text/css" href="board/board.css">
     <link rel="stylesheet" type="text/css" href="pieces/pieces.css">
+    <link rel="stylesheet" type="text/css" href="surround/compass.css">
 
 </head>
 
 <body>
 
+    <!-- Corners added to allow side panels to be exandable -->
+    <div class="corner  top left over_text">
+    </div>
+
     <!-- Fixed header with padding underneath-->
     <div class="the_header over_text">
-        Archipelago!
+        <div class="title_box">
+            Archipelago!
+        </div>
+    </div>
+
+    <!-- Corners added to allow side panels to be exandable -->
+    <div class="corner top right over_text">
     </div>
 
     <div class="the_header under_text">
-        -
     </div>
-    <br>
+    <br> <br>
 
-    <!-- A div used as a placeholder to which the dynamically generated board is added -->
-    <div class="boardmark"></div>
-    <br><br>
-
-    <!-- Fixed footer for buttons with padding underneath-->
-    <div class="the_footer over_text">
+    <!-- Expandable (future development) sidebar left -->
+    <div class="left sidebar over_text">
 
         <!-- Buttons - temporary just to illustrate and aid with developing the board -->
-        <form class='contents_box'>
+        <form class='item_holder boardSizeSelect'>
             Size of the game board:
             <select class="boardSizeSelect" name="boardSize">
-                <option selected value="31">small</option>
-                <option value="40">medium</option>
-                <option value="49">large</option>
+                <option value="31">small</option>
+                <option selected value="40">medium</option>
             </select>
         </form>
 
-        <form class='contents_box'>
+        <br>
+
+        <form class='item_holder boardShapeSelect'>
             Shape of the game board:
             <select class="boardShapeSelect" name="boardShape">
                 <option selected value="octagon">octagon</option>
                 <option value="square">square</option>
             </select>
         </form>
+    </div>
 
-        <!-- Commentary box - Again is temporary in this position just to aid any visitors to site-->
-        <div class='contents_box commentary'>
-            Commentary ...
+    <div class="left sidebar under_text">
+    </div>
+
+
+    <!-- A div used as a placeholder to which the dynamically generated board is added -->
+    <div class="boardmark"></div>
+
+    <!-- Expandable (future development) sidebar right -->
+    <div class="right sidebar over_text">
+
+        <!-- Compass item - divs styled using CSS classes-->
+        <div class="compass outer">
+            <div class="compass inner">
+                <div class="compass points NS">
+                </div>
+                <div class="compass points EW">
+                </div>
+                <div class="compass inner2">
+                </div>
+                <div class="compass needle">
+                    <div class="compass needlehead">
+                    </div>
+                </div>
+            </div>
         </div>
+    </div>
 
+    <div class="right sidebar under_text">
+    </div>
 
+    <br>
+
+    <!-- Corners added to allow side panels to be exandable -->
+    <div class="corner bottom left over_text">
+    </div>
+
+    <!-- Fixed footer for icon buttons with padding underneath-->
+    <div class="the_footer over_text">
+
+    <!-- Commentary box - Again is temporary in this position just to aid any visitors to site-->
+    <div class='contents_box commentary'>
+        Commentary ...
+    </div>
+
+    <!-- Icon button for end of turn -->
+    <div class="icon_holder endturnmark">
+        <div class="end_turn">
+        </div>
+            end turn
+        </div>
+    </div>
+
+    <!-- Corners added to allow side panels to be exandable -->
+    <div class="corner bottom right over_text">
     </div>
 
     <!-- Padding for footer -->
@@ -65,6 +122,9 @@
 
     <!-- The game board object -->
     <script src='board/board.js'></script>
+
+    <!-- The compass object -->
+    <script src='surround/compass.js'></script>
 
     <!-- The piece movement object -->
     <script src='movement/movement.js'></script>
