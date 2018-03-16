@@ -1,0 +1,89 @@
+/* Style for compass */
+/* ----------------- */
+
+/* Compass circles*/
+.compass.outer {
+    position: relative;
+    top: 100px;
+    width: 80px;
+    height: 80px;
+    display: inline-block;
+    border-radius: 50%;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    border: 2px solid rgb(137, 113, 82);
+    background-color: rgb(240, 220, 188);
+}
+
+.compass.inner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60px;
+    height: 55px;
+    transform: translate(-50%,-50%);
+    border-radius: 50%;
+    margin: 0;
+    padding: 0;
+    border: 2px solid rgb(137, 113, 82);
+    background-color: rgb(251, 242, 234);
+}
+
+.compass.inner2 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    border-radius: 50%;
+    border: 2px solid rgb(137, 113, 82);
+    width: 18px;
+    height: 18px;
+    background-color: rgb(231, 190, 151);
+
+}
+
+/* Compass points*/
+.points {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(240, 220, 188);
+    border: 3px solid rgb(137, 113, 82);
+}
+
+.NS {
+    transform: translate(-50%, -50%) scale(1.05, 0.2) rotate(45deg);
+    border-left: 8px solid rgb(137, 113, 82);
+    border-right: 8px solid rgb(137, 113, 82);
+}
+
+.EW {
+    transform: translate(-50%, -50%) scale(0.2, 1.05) rotate(225deg);
+    border-top: 8px solid rgb(137, 113, 82);
+    border-bottom: 8px solid rgb(137, 113, 82);
+}
+
+/* Compass needle*/
+.needle {
+    position: absolute;
+    top: 48.5%;
+    left: -35%;
+    width: 170%;
+    height: 4%;
+    background-color: rgb(219, 158, 54);
+    transition: transform 1s;
+}
+
+.needlehead {
+    position: absolute;
+    width: 0;
+    height: 0;
+    top: -80%;
+    left: -4%;
+    border-top: 0.2em solid transparent;
+    border-bottom: 0.2em solid transparent;
+    border-right: 0.5em solid rgb(219, 158, 54);
+}
