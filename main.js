@@ -33,6 +33,8 @@ elShape.addEventListener('change', function() {
     boardSetUp(row, col, gridSize, boardShape);
 });
 
+
+
 // Parameters for board set up
 // ---------------------------
 // Intial values for the board size and shape
@@ -42,6 +44,48 @@ let row = elSize.value, col = elSize.value, gridSize = 25, boardShape=elShape.va
 
 // Set up the board
 boardSetUp(row, col, gridSize, boardShape);
+
+// ------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------
+// SET UP THE SURROUND
+
+// Dynamic size of icons
+// ---------------------
+let iconHolder = document.querySelectorAll('.icon_holder');
+for (var iconHolder_i = 0; iconHolder_i < iconHolder.length; iconHolder_i++) {
+    iconHolder[iconHolder_i].style.width = 1.5 * gridSize + 'px';
+    iconHolder[iconHolder_i].style.height = 2 * gridSize + 'px';
+}
+
+
+// Set up of compass
+// -----------------
+// Initial wind direction
+let windDirection = compass.largeWindChange();
+let needleDirection = compass.directionArray[windDirection].needle;
+// Transform / Transition for compass
+let needle = document.querySelector('.compass.needle');
+needle.style.transform = 'rotate(' + needleDirection + 'deg)';
+
+// Next turn functionality
+// -----------------------
+var endTurn = document.querySelector('.end_turn');
+endTurn.setAttribute('class', 'end_turn ' + gameManagement.turn + ' team_colours');
+endTurn.addEventListener('click', function(element) {
+    // Used pieces are resert to unused
+    pieceMovement.usedPiecesReset();
+    // Team is changed
+    gameManagement.nextTurn();
+    // Wind direction is set for next turn
+    windDirection = compass.newWindDirection(windDirection);
+    needleDirection = compass.directionArray[windDirection].needle;
+    needle = document.querySelector('.compass.needle');
+    needle.style.transform = 'rotate(' + needleDirection + 'deg)';
+    // Comment for next player
+    commentary.innerText = ' turn: ' + gameManagement.turn + ': click on piece';
+    // End turn button colour is changed
+    endTurn.setAttribute('class', 'end_turn ' + gameManagement.turn + ' team_colours');
+});
 
 // ------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------
@@ -66,23 +110,23 @@ theBoard.addEventListener('click', function(element)  {
     let colForChosenTile = chosenSquare.id % 1000;
     let rowForChosenTile = (chosenSquare.id - colForChosenTile)/1000;
     let chosenPieceName = gameBoard.boardArray[rowForChosenTile][colForChosenTile].pieces.type;
+    let chosenPieceUsed = gameBoard.boardArray[rowForChosenTile][colForChosenTile].pieces.used;
     let chosenPieceTeam = gameBoard.boardArray[rowForChosenTile][colForChosenTile].pieces.team;
     let chosenSquareActiveStatus = gameBoard.boardArray[rowForChosenTile][colForChosenTile].activeStatus;
 
     // Commentary on tile clicked on
-    console.log(commentary);
-    commentary.innerText = gameManagement.turn + ' turn: ' + chosenPieceTeam + ' ' + chosenPieceName + ' on row ' + rowForChosenTile + ' col ' + colForChosenTile;
+
+    commentary.innerText = gameManagement.turn + ' turn: ' + chosenPieceTeam + ' ' + chosenPieceUsed + ' ' + chosenPieceName + ' on row ' + rowForChosenTile + ' col ' + colForChosenTile;
 
     // Once "firstGate" is open second click needs to be to an active square
     // Piece move is then made
     if (firstGate) {
         if (chosenSquareActiveStatus == 'active') {
-            gameBoard.boardArray[rowForChosenTile][colForChosenTile].pieces = {populatedSquare: true, type: 'cargoShip', team: gameManagement.turn};
-            gameBoard.boardArray[pieceMovement.movementArray.fromRow][pieceMovement.movementArray.fromCol].pieces = {populatedSquare: false, type: 'none', team: 'none'};
+            gameBoard.boardArray[rowForChosenTile][colForChosenTile].pieces = {populatedSquare: true, type: 'cargoShip', used: 'used', team: gameManagement.turn};
+            gameBoard.boardArray[pieceMovement.movementArray.fromRow][pieceMovement.movementArray.fromCol].pieces = {populatedSquare: false, type: 'none', used: 'unused', team: 'none'};
             pieceMovement.deactivateTiles();
             firstGate = !firstGate;
-            gameManagement.nextTurn();
-            commentary.innerText = ' turn: ' + gameManagement.turn + ': click on piece' 
+
         } else {
             // Closing gate and resetting if second click is not valid
             firstGate = false;
@@ -92,7 +136,7 @@ theBoard.addEventListener('click', function(element)  {
 
     // "firstGate" is opened when first click is confirmed valid
     if (!firstGate) {
-        if (chosenPieceTeam == gameManagement.turn) {
+        if (chosenPieceTeam == gameManagement.turn && chosenPieceUsed == 'unused') {
             if (chosenPieceName == 'cargoShip') {
                 // Future update: capture all movements (to allow potential for replay and undo)
                 pieceMovement.movementArray.fromCol = colForChosenTile;
