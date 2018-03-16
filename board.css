@@ -1,73 +1,13 @@
 /* styles for the game board */
 /* ------------------------- */
 
-html {
-    background-color: rgb(254,252,250);
-    margin: 0;
-}
-
- /* style for the header */
-.the_header {
-    font-family: 'Palatino';
-    font-size: 2em;
-    color: rgb(250,105,0);
-    text-align: center;
-    background-color: rgb(251, 242, 234);
-    top: 0%;
-    margin: 0% 1% 1% 0%;
-    border-bottom: 1px solid grey;
-    padding: 1% 1% 1% 1%;
-    width: 98%;
-    height: 35px;
-}
-
-/* style for the footer */
-.the_footer {
-    font-family: 'Palatino';
-    color: rgb(250,105,0);
-    text-align: center;
-    background-color: rgb(251, 242, 234);
-    bottom: 0%;
-    margin: 0% 0% 0% 0%;
-    border-top: 1px solid grey;
-    padding: 2% 1% 0% 1%;
-    width: 98%;
-    height: 50px;
-}
-
-/* style to fix the header and footer and prevent scrolling */
-.over_text {
-    position: fixed;
-    z-index: 1;
-}
-
-.under_text {
-    position: normal;
-    height: 30px;
-}
-
-/* style for contents boxes in the footer - TEMPORARY */
-.contents_box {
-    display: inline;
-    background-color: rgb(254,252,250);
-    text-align: center;
-    margin: 1% 1% 1% 0%;
-    border: 1px solid grey;
-    padding: 1% 1% 1% 1%;
-    width: 10%;
-}
-
-/* colour for commentary box */
-.commentary {
-    color: rgb(77, 210, 255);
-}
-
 /* style for game board holder */
 .boardmark {
     background-color: rgb(251, 242, 234);
     text-align: center;
     margin: auto;
     font-size: 20px;
+    /* display: inline-block; */
 }
 
 /* style for row holders within game board */

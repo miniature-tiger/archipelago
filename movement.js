@@ -12,10 +12,11 @@ let pieceMovement = {
     //              : code for different pieces
     //              : distance around obstacles
     activateTiles: function(rowForChosenTile, colForChosenTile) {
-        let moveDistance = 3;
-        for (var i = -moveDistance; i < moveDistance + 1; i++) {
-            if(rowForChosenTile+i >=0 && rowForChosenTile+i <row) {
-                for (var j = -moveDistance; j < moveDistance + 1; j++) {
+        let moveDistance = 2;
+        for (var i = -moveDistance + compass.directionArray[windDirection].windRow ; i < moveDistance + 1 +compass.directionArray[windDirection].windRow ; i++) {
+            if(rowForChosenTile+i>=0 && rowForChosenTile+i <row) {
+                console.log(rowForChosenTile, i, compass.directionArray[windDirection].windRow);
+                for (var j = -moveDistance + compass.directionArray[windDirection].windCol; j < moveDistance + 1 +compass.directionArray[windDirection].windCol; j++) {
                     if(colForChosenTile+j >=0 && colForChosenTile+j <col) {
                         if (gameBoard.boardArray[rowForChosenTile+i][colForChosenTile+j].terrain == 'sea' && gameBoard.boardArray[rowForChosenTile+i][colForChosenTile+j].pieces.populatedSquare == false) {
                             gameBoard.boardArray[rowForChosenTile+i][colForChosenTile+j].activeStatus = 'active';
@@ -31,13 +32,25 @@ let pieceMovement = {
     // --------------------------------------------------
     // Future update: as above for activateTiles
     deactivateTiles: function() {
-        let moveDistance = 3;
-        for (var i = -moveDistance; i < moveDistance + 1; i++) {
+        let moveDistance = 2;
+        for (var i = -moveDistance + compass.directionArray[windDirection].windRow; i < moveDistance + 1 + compass.directionArray[windDirection].windRow; i++) {
             if(this.movementArray.fromRow+i >=0 && this.movementArray.fromRow+i <row) {
-                for (var j = -moveDistance; j < moveDistance + 1; j++) {
+                for (var j = -moveDistance + compass.directionArray[windDirection].windCol; j < moveDistance + 1 +compass.directionArray[windDirection].windCol; j++) {
                     if(this.movementArray.fromCol+j >=0 && this.movementArray.fromCol+j <col) {
                         gameBoard.boardArray[this.movementArray.fromRow+i][this.movementArray.fromCol+j].activeStatus = 'inactive';
                     }
+                }
+            }
+        }
+    },
+
+    // Method to reset pieces from 'used' to 'unused' once a turn has ended
+    // --------------------------------------------------------------------
+    usedPiecesReset: function() {
+        for (var y = 0; y <  col; y++) {
+            for (var x = 0; x <  row; x++) {
+                if (gameBoard.boardArray[x][y].pieces.used == 'used') {
+                    gameBoard.boardArray[x][y].pieces.used = 'unused';
                 }
             }
         }

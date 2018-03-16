@@ -19,10 +19,10 @@ let gameBoard = {
             for (var x = 0; x < row; x++) {
                 // A few random land tiles
                 if(Math.random() > 0.995) {
-                    rowArray.push({xpos: + x, ypos: + y, terrain: 'land', activeStatus: 'inactive', pieces: {populatedSquare: false, type: 'no piece', team: ''}});
+                    rowArray.push({xpos: + x, ypos: + y, terrain: 'land', activeStatus: 'inactive', pieces: {populatedSquare: false, type: 'no piece', used: 'unused', team: ''}});
                 // But mainly sea tiles
                 } else {
-                    rowArray.push({xpos: + x, ypos: + y, terrain: 'sea', activeStatus: 'inactive', pieces: {populatedSquare: false, type: 'no piece', team: ''}});
+                    rowArray.push({xpos: + x, ypos: + y, terrain: 'sea', activeStatus: 'inactive', pieces: {populatedSquare: false, type: 'no piece',  used: 'unused', team: ''}});
                 }
             }
         this.boardArray.push(rowArray);
@@ -30,8 +30,8 @@ let gameBoard = {
 
     },
 
-    // Method to overlay islands and bases
-    // -----------------------------------
+    // Method to overlay islands and bases and pieces
+    // ----------------------------------------------
     // Much of this overlay code could be removed and replaced by a fixed array at a later date
     // But currently it is useful to allow the board to be set dynamically in different sizes
     // whilst game play is being developed
@@ -87,16 +87,20 @@ let gameBoard = {
         this.overlayTiles(boardCenter-1, boardCenter+2, 0, 1, 'land');
 
         // Creation of bases
-        this.boardArray[boardCenter][col-1].pieces = {populatedSquare: true, type: 'hut', team: 'teamOrange'};
-        this.boardArray[0][boardCenter].pieces = {populatedSquare: true, type: 'hut', team: 'teamLemon'};
-        this.boardArray[row-1][boardCenter].pieces = {populatedSquare: true, type: 'hut', team: 'teamLime'};
-        this.boardArray[boardCenter][0].pieces = {populatedSquare: true, type: 'hut', team: 'teamPlum'};
+        this.boardArray[boardCenter][col-1].pieces = {populatedSquare: true, type: 'hut', used: 'unused', team: 'teamOrange'};
+        this.boardArray[0][boardCenter].pieces = {populatedSquare: true, type: 'hut', used: 'unused', team: 'teamLemon'};
+        this.boardArray[row-1][boardCenter].pieces = {populatedSquare: true, type: 'hut', used: 'unused', team: 'teamLime'};
+        this.boardArray[boardCenter][0].pieces = {populatedSquare: true, type: 'hut', used: 'unused', team: 'teamPlum'};
 
         // Creation of ships
-        this.boardArray[boardCenter][col-2].pieces = {populatedSquare: true, type: 'cargoShip', team: 'teamOrange'};
-        this.boardArray[1][boardCenter].pieces = {populatedSquare: true, type: 'cargoShip', team: 'teamLemon'};
-        this.boardArray[row-2][boardCenter].pieces = {populatedSquare: true, type: 'cargoShip', team: 'teamLime'};
-        this.boardArray[boardCenter][1].pieces = {populatedSquare: true, type: 'cargoShip', team: 'teamPlum'};
+        this.boardArray[boardCenter-1][col-2].pieces = {populatedSquare: true, type: 'cargoShip', used: 'unused', team: 'teamOrange'};
+        this.boardArray[boardCenter+1][col-2].pieces = {populatedSquare: true, type: 'cargoShip', used: 'unused', team: 'teamOrange'};
+        this.boardArray[1][boardCenter-1].pieces = {populatedSquare: true, type: 'cargoShip', used: 'unused', team: 'teamLemon'};
+        this.boardArray[1][boardCenter+1].pieces = {populatedSquare: true, type: 'cargoShip', used: 'unused', team: 'teamLemon'};
+        this.boardArray[row-2][boardCenter-1].pieces = {populatedSquare: true, type: 'cargoShip', used: 'unused', team: 'teamLime'};
+        this.boardArray[row-2][boardCenter+1].pieces = {populatedSquare: true, type: 'cargoShip', used: 'unused', team: 'teamLime'};
+        this.boardArray[boardCenter-1][1].pieces = {populatedSquare: true, type: 'cargoShip', used: 'unused', team: 'teamPlum'};
+        this.boardArray[boardCenter+1][1].pieces = {populatedSquare: true, type: 'cargoShip', used: 'unused', team: 'teamPlum'};
     },
 
     // Method to create triangle shaped overlay
