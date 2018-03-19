@@ -19,10 +19,10 @@ let gameBoard = {
             for (var x = 0; x < row; x++) {
                 // A few random land tiles
                 if(Math.random() > 0.995) {
-                    rowArray.push({xpos: + x, ypos: + y, terrain: 'land', activeStatus: 'inactive', pieces: {populatedSquare: false, type: 'no piece', used: 'unused', team: ''}});
+                    rowArray.push({xpos: + x, ypos: + y, terrain: 'land', activeStatus: 'inactive', pieces: {populatedSquare: false, type: 'no piece', direction: '', used: 'unused', team: ''}});
                 // But mainly sea tiles
                 } else {
-                    rowArray.push({xpos: + x, ypos: + y, terrain: 'sea', activeStatus: 'inactive', pieces: {populatedSquare: false, type: 'no piece',  used: 'unused', team: ''}});
+                    rowArray.push({xpos: + x, ypos: + y, terrain: 'sea', activeStatus: 'inactive', pieces: {populatedSquare: false, type: 'no piece', direction: '', used: 'unused', team: ''}});
                 }
             }
         this.boardArray.push(rowArray);
@@ -87,20 +87,20 @@ let gameBoard = {
         this.overlayTiles(boardCenter-1, boardCenter+2, 0, 1, 'land');
 
         // Creation of bases
-        this.boardArray[boardCenter][col-1].pieces = {populatedSquare: true, type: 'hut', used: 'unused', team: 'teamOrange'};
-        this.boardArray[0][boardCenter].pieces = {populatedSquare: true, type: 'hut', used: 'unused', team: 'teamLemon'};
-        this.boardArray[row-1][boardCenter].pieces = {populatedSquare: true, type: 'hut', used: 'unused', team: 'teamLime'};
-        this.boardArray[boardCenter][0].pieces = {populatedSquare: true, type: 'hut', used: 'unused', team: 'teamPlum'};
+        this.boardArray[boardCenter][col-1].pieces = {populatedSquare: true, type: 'hut', direction: '0', used: 'unused', team: 'teamOrange'};
+        this.boardArray[0][boardCenter].pieces = {populatedSquare: true, type: 'hut', direction: '0', used: 'unused', team: 'teamLemon'};
+        this.boardArray[row-1][boardCenter].pieces = {populatedSquare: true, type: 'hut', direction: '0', used: 'unused', team: 'teamLime'};
+        this.boardArray[boardCenter][0].pieces = {populatedSquare: true, type: 'hut', direction: '0', used: 'unused', team: 'teamPlum'};
 
         // Creation of ships
-        this.boardArray[boardCenter-1][col-2].pieces = {populatedSquare: true, type: 'cargoShip', used: 'unused', team: 'teamOrange'};
-        this.boardArray[boardCenter+1][col-2].pieces = {populatedSquare: true, type: 'cargoShip', used: 'unused', team: 'teamOrange'};
-        this.boardArray[1][boardCenter-1].pieces = {populatedSquare: true, type: 'cargoShip', used: 'unused', team: 'teamLemon'};
-        this.boardArray[1][boardCenter+1].pieces = {populatedSquare: true, type: 'cargoShip', used: 'unused', team: 'teamLemon'};
-        this.boardArray[row-2][boardCenter-1].pieces = {populatedSquare: true, type: 'cargoShip', used: 'unused', team: 'teamLime'};
-        this.boardArray[row-2][boardCenter+1].pieces = {populatedSquare: true, type: 'cargoShip', used: 'unused', team: 'teamLime'};
-        this.boardArray[boardCenter-1][1].pieces = {populatedSquare: true, type: 'cargoShip', used: 'unused', team: 'teamPlum'};
-        this.boardArray[boardCenter+1][1].pieces = {populatedSquare: true, type: 'cargoShip', used: 'unused', team: 'teamPlum'};
+        this.boardArray[boardCenter-1][col-2].pieces = {populatedSquare: true, type: 'cargoShip', direction: '-90', used: 'unused', team: 'teamOrange'};
+        this.boardArray[boardCenter+1][col-2].pieces = {populatedSquare: true, type: 'cargoShip', direction: '-90', used: 'unused', team: 'teamOrange'};
+        this.boardArray[1][boardCenter-1].pieces = {populatedSquare: true, type: 'cargoShip', direction: '180', used: 'unused', team: 'teamLemon'};
+        this.boardArray[1][boardCenter+1].pieces = {populatedSquare: true, type: 'cargoShip', direction: '180', used: 'unused', team: 'teamLemon'};
+        this.boardArray[row-2][boardCenter-1].pieces = {populatedSquare: true, type: 'cargoShip', direction: '0', used: 'unused', team: 'teamLime'};
+        this.boardArray[row-2][boardCenter+1].pieces = {populatedSquare: true, type: 'cargoShip', direction: '0', used: 'unused', team: 'teamLime'};
+        this.boardArray[boardCenter-1][1].pieces = {populatedSquare: true, type: 'cargoShip', direction: '90', used: 'unused', team: 'teamPlum'};
+        this.boardArray[boardCenter+1][1].pieces = {populatedSquare: true, type: 'cargoShip', direction: '90', used: 'unused', team: 'teamPlum'};
     },
 
     // Method to create triangle shaped overlay
@@ -145,7 +145,7 @@ let gameBoard = {
     // Method to create a single tile
     // ------------------------------
     // gridSize is the size of the tile, squareType is the land / sea / base of the tile
-    createTile: function(squareType, i, j, gridSize) {
+    createTile: function(i, j, gridSize) {
         // Creating the tile from three nested divs
         let newTile = document.createElement('div');
         let innerTile = document.createElement('div');
@@ -162,12 +162,12 @@ let gameBoard = {
         newTile.style.width = (gridSize - 2) + 'px';
 
         rotatedTile.setAttribute('class', 'rotated_square' + ' ' + this.boardArray[i][j].terrain + ' ' + this.boardArray[i][j].activeStatus);
-        rotatedTile.style.height = (gridSize - 4) + 'px';
-        rotatedTile.style.width = (gridSize - 4) + 'px';
+        rotatedTile.style.height = (gridSize - 6) + 'px';
+        rotatedTile.style.width = (gridSize - 6) + 'px';
 
         innerTile.setAttribute('class', 'inner_square' + ' ' + this.boardArray[i][j].terrain + ' ' + this.boardArray[i][j].activeStatus);
-        innerTile.style.height = (gridSize - 4) + 'px';
-        innerTile.style.width = (gridSize - 4) + 'px';
+        innerTile.style.height = (gridSize - 6) + 'px';
+        innerTile.style.width = (gridSize - 6) + 'px';
 
         newTile.appendChild(rotatedTile);
         rotatedTile.appendChild(innerTile);
@@ -183,27 +183,34 @@ let gameBoard = {
     createActionTile: function(i, j, gridSize) {
         // Creating the action tile shape
         let newActionTile = document.createElement('div');
+        let holdingActionTile = document.createElement('div');
         let innerActionTile = document.createElement('div');
         let detailActionTile = document.createElement('div');
 
         // Adding an id for each tile - DECIDE IF NECESSARY IN NEXT STAGE
         newActionTile.id = i*1000 + j;
+        holdingActionTile.id = 'holding' + Number(i*1000 + j);
 
         // Creating the tile by dynamically allocating CSS classes
-        //{populatedSquare: true, ship: 'cargoShip', team: 'teamPlum'}
-        newActionTile.setAttribute('class', 'square' + ' ' + this.boardArray[i][j].pieces.type + ' ' + this.boardArray[i][j].pieces.team + ' ' + this.boardArray[i][j].activeStatus);
+        newActionTile.setAttribute('class', 'square' + ' ' + this.boardArray[i][j].pieces.type );
         newActionTile.style.height = (gridSize - 2) + 'px';
         newActionTile.style.width = (gridSize - 2) + 'px';
 
+        holdingActionTile.setAttribute('class', 'holding' + ' ' + this.boardArray[i][j].pieces.type );
+        holdingActionTile.style.height = (gridSize - 2) + 'px';
+        holdingActionTile.style.width = (gridSize - 2) + 'px';
+        holdingActionTile.style.transform = 'rotate(' + this.boardArray[i][j].pieces.direction + 'deg)';
+
         innerActionTile.setAttribute('class', 'piece' + ' ' + this.boardArray[i][j].pieces.type + ' ' + this.boardArray[i][j].pieces.team + ' team_colours');
-        innerActionTile.style.height = (gridSize - 2) + 'px';
-        innerActionTile.style.width = (gridSize - 2) + 'px';
+        innerActionTile.style.height = (gridSize - 6) + 'px';
+        innerActionTile.style.width = (gridSize - 6) + 'px';
 
         detailActionTile.setAttribute('class', 'detail' + ' ' + this.boardArray[i][j].pieces.type + ' ' + this.boardArray[i][j].pieces.team);
-        detailActionTile.style.height = (gridSize - 2) + 'px';
-        detailActionTile.style.width = (gridSize - 2) + 'px';
+        detailActionTile.style.height = (gridSize - 6) + 'px';
+        detailActionTile.style.width = (gridSize - 6) + 'px';
 
-        newActionTile.appendChild(innerActionTile);
+        newActionTile.appendChild(holdingActionTile);
+        holdingActionTile.appendChild(innerActionTile);
         innerActionTile.appendChild(detailActionTile);
 
         // tile is returned to drawBoard
@@ -239,14 +246,13 @@ let gameBoard = {
 
             // Loop through each tile j of each board row i
             for (var j = 0; j < this.boardArray[i].length; j++) {
-                let squareType = this.boardArray[i][j].terrain;
 
                 if (this.boardArray[i][j].pieces.populatedSquare == true) {
                     // Create action tile and add tile to row
                     newRow.appendChild(this.createActionTile(i, j, gridSize));
                 } else {
                     // Create empty tile and add tile to row
-                    newRow.appendChild(this.createTile(squareType, i, j, gridSize));
+                    newRow.appendChild(this.createTile( i, j, gridSize));
                 }
             }
             // Add row to board

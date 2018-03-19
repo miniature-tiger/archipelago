@@ -2,8 +2,8 @@
 // --------------------------------------------------------------
 
 let compass = {
-  
-    // Method to obtain new wind direction
+
+    // Array to hold wind direction
     directionArray: [ {wind: 'NW', windRow: -1, windCol: -1, needle: 45},
                       {wind: 'N', windRow: -1, windCol: 0, needle: 90},
                       {wind: 'NE', windRow: -1, windCol: 1, needle: 135},
