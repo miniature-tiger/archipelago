@@ -13,6 +13,7 @@ function boardSetUp(row, col, gridSize, boardShape) {
     gameBoard.drawBoard(row, col, gridSize);
 }
 
+
 // Some button handlers
 // --------------------
 // These buttons are unlikely to be part of the final gameBoard
@@ -34,7 +35,6 @@ elShape.addEventListener('change', function() {
 });
 
 
-
 // Parameters for board set up
 // ---------------------------
 // Intial values for the board size and shape
@@ -44,6 +44,9 @@ let row = elSize.value, col = elSize.value, gridSize = 25, boardShape=elShape.va
 
 // Set up the board
 boardSetUp(row, col, gridSize, boardShape);
+
+
+
 
 // ------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------
@@ -67,6 +70,7 @@ let needleDirection = compass.directionArray[windDirection].needle;
 let needle = document.querySelector('.compass.needle');
 needle.style.transform = 'rotate(' + needleDirection + 'deg)';
 
+
 // Next turn functionality
 // -----------------------
 var endTurn = document.querySelector('.end_turn');
@@ -87,13 +91,18 @@ endTurn.addEventListener('click', function(element) {
     endTurn.setAttribute('class', 'end_turn ' + gameManagement.turn + ' team_colours');
 });
 
+
+
+
 // ------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------
 // PIECE MOVEMENT
 
 // Parameters for piece movement set up
 // ------------------------------------
-let firstGate = false;
+let startEnd = 'start';
+let chosenSquare = {start: '', end: ''};
+let chosenHolding = {start: '', end: ''};
 
 // commentary box - Future work: develop into illustrated commentary by side of board (with flags and pieces)
 let commentary = document.querySelector('.contents_box.commentary');
@@ -102,57 +111,50 @@ commentary.innerText = ' turn: ' + gameManagement.turn + ': click on piece'
 // handler for capturing clicks on board tiles
 // As the logic of this section is expanded it will be moved across into the piece movement object
 var theBoard = document.querySelector('.boardmark');
-theBoard.addEventListener('click', function(element)  {
+theBoard.addEventListener('click', function(element) {
+    // Capturing the clicked tile information and recording moves
 
-    // Details of most recent tile clicked on
-    let chosenSquare = element.target.closest('.square');
-    let chosenPiece = element.target.closest('.piece');
-    let colForChosenTile = chosenSquare.id % 1000;
-    let rowForChosenTile = (chosenSquare.id - colForChosenTile)/1000;
-    let chosenPieceName = gameBoard.boardArray[rowForChosenTile][colForChosenTile].pieces.type;
-    let chosenPieceUsed = gameBoard.boardArray[rowForChosenTile][colForChosenTile].pieces.used;
-    let chosenPieceTeam = gameBoard.boardArray[rowForChosenTile][colForChosenTile].pieces.team;
-    let chosenSquareActiveStatus = gameBoard.boardArray[rowForChosenTile][colForChosenTile].activeStatus;
+    chosenSquare[startEnd] = element.target.closest('.square');
+    chosenHolding[startEnd] = element.target.closest('.holding');
+
+    // Obtain details of most recent tile clicked on - separated between start and end points
+    pieceMovement.captureMove(startEnd, chosenSquare);
 
     // Commentary on tile clicked on
+    commentary.innerText = gameManagement.turn + ' turn: ' + pieceMovement.movementArray[startEnd].team + ' ' + pieceMovement.movementArray[startEnd].used + ' ' + pieceMovement.movementArray[startEnd].type + ' on row ' + pieceMovement.movementArray[startEnd].row + ' col ' + pieceMovement.movementArray[startEnd].col;
 
-    commentary.innerText = gameManagement.turn + ' turn: ' + chosenPieceTeam + ' ' + chosenPieceUsed + ' ' + chosenPieceName + ' on row ' + rowForChosenTile + ' col ' + colForChosenTile;
-
-    // Once "firstGate" is open second click needs to be to an active square
+    // Once "start" piece has been selected second click needs to be to an active "end" square
     // Piece move is then made
-    if (firstGate) {
-        if (chosenSquareActiveStatus == 'active') {
-            gameBoard.boardArray[rowForChosenTile][colForChosenTile].pieces = {populatedSquare: true, type: 'cargoShip', used: 'used', team: gameManagement.turn};
-            gameBoard.boardArray[pieceMovement.movementArray.fromRow][pieceMovement.movementArray.fromCol].pieces = {populatedSquare: false, type: 'none', used: 'unused', team: 'none'};
+    if (startEnd == 'end') {
+        if (pieceMovement.movementArray[startEnd].activeStatus == 'active') {
             pieceMovement.deactivateTiles();
-            firstGate = !firstGate;
-
+            pieceMovement.shipTransition();
         } else {
-            // Closing gate and resetting if second click is not valid
-            firstGate = false;
+            // Resetting if second click is not valid
             pieceMovement.deactivateTiles();
         }
+        // Resetting movement array once second click has been made (whether valid or invalid)
+        pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
+        startEnd = 'start';
     }
 
-    // "firstGate" is opened when first click is confirmed valid
-    if (!firstGate) {
-        if (chosenPieceTeam == gameManagement.turn && chosenPieceUsed == 'unused') {
-            if (chosenPieceName == 'cargoShip') {
-                // Future update: capture all movements (to allow potential for replay and undo)
-                pieceMovement.movementArray.fromCol = colForChosenTile;
-                pieceMovement.movementArray.fromRow = rowForChosenTile;
-                pieceMovement.movementArray.piece = chosenPieceName;
-                pieceMovement.movementArray.team = chosenPieceTeam;
-                firstGate = true;
-            } else if (element.target.classList.contains('hut')) {
+    // "Start" piece validation on first click
+    if (startEnd == 'start') {
+        if (pieceMovement.movementArray[startEnd].team  == gameManagement.turn && pieceMovement.movementArray[startEnd].used == 'unused') {
+            if (pieceMovement.movementArray[startEnd].type == 'cargoShip') {
+                startEnd  = 'end';
+            } else if (pieceMovement.movementArray[startEnd].type == 'hut') {
                 // Future update: hut actions
             }
-            // If "firstGate" is open potential tiles are activated
-            if (firstGate) {
-                pieceMovement.activateTiles(rowForChosenTile, colForChosenTile);
+            // If "Start" piece is validated potential tiles are activated
+            if (startEnd == 'end') {
+                pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col);
+                // Redraw gameboard to show activated tiles
+                gameBoard.drawBoard(row, col, gridSize);
             }
         }
     }
-    // Redraw gameboard
-    gameBoard.drawBoard(row, col, gridSize);
+    setTimeout(function() {
+        gameBoard.drawBoard(row, col, gridSize);
+    }, 3000);
 });

@@ -3,77 +3,110 @@
 
 /* Cargo ship */
 .square.cargoShip {
-  display: inline-block;
-  margin: 0px 0px 0px 0px;
-  padding: 0px 0px 0px 0px;
-  overflow: hidden;
-  background: rgb(77, 210, 255);
-  border: 1px solid rgb(77, 210, 255);
+    display: inline-block;
+    vertical-align: top;
+    margin: 0px;
+    padding: 0px;
+    overflow: hidden;
+    background-color: rgb(77, 210, 255);
+    border: 1px solid rgb(77, 210, 255);
+    text-align: center;
 }
 
+.holding.cargoShip {
+    position: relative;
+    vertical-align: top;
+    margin: 0px;
+    padding: 0px;
+    border: 0px;
+    background-color: rgb(77, 210, 255);
+    border-radius: 50%;
+    text-align: center;
+    left: 0px;
+    top: 0px;
+}
+
+
 .piece.cargoShip {
-  display: inline-block;
-  margin: 0px 0px 0px 0px;
-  padding: 0px 0px 0px 0px;
-  transform: rotate(45deg) scale(0.35,0.88) translateX(-25%) translateY(-5%);
-  border-top-left-radius: 50%;
-  border-top-right-radius: 50%;
-  border-bottom-left-radius: 20%;
-  border-bottom-right-radius: 20%;
-  background: rgb(181, 110, 43);
-  border-left: 0.08em solid rgb(89, 53, 20);
-  border-right: 0.08em solid rgb(89, 53, 20);
-  border-top: 0.1em solid rgb(89, 53, 20);
-  border-bottom: 0.08em solid rgb(89, 53, 20);
+  /*Tile is gridsize -2
+    Inner tile is gridsize -6 (space for border 2 like in sea tiles)
+    Left border is 2, others are 1
+    So margin 1 on all borders except left*/
+    display: inline-block;
+    padding: 0px;
+    margin: 1px 1px 1px 0px;
+    transform: rotate(-90deg) scale(0.9, 0.38);
+
+    border-top-left-radius: 20%;
+    border-top-right-radius: 50%;
+    border-bottom-left-radius: 20%;
+    border-bottom-right-radius: 50%;
+    border-left: 1.5px solid rgb(89, 53, 20);
+    border-right: 1.5px solid rgb(89, 53, 20);
+    border-top: 1px solid rgb(89, 53, 20);
+    border-bottom: 1px solid rgb(89, 53, 20);
+
+    background-color: rgb(181, 110, 43);
+    text-align: center;
+    transition: transform 1s;
 }
 
 .detail.cargoShip {
-  display: inline-block;
-  margin: 0px 0px 0px 0px;
-  padding: 0px 0px 0px 0px;
-  transform: rotate(90deg) scale(0.1,2.2) translateX(-0.15em) translateY(0.13em);
-  border-right: 0.3em solid rgb(89, 53, 20);
-  border-left: 0.3em solid rgb(89, 53, 20);
-  border-top-left-radius: 50%;
-  border-bottom-left-radius: 50%;
-  background: white;
+    display: inline-block;
+    margin: 0px;
+    transform: rotate(0deg) scale(0.1,2.4) translateX(-60px) translateY(0);
+    border-right: 5px solid rgb(89, 53, 20);
+    border-left: 5px solid rgb(89, 53, 20);
+    margin: 0px 0px 2px 1px;
+    border-top-right-radius: 50%;
+    border-bottom-right-radius: 50%;
+    background-color: white;
 }
 
 /* Hut */
 .square.hut {
-  display: inline-block;
-  margin: 0px 0px 0px 0px;
-  padding: 0px 0px 0px 0px;
-  overflow: hidden;
-  border: 1px solid rgb(230, 230, 0);
-  background: rgb(77, 210, 55);
+    display: inline-block;
+    vertical-align: top;
+    margin: 0px;
+    padding: 0px;
+    overflow: hidden;
+    text-align: center;
+    border: 1px solid rgb(230, 230, 0);
+    background-color: rgb(77, 210, 55);
 }
 
 .piece.hut {
-  background: rgb(77, 210, 55);
-  transform: scale(0.6,0.6) translateX(-10%) translateY(-10%);
-  border: 0.1em solid rgb(89, 53, 20);
-  border-radius: 10%;
+    display: inline-block;
+    padding: 0px;
+    background-color: rgb(77, 210, 55);
+    transform: scale(0.6,0.6);
+    border: 2px solid rgb(89, 53, 20);
+    border-radius: 10%;
 }
 
 .detail.hut{
-  background: rgb(89, 53, 20);
-  transform: scale(1.3,0.1) translateX(0%) translateY(0%);
+  background-color: rgb(89, 53, 20);
+  transform: scale(1.3,0.1);
 }
 
 /* Team colours */
 .teamPlum.team_colours {
-    background: rgb(224, 165, 247);
+    background-color: rgb(224, 165, 247);
 }
 
 .teamOrange.team_colours {
-    background: rgb(255, 198, 167);
+    background-color: rgb(255, 198, 167);
 }
 
 .teamLemon.team_colours {
-    background: rgb(255, 255, 0);
+    background-color: rgb(255, 255, 0);
 }
 
 .teamLime.team_colours {
-    background: rgb(159, 255, 26);
+    background-color: rgb(159, 255, 26);
+}
+
+.deg90 {
+    transform: rotate(90deg);
+    transition: transform 1s;
 }
