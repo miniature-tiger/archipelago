@@ -161,6 +161,7 @@ theBoard.addEventListener('click', function(element) {
         if (pieceMovement.movementArray[startEnd].activeStatus == 'active') {
             pieceMovement.deactivateTiles();
             pieceMovement.shipTransition();
+            gameBoard.stockTake();
         } else {
             // Resetting if second click is not valid
             pieceMovement.deactivateTiles();
