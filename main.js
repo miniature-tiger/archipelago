@@ -20,27 +20,37 @@ function boardSetUp(row, col, gridSize, boardShape) {
 // But it is useful to allow the board to be varied dynamically while game play is being developed
 
 // board size button handler
-var elSize = document.querySelector('select.boardSizeSelect');
-elSize.addEventListener('change', function() {
-    row = elSize.value;
-    col = elSize.value;
-    boardSetUp(row, col, gridSize, boardShape);
+var elSize = document.querySelector('.boardSizeSelect');
+elSize.addEventListener('click', function(element) {
+    if(element.target.classList.contains('boardSizeSelect_31')) {
+        row = 31;
+        col = 31;
+        boardSetUp(row, col, gridSize, boardShape);
+    } else if (element.target.classList.contains('boardSizeSelect_40')) {
+        row = 40;
+        col = 40;
+        boardSetUp(row, col, gridSize, boardShape);
+    }
 });
 
 // board shape button handler
-var elShape = document.querySelector('select.boardShapeSelect');
-elShape.addEventListener('change', function() {
-    boardShape = elShape.value;
-    boardSetUp(row, col, gridSize, boardShape);
+var elShape = document.querySelector('.boardShapeSelect');
+elShape.addEventListener('click', function(element) {
+    if(element.target.classList.contains('boardShapeSelect_octagon')) {
+        boardShape = 'octagon';
+        boardSetUp(row, col, gridSize, boardShape);
+    } else if (element.target.classList.contains('boardShapeSelect_square')) {
+        boardShape = 'square';
+        boardSetUp(row, col, gridSize, boardShape);
+    }
 });
-
 
 // Parameters for board set up
 // ---------------------------
 // Intial values for the board size and shape
 // Tile size (gridSize) is set here
 
-let row = elSize.value, col = elSize.value, gridSize = 25, boardShape=elShape.value;
+let row = 40, col = 40, gridSize = 25, boardShape='octagon';
 
 // Set up the board
 boardSetUp(row, col, gridSize, boardShape);
@@ -90,6 +100,28 @@ endTurn.addEventListener('click', function(element) {
     // End turn button colour is changed
     endTurn.setAttribute('class', 'end_turn ' + gameManagement.turn + ' team_colours');
 });
+
+// Settings pop-up box
+// --------------------
+var settingsIcon = document.querySelector('.settingsmark');
+var settingsPopup = document.querySelector('.settings_popup');
+var settingsClose = document.querySelector('.settings_close');
+
+settingsIcon.addEventListener('click', function(element) {
+    settingsPopup.style.display = "block";
+});
+
+settingsClose.addEventListener('click', function(element) {
+    settingsPopup.style.display = "none";
+});
+
+// When the user clicks anywhere outside of the modal, close it
+window.addEventListener('click', function(element) {
+    if (element.target == settingsPopup) {
+        settingsPopup.style.display = "none";
+    }
+});
+
 
 
 
@@ -156,5 +188,5 @@ theBoard.addEventListener('click', function(element) {
     }
     setTimeout(function() {
         gameBoard.drawBoard(row, col, gridSize);
-    }, 3000);
+    }, 2500);
 });

@@ -6,9 +6,9 @@ html {
     margin: 0;
 }
 
+/* style for the frame corners */
 .corner {
     font-family: 'Palatino';
-    font-size: 2em;
     color: rgb(250,105,0);
     text-align: center;
     margin: 0;
@@ -17,12 +17,11 @@ html {
     height: 8%;
 }
 
-
  /* style for the header */
 .the_header {
     font-family: 'Palatino';
     font-size: 2em;
-    color: rgb(250,105,0);
+    color: rgb(137, 113, 82);
     text-align: center;
     background-color: rgb(251, 242, 234);
     top: 0%;
@@ -38,7 +37,7 @@ html {
 .the_footer {
     font-family: 'Palatino';
     color: rgb(250,105,0);
-    text-align: center;
+    text-align: right;
     background-color: rgb(231, 175, 126);
     bottom: 0%;
     left: 10%;
@@ -53,16 +52,17 @@ html {
 .over_text {
     position: fixed;
     background-color: rgb(251, 242, 234);
-    z-index: 1;
+    z-index: 2;
 }
 
 .under_text {
-    position: normal;
+    position: static;
     width: 100%;
     background-color: rgb(254,252,250);
     padding-top: 1%;
 }
 
+/* style for the frame sidebars */
 .sidebar {
     position: fixed;
     font-family: 'Palatino';
@@ -111,27 +111,33 @@ html {
 
 /* style for contents boxes in the footer - TEMPORARY */
 .contents_box {
-    position: relative;
-    top: 25%;
+    position: fixed;
     transform: translateY(0%);
     display: inline;
     background-color: rgb(254,252,250);
     text-align: center;
-    margin: 0.5% 0.5% 0.5% 0.5%;
+    margin: 0%;
     border: 1px solid grey;
     padding: 0.5% 0.5% 0.5% 0.5%;
-    font-size: 1em;
+    z-index: 1;
 }
 
-/* colour for commentary box */
+/* commentary box */
 .commentary {
-
-    color: rgb(77, 210, 255);
+    left: 10%;
+    bottom: 1%;
+    height: 2%;
+    width: 30%;
+    font-style: bold;
+    text-align: left;
+    overflow: hidden;
+    padding: 1% 1% 1% 1%;
+    color: grey;
+    font-size: 80%;
 }
 
 /* Side bar item holders */
 .item_holder {
-    position: relative;
     padding: 3%;
     top: 10%;
     width: 80px;
@@ -146,6 +152,7 @@ html {
 
 /* Footer icon holders */
 .icon_holder {
+    margin-right: 2%;
     position: relative;
     display: inline-block;
     text-align: center;
@@ -155,7 +162,23 @@ html {
     color: rgb(137, 113, 82);
     background-color: rgb(251, 242, 234);
     text-align: center;
-    font-size: 0.5em;
+}
+
+/* Style for text under icons */
+.icon_text {
+    position: relative;
+    display: block;
+    text-align: center;
+    top: 8%;
+    height: 35%;
+    width: 100%;
+    padding: 0%;
+    color: rgb(137, 113, 82);
+    background-color: rgb(251, 242, 234);
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 60%;
 }
 
 /* End of turn icon */
@@ -163,13 +186,148 @@ html {
     display: inline-block;
     position: relative;
     top: -1px;
-    left: -1px;
     margin-top: 0%;
     margin-left: 0%;
     vertical-align: top;
-    height: 75%;
-    width: 100%;
+    height: 60%;
+    width: 80%;
     border-radius: 50%;
     background-color: rgb(231, 190, 151);
     border: 1px solid rgb(137, 113, 82);
+}
+
+/* Settings icon */
+.settings {
+    display: inline-block;
+    position: relative;
+    top: 0px;
+    margin-top: 0%;
+    margin-left: 0%;
+    vertical-align: center;
+    height: 60%;
+    width: 80%;
+    border-radius: 50%;
+    background-color: grey;
+    border: 1px solid rgb(251, 242, 234);
+    transform:  scale(1, 1);
+}
+
+.settings_teeth {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 100%;
+    width: 100%;
+    background-color: grey;
+    border-radius: 10%;
+}
+
+.teethrotate0 {
+    transform:  translate(-50%,-50%) rotate(0deg) scale(0.26, 1.15);
+}
+
+.teethrotate45 {
+    transform:  translate(-50%,-50%) rotate(45deg) scale(0.26, 1.15);
+}
+
+.teethrotate90 {
+    transform:  translate(-50%,-50%) rotate(90deg) scale(0.26, 1.15);
+}
+
+.teethrotate135 {
+    transform:  translate(-50%,-50%) rotate(135deg) scale(0.26, 1.15);
+}
+
+.settings_inner {
+    display: inline-block;
+    position: relative;
+    top:12%;
+    margin-top: 0%;
+    margin-left: 0%;
+    vertical-align: top;
+    height: 70%;
+    width: 70%;
+    border-radius: 50%;
+    background-color: rgb(251, 242, 234);
+    border: 1px solid grey;
+}
+
+/* Transparent covering for full screen when settings panel is called up */
+.settings_popup {
+    display: none;
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(0,0,0,0.25);
+    font-size: 0.8em;
+    z-index: 1;
+}
+
+/* Settings panel style */
+.settingspopup_inner {
+    position: fixed;
+    background-color: grey;
+    width: 350px;
+    height: 350px;
+    bottom: 14%;
+    right: 14%;
+    padding: 0;
+    color: rgb(137, 113, 82);
+    border-radius: 50%;
+    border: 0px solid grey;
+    text-align: center;
+    vertical-align: top;
+}
+
+/* A separate inner circle is required for the large settings panel */
+.settings_inner2 {
+    display: inline-block;
+    position: relative;
+    top:10%;
+    margin-top: 0%;
+    margin-left: 0%;
+    vertical-align: top;
+    padding: 5%;
+    height: 68%;
+    width: 68%;
+    border-radius: 50%;
+    background-color: rgb(251, 242, 234);
+    border: 1px solid grey;
+}
+
+/* Settings button styles */
+.settings_holder {
+    position: relative;
+    top: 5%;
+    width: 70%;
+    margin: 0% 13% 5% 13%;
+    height: 18%;
+    padding: 2%;
+    display: block;
+    color: rgb(254, 252, 250);
+    background-color: grey;
+    border: 1px solid grey;
+}
+
+.settings_button {
+    display: inline-block;
+    width: 40%;
+    margin: 4% 2% 2% 2%;
+    color: grey;
+    background-color: rgb(254, 252, 250);
+    cursor: pointer;
+}
+
+/* Settings close button */
+.settings_close {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.settings_close:hover, .settings_close:focus {
+    color: black;
+    cursor: pointer;
 }
