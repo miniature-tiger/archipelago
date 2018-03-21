@@ -39,24 +39,7 @@
     <!-- Expandable (future development) sidebar left -->
     <div class="left sidebar over_text">
 
-        <!-- Buttons - temporary just to illustrate and aid with developing the board -->
-        <form class='item_holder boardSizeSelect'>
-            Size of the game board:
-            <select class="boardSizeSelect" name="boardSize">
-                <option value="31">small</option>
-                <option selected value="40">medium</option>
-            </select>
-        </form>
 
-        <br>
-
-        <form class='item_holder boardShapeSelect'>
-            Shape of the game board:
-            <select class="boardShapeSelect" name="boardShape">
-                <option selected value="octagon">octagon</option>
-                <option value="square">square</option>
-            </select>
-        </form>
     </div>
 
     <div class="left sidebar under_text">
@@ -98,21 +81,83 @@
     <!-- Fixed footer for icon buttons with padding underneath-->
     <div class="the_footer over_text">
 
-    <!-- Commentary box - Again is temporary in this position just to aid any visitors to site-->
-    <div class='contents_box commentary'>
-        Commentary ...
-    </div>
-
-    <!-- Icon button for end of turn -->
-    <div class="icon_holder endturnmark">
-        <div class="end_turn">
+        <!-- Commentary box - Again is temporary in this position just to aid any visitors to site-->
+        <div class='contents_box commentary'>
+            Commentary ...
         </div>
-            end turn
+
+        <!-- Settings icon button-->
+        <div class="icon_holder settingsmark">
+            <div class="settings">
+                <div class="settings_teeth teethrotate0">
+                </div>
+                <div class="settings_teeth teethrotate45">
+                </div>
+                <div class="settings_teeth teethrotate90">
+                </div>
+                <div class="settings_teeth teethrotate135">
+                </div>
+                <div class="settings_inner">
+                </div>
+            </div>
+            <div class="icon_text">
+                settings
+            </div>
+        </div>
+
+        <!-- End of turn icon button -->
+        <div class="icon_holder endturnmark">
+            <div class="end_turn">
+            </div>
+            <div class="icon_text">
+                end turn
+            </div>
         </div>
     </div>
 
     <!-- Corners added to allow side panels to be exandable -->
     <div class="corner bottom right over_text">
+
+      <!-- Settings panel pop up -->
+      <div class="settings_popup">
+          <div class="settingspopup_inner">
+                <div class="settings_teeth teethrotate0">
+                </div>
+                <div class="settings_teeth teethrotate45">
+                </div>
+                <div class="settings_teeth teethrotate90">
+                </div>
+                <div class="settings_teeth teethrotate135">
+                </div>
+                <div class="settings_inner2">
+                    <span class="settings_close">
+                        &times;
+                    </span>
+                    <br>Changing size or shape of the<br>board will restart the game.
+
+                    <!-- Buttons - for the size and shape of the board -->
+                    <div class='settings_holder boardSizeSelect'>
+                        Size of the game board:
+                        <div class="settings_button boardSizeSelect_31">
+                            small
+                        </div>
+                        <div class="settings_button boardSizeSelect_40">
+                            medium
+                        </div>
+                    </div>
+
+                    <div class='settings_holder boardShapeSelect'>
+                        Shape of the game board:
+                        <div class="settings_button boardShapeSelect_octagon">
+                            octagon
+                        </div>
+                        <div class="settings_button boardShapeSelect_square">
+                            square
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Padding for footer -->
