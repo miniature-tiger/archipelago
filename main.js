@@ -70,6 +70,10 @@ for (var iconHolder_i = 0; iconHolder_i < iconHolder.length; iconHolder_i++) {
     iconHolder[iconHolder_i].style.height = 2 * gridSize + 'px';
 }
 
+// Set up of stock dashboard
+// -------------------------
+stockDashboard.stockTake();
+stockDashboard.drawStock();
 
 // Set up of compass
 // -----------------
@@ -162,6 +166,7 @@ theBoard.addEventListener('click', function(element) {
             pieceMovement.deactivateTiles();
             pieceMovement.shipTransition();
             stockDashboard.stockTake();
+            stockDashboard.drawStock();
         } else {
             // Resetting if second click is not valid
             pieceMovement.deactivateTiles();
@@ -174,7 +179,7 @@ theBoard.addEventListener('click', function(element) {
     // "Start" piece validation on first click
     if (startEnd == 'start') {
         if (pieceMovement.movementArray[startEnd].team  == gameManagement.turn && pieceMovement.movementArray[startEnd].used == 'unused') {
-            if (pieceMovement.movementArray[startEnd].type == 'cargoShip') {
+            if (pieceMovement.movementArray[startEnd].type == 'cargo') {
                 startEnd  = 'end';
             } else if (pieceMovement.movementArray[startEnd].type == 'hut') {
                 // Future update: hut actions
@@ -189,5 +194,5 @@ theBoard.addEventListener('click', function(element) {
     }
     setTimeout(function() {
         gameBoard.drawBoard(row, col, gridSize);
-    }, 3000);
+    }, 2200);
 });

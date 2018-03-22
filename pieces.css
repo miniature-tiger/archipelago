@@ -1,8 +1,8 @@
 /* Style for individual piece tiles. */
 /* --------------------------------- */
 
-/* Cargo ship */
-.square.cargoShip {
+/* cargo ship */
+.square.cargo {
     display: inline-block;
     vertical-align: top;
     margin: 0px;
@@ -13,7 +13,7 @@
     text-align: center;
 }
 
-.holding.cargoShip {
+.holding.cargo {
     position: relative;
     vertical-align: top;
     margin: 0px;
@@ -27,7 +27,7 @@
 }
 
 
-.piece.cargoShip {
+.piece.cargo {
   /*Tile is gridsize -2
     Inner tile is gridsize -6 (space for border 2 like in sea tiles)
     Left border is 2, others are 1
@@ -51,7 +51,7 @@
     transition: transform 1s;
 }
 
-.detail.cargoShip {
+.detail.cargo {
     display: inline-block;
     margin: 0px;
     transform: rotate(0deg) scale(0.1,2.4) translateX(-60px) translateY(0);
@@ -89,8 +89,8 @@
   transform: scale(1.3,0.1);
 }
 
-/* Trees */
-.square.tree {
+/* forests */
+.square.forest {
     display: inline-block;
     vertical-align: top;
     margin: 0px;
@@ -101,7 +101,7 @@
     background-color: rgb(77, 210, 55);
 }
 
-.piece.tree {
+.piece.forest {
     display: inline-block;
     padding: 0px;
     background-color: rgb(77, 210, 55);
@@ -110,7 +110,7 @@
     border-radius: 50%;
 }
 
-.piece.tree::before, .detail.tree::before {
+.piece.forest::before, .detail.forest::before {
     content: '';
     width: 100%;
     height: 100%;
@@ -121,7 +121,7 @@
     border: 2px solid rgb(89, 53, 20);
 }
 
-.detail.tree {
+.detail.forest {
   display: inline-block;
   padding: 0px;
   background-color: limegreen;
@@ -130,8 +130,8 @@
   border-radius: 50%;
 }
 
-/* Iron */
-.square.iron {
+/* ironworks */
+.square.ironworks {
     display: inline-block;
     vertical-align: top;
     margin: 0px;
@@ -142,7 +142,7 @@
     background-color: rgb(77, 210, 55);
 }
 
-.piece.iron {
+.piece.ironworks {
     display: inline-block;
     padding: 0px;
     background-color: silver;
@@ -151,7 +151,7 @@
     border-radius: 10%;
 }
 
-.detail.iron {
+.detail.ironworks {
     display: inline-block;
     padding: 0px;
     background-color: silver;
@@ -164,7 +164,7 @@
     border-radius: 10%;
 }
 
-.detail.iron::after {
+.detail.ironworks::after {
     content: 'I';
     font-size: 1em;
     height: 100%;

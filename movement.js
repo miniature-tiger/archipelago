@@ -115,7 +115,7 @@ let pieceMovement = {
         chosenSquare.end.removeChild(chosenSquare.end.firstChild);
 
         // Applying moves to game board array
-        gameBoard.boardArray[this.movementArray.end.row][this.movementArray.end.col].pieces = {populatedSquare: true, type: 'cargoShip', direction: rotateDirection, used: 'used', team: gameManagement.turn};
+        gameBoard.boardArray[this.movementArray.end.row][this.movementArray.end.col].pieces = {populatedSquare: true, type: 'cargo', direction: rotateDirection, used: 'used', team: gameManagement.turn};
         gameBoard.boardArray[pieceMovement.movementArray['start'].row][pieceMovement.movementArray['start'].col].pieces = {populatedSquare: false, type: 'none', direction: '', used: 'unused', team: 'none'};
 
     },
