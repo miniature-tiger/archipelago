@@ -14,10 +14,9 @@ https://miniature-tiger.github.io/archipelago/
 2) Move downloaded files to the folder of your choice.
 3) Open the index.html file using your preferred browser (production testing is in safari and chrome).
 
+----------------------------------------------
 
-Road map (short term):
-----------------------
-
+# Road map (short term):
 Board and ship movement:
 * Board set up - COMPLETE
 * Basic ship creation: functionality and graphics  - COMPLETE 
@@ -35,17 +34,16 @@ Land Squares and goods discovery:
 
 
 
-Road map (longer term):
-----------------------
-Building: (recipes, times etc)
-Contracts for delivery:
-Islands (naming: for describing location ot pieces, trading settlements)
-Central trading centre:
-Conflicts:
-Pirates:
-Scoring: 
+# Road map (longer term):
+* Building: (recipes, times etc)
+* Contracts for delivery:
+* Islands (naming: for describing location ot pieces, trading settlements)
+* Central trading centre:
+* Conflicts:
+* Pirates:
+* Scoring: 
 
-
+----------------------------------------------
 
 
 
