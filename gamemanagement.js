@@ -18,4 +18,5 @@ let gameManagement = {
     nextTurn: function() {
         this.turn = this.teamArray[(this.teamArray.indexOf(this.turn)+1) % 4];
     }
+
 }

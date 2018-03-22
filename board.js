@@ -93,26 +93,26 @@ let gameBoard = {
         this.boardArray[boardCenter][0].pieces = {populatedSquare: true, type: 'hut', direction: '0', used: 'unused', team: 'teamPlum'};
 
         // Creation of ships
-        this.boardArray[boardCenter-1][col-2].pieces = {populatedSquare: true, type: 'cargoShip', direction: '-90', used: 'unused', team: 'teamOrange'};
-        this.boardArray[boardCenter+1][col-2].pieces = {populatedSquare: true, type: 'cargoShip', direction: '-90', used: 'unused', team: 'teamOrange'};
-        this.boardArray[1][boardCenter-1].pieces = {populatedSquare: true, type: 'cargoShip', direction: '180', used: 'unused', team: 'teamLemon'};
-        this.boardArray[1][boardCenter+1].pieces = {populatedSquare: true, type: 'cargoShip', direction: '180', used: 'unused', team: 'teamLemon'};
-        this.boardArray[row-2][boardCenter-1].pieces = {populatedSquare: true, type: 'cargoShip', direction: '0', used: 'unused', team: 'teamLime'};
-        this.boardArray[row-2][boardCenter+1].pieces = {populatedSquare: true, type: 'cargoShip', direction: '0', used: 'unused', team: 'teamLime'};
-        this.boardArray[boardCenter-1][1].pieces = {populatedSquare: true, type: 'cargoShip', direction: '90', used: 'unused', team: 'teamPlum'};
-        this.boardArray[boardCenter+1][1].pieces = {populatedSquare: true, type: 'cargoShip', direction: '90', used: 'unused', team: 'teamPlum'};
+        this.boardArray[boardCenter-1][col-2].pieces = {populatedSquare: true, type: 'cargo', direction: '-90', used: 'unused', team: 'teamOrange'};
+        this.boardArray[boardCenter+1][col-2].pieces = {populatedSquare: true, type: 'cargo', direction: '-90', used: 'unused', team: 'teamOrange'};
+        this.boardArray[1][boardCenter-1].pieces = {populatedSquare: true, type: 'cargo', direction: '180', used: 'unused', team: 'teamLemon'};
+        this.boardArray[1][boardCenter+1].pieces = {populatedSquare: true, type: 'cargo', direction: '180', used: 'unused', team: 'teamLemon'};
+        this.boardArray[row-2][boardCenter-1].pieces = {populatedSquare: true, type: 'cargo', direction: '0', used: 'unused', team: 'teamLime'};
+        this.boardArray[row-2][boardCenter+1].pieces = {populatedSquare: true, type: 'cargo', direction: '0', used: 'unused', team: 'teamLime'};
+        this.boardArray[boardCenter-1][1].pieces = {populatedSquare: true, type: 'cargo', direction: '90', used: 'unused', team: 'teamPlum'};
+        this.boardArray[boardCenter+1][1].pieces = {populatedSquare: true, type: 'cargo', direction: '90', used: 'unused', team: 'teamPlum'};
 
-        // Creation of trees
-        this.boardArray[boardCenter+1][col-1].pieces = {populatedSquare: true, type: 'tree', direction: '0', used: 'unused', team: 'teamOrange'};
-        this.boardArray[0][boardCenter+1].pieces = {populatedSquare: true, type: 'tree', direction: '0', used: 'unused', team: 'teamLemon'};
-        this.boardArray[row-1][boardCenter-1].pieces = {populatedSquare: true, type: 'tree', direction: '0', used: 'unused', team: 'teamLime'};
-        this.boardArray[boardCenter-1][0].pieces = {populatedSquare: true, type: 'tree', direction: '0', used: 'unused', team: 'teamPlum'};
+        // Creation of forests
+        this.boardArray[boardCenter+1][col-1].pieces = {populatedSquare: true, type: 'forest', direction: '0', used: 'unused', team: 'teamOrange'};
+        this.boardArray[0][boardCenter+1].pieces = {populatedSquare: true, type: 'forest', direction: '0', used: 'unused', team: 'teamLemon'};
+        this.boardArray[row-1][boardCenter-1].pieces = {populatedSquare: true, type: 'forest', direction: '0', used: 'unused', team: 'teamLime'};
+        this.boardArray[boardCenter-1][0].pieces = {populatedSquare: true, type: 'forest', direction: '0', used: 'unused', team: 'teamPlum'};
 
-        // Creation of iron
-        this.boardArray[boardCenter-1][col-1].pieces = {populatedSquare: true, type: 'iron', direction: '0', used: 'unused', team: 'teamOrange'};
-        this.boardArray[0][boardCenter-1].pieces = {populatedSquare: true, type: 'iron', direction: '0', used: 'unused', team: 'teamLemon'};
-        this.boardArray[row-1][boardCenter+1].pieces = {populatedSquare: true, type: 'iron', direction: '0', used: 'unused', team: 'teamLime'};
-        this.boardArray[boardCenter+1][0].pieces = {populatedSquare: true, type: 'iron', direction: '0', used: 'unused', team: 'teamPlum'};
+        // Creation of ironworks
+        this.boardArray[boardCenter-1][col-1].pieces = {populatedSquare: true, type: 'ironworks', direction: '0', used: 'unused', team: 'teamOrange'};
+        this.boardArray[0][boardCenter-1].pieces = {populatedSquare: true, type: 'ironworks', direction: '0', used: 'unused', team: 'teamLemon'};
+        this.boardArray[row-1][boardCenter+1].pieces = {populatedSquare: true, type: 'ironworks', direction: '0', used: 'unused', team: 'teamLime'};
+        this.boardArray[boardCenter+1][0].pieces = {populatedSquare: true, type: 'ironworks', direction: '0', used: 'unused', team: 'teamPlum'};
     },
 
     // Method to create triangle shaped overlay
@@ -191,35 +191,48 @@ let gameBoard = {
 
     // Method to create a single action tile
     // -------------------------------------
+    // tileSize is the size of the tile
+    createActionTile: function(locali, localj, tileSize) {
+
+        // Use guildActionTile function to construct tile then label it with id
+        let identifiedTile = this.buildActionTile(this.boardArray[locali][localj].pieces.type, this.boardArray[locali][localj].pieces.direction, this.boardArray[locali][localj].pieces.team, tileSize)
+
+        // Adding an id for each tile - DECIDE IF NECESSARY IN NEXT STAGE
+        identifiedTile.id = locali*1000 + localj;
+        identifiedTile.firstChild.id = 'holding' + Number(locali*1000 + localj);
+
+        // tile is returned to drawBoard
+        return identifiedTile;
+    },
+
+    // Method allows "non-specific" action tile to be created without reference to the boardArray
+    // ------------------------------------------------------------------------------------------
     // gridSize is the size of the tile, squareType is the ship type of the tile
-    createActionTile: function(i, j, gridSize) {
+
+    buildActionTile: function(localType, localDirection, localTeam, tileSize) {
         // Creating the action tile shape
         let newActionTile = document.createElement('div');
         let holdingActionTile = document.createElement('div');
         let innerActionTile = document.createElement('div');
         let detailActionTile = document.createElement('div');
 
-        // Adding an id for each tile - DECIDE IF NECESSARY IN NEXT STAGE
-        newActionTile.id = i*1000 + j;
-        holdingActionTile.id = 'holding' + Number(i*1000 + j);
-
         // Creating the tile by dynamically allocating CSS classes
-        newActionTile.setAttribute('class', 'square' + ' ' + this.boardArray[i][j].pieces.type );
-        newActionTile.style.height = (gridSize - 2) + 'px';
-        newActionTile.style.width = (gridSize - 2) + 'px';
+        newActionTile.setAttribute('class', 'square' + ' ' + localType);
+        newActionTile.style.height = (tileSize - 2) + 'px';
+        newActionTile.style.width = (tileSize - 2) + 'px';
 
-        holdingActionTile.setAttribute('class', 'holding' + ' ' + this.boardArray[i][j].pieces.type );
-        holdingActionTile.style.height = (gridSize - 2) + 'px';
-        holdingActionTile.style.width = (gridSize - 2) + 'px';
-        holdingActionTile.style.transform = 'rotate(' + this.boardArray[i][j].pieces.direction + 'deg)';
+        holdingActionTile.setAttribute('class', 'holding' + ' ' + localType);
+        holdingActionTile.style.height = (tileSize - 2) + 'px';
+        holdingActionTile.style.width = (tileSize - 2) + 'px';
+        holdingActionTile.style.transform = 'rotate(' + localDirection + 'deg)';
 
-        innerActionTile.setAttribute('class', 'piece' + ' ' + this.boardArray[i][j].pieces.type + ' ' + this.boardArray[i][j].pieces.team + ' team_colours');
-        innerActionTile.style.height = (gridSize - 6) + 'px';
-        innerActionTile.style.width = (gridSize - 6) + 'px';
+        innerActionTile.setAttribute('class', 'piece' + ' ' + localType + ' ' + localTeam + ' team_colours');
+        innerActionTile.style.height = (tileSize - 6) + 'px';
+        innerActionTile.style.width = (tileSize - 6) + 'px';
 
-        detailActionTile.setAttribute('class', 'detail' + ' ' + this.boardArray[i][j].pieces.type + ' ' + this.boardArray[i][j].pieces.team);
-        detailActionTile.style.height = (gridSize - 6) + 'px';
-        detailActionTile.style.width = (gridSize - 6) + 'px';
+        detailActionTile.setAttribute('class', 'detail' + ' ' + localType + ' ' + localTeam);
+        detailActionTile.style.height = (tileSize - 6) + 'px';
+        detailActionTile.style.width = (tileSize - 6) + 'px';
 
         newActionTile.appendChild(holdingActionTile);
         holdingActionTile.appendChild(innerActionTile);
@@ -272,46 +285,7 @@ let gameBoard = {
         }
     },
 
-    // Array to hold information on pieces held by each player
-    // -------------------------------------------------------
-    pieceTotals: [],
 
-
-    // Array to hold list of all piece types
-    // -------------------------------------
-    pieceTypes: ['cargoShip', 'hut', 'tree', 'iron'],
-
-
-    // Method to count items in boardArray for leader board
-    // ----------------------------------------------------
-
-    stockTake: function() {
-        let counter = 0;
-        for (var h = 0; h < gameManagement.teamArray.length; h++) {
-            console.log(gameManagement.teamArray[h]);
-            gameBoard.pieceTotals[h] = {team: gameManagement.teamArray[h], pieces: {}};
-            for (var k = 0; k < gameBoard.pieceTypes.length; k++) {
-                console.log(gameBoard.pieceTypes[k]);
-                gameBoard.pieceTotals[h].pieces[gameBoard.pieceTypes[k]] = 0;
-                counter = 0;
-                for (var i = 0; i < gameBoard.boardArray.length; i++) {
-                    for (var j = 0; j < gameBoard.boardArray[i].length; j++) {
-                        if(gameBoard.boardArray[i][j].pieces.populatedSquare) {
-                            if(gameBoard.boardArray[i][j].pieces.team == gameManagement.teamArray[h]) {
-                                if(gameBoard.boardArray[i][j].pieces.type == gameBoard.pieceTypes[k]) {
-                                    counter += 1;
-                                }
-                            }
-                        }
-                    }
-                }
-                gameBoard.pieceTotals[h].pieces[gameBoard.pieceTypes[k]] = counter;
-                console.log(gameBoard.pieceTotals[h].pieces[gameBoard.pieceTypes[k]]);
-                //console.log(gameBoard.boardArray[i][j].pieces.type + ' ' + gameBoard.boardArray[i][j].pieces.team);
-            }
-        }
-        console.log(gameBoard.pieceTotals);
-    },
 
 // LAST BRACKET OF OBJECT
 }
