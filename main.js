@@ -161,7 +161,7 @@ theBoard.addEventListener('click', function(element) {
         if (pieceMovement.movementArray[startEnd].activeStatus == 'active') {
             pieceMovement.deactivateTiles();
             pieceMovement.shipTransition();
-            gameBoard.stockTake();
+            stockDashboard.stockTake();
         } else {
             // Resetting if second click is not valid
             pieceMovement.deactivateTiles();
@@ -189,5 +189,5 @@ theBoard.addEventListener('click', function(element) {
     }
     setTimeout(function() {
         gameBoard.drawBoard(row, col, gridSize);
-    }, 2500);
+    }, 3000);
 });
