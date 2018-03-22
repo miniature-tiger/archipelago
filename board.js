@@ -101,6 +101,18 @@ let gameBoard = {
         this.boardArray[row-2][boardCenter+1].pieces = {populatedSquare: true, type: 'cargoShip', direction: '0', used: 'unused', team: 'teamLime'};
         this.boardArray[boardCenter-1][1].pieces = {populatedSquare: true, type: 'cargoShip', direction: '90', used: 'unused', team: 'teamPlum'};
         this.boardArray[boardCenter+1][1].pieces = {populatedSquare: true, type: 'cargoShip', direction: '90', used: 'unused', team: 'teamPlum'};
+
+        // Creation of trees
+        this.boardArray[boardCenter+1][col-1].pieces = {populatedSquare: true, type: 'tree', direction: '0', used: 'unused', team: 'teamOrange'};
+        this.boardArray[0][boardCenter+1].pieces = {populatedSquare: true, type: 'tree', direction: '0', used: 'unused', team: 'teamLemon'};
+        this.boardArray[row-1][boardCenter-1].pieces = {populatedSquare: true, type: 'tree', direction: '0', used: 'unused', team: 'teamLime'};
+        this.boardArray[boardCenter-1][0].pieces = {populatedSquare: true, type: 'tree', direction: '0', used: 'unused', team: 'teamPlum'};
+
+        // Creation of iron
+        this.boardArray[boardCenter-1][col-1].pieces = {populatedSquare: true, type: 'iron', direction: '0', used: 'unused', team: 'teamOrange'};
+        this.boardArray[0][boardCenter-1].pieces = {populatedSquare: true, type: 'iron', direction: '0', used: 'unused', team: 'teamLemon'};
+        this.boardArray[row-1][boardCenter+1].pieces = {populatedSquare: true, type: 'iron', direction: '0', used: 'unused', team: 'teamLime'};
+        this.boardArray[boardCenter+1][0].pieces = {populatedSquare: true, type: 'iron', direction: '0', used: 'unused', team: 'teamPlum'};
     },
 
     // Method to create triangle shaped overlay
@@ -267,7 +279,7 @@ let gameBoard = {
 
     // Array to hold list of all piece types
     // -------------------------------------
-    pieceTypes: ['cargoShip', 'hut'],
+    pieceTypes: ['cargoShip', 'hut', 'tree', 'iron'],
 
 
     // Method to count items in boardArray for leader board

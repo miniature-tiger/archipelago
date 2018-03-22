@@ -89,6 +89,93 @@
   transform: scale(1.3,0.1);
 }
 
+/* Trees */
+.square.tree {
+    display: inline-block;
+    vertical-align: top;
+    margin: 0px;
+    padding: 0px;
+    overflow: hidden;
+    text-align: center;
+    border: 1px solid rgb(230, 230, 0);
+    background-color: rgb(77, 210, 55);
+}
+
+.piece.tree {
+    display: inline-block;
+    padding: 0px;
+    background-color: rgb(77, 210, 55);
+    transform: scale(0.5, 0.5) translate(20%, -20%);
+    border: 2px solid rgb(89, 53, 20);
+    border-radius: 50%;
+}
+
+.piece.tree::before, .detail.tree::before {
+    content: '';
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+    padding: 0px;
+    background-color: rgb(89, 53, 20);
+    transform: translate(-10%, 60%) scale(0.2,0.5);
+    border: 2px solid rgb(89, 53, 20);
+}
+
+.detail.tree {
+  display: inline-block;
+  padding: 0px;
+  background-color: limegreen;
+  transform: translate(-60%, -110%) scale(0.8, 0.8);
+  border: 2px solid rgb(89, 53, 20);
+  border-radius: 50%;
+}
+
+/* Iron */
+.square.iron {
+    display: inline-block;
+    vertical-align: top;
+    margin: 0px;
+    padding: 0px;
+    overflow: hidden;
+    text-align: center;
+    border: 1px solid rgb(230, 230, 0);
+    background-color: rgb(77, 210, 55);
+}
+
+.piece.iron {
+    display: inline-block;
+    padding: 0px;
+    background-color: silver;
+    transform:  translate(0%, 50%) scale(1, 1.4) rotate(45deg);
+    border: 1px solid rgb(89, 53, 20);
+    border-radius: 10%;
+}
+
+.detail.iron {
+    display: inline-block;
+    padding: 0px;
+    background-color: silver;
+    border-top: 2px solid rgb(89, 53, 20);
+    border-bottom: 2px solid rgb(89, 53, 20);
+    border-left: 2px solid rgb(89, 53, 20);
+    border-right: 2px solid rgb(89, 53, 20);
+
+    transform: translate(-15%, -15%)  rotate(-45deg) scale(0.4, 0.3);
+    border-radius: 10%;
+}
+
+.detail.iron::after {
+    content: 'I';
+    font-size: 1em;
+    height: 100%;
+    width: 100%;
+    display: inline-block;
+    padding: 0px;
+    background-color: silver;
+    transform: translate(0%, 0%) scale(0.8,0.8);
+    border: 0;
+}
+
 /* Team colours */
 .teamPlum.team_colours {
     background-color: rgb(224, 165, 247);
