@@ -96,6 +96,8 @@ endTurn.addEventListener('click', function(element) {
     gameManagement.nextTurn();
     // Wind direction is set for next turn
     windDirection = compass.newWindDirection(windDirection);
+    console.log('windDirection: ' + compass.directionArray[windDirection].wind);
+    console.log('windDirection: ' + compass.directionArray[windDirection].needle);
     needleDirection = compass.directionArray[windDirection].needle;
     needle = document.querySelector('.compass.needle');
     needle.style.transform = 'rotate(' + needleDirection + 'deg)';
@@ -136,6 +138,13 @@ window.addEventListener('click', function(element) {
 
 // Parameters for piece movement set up
 // ------------------------------------
+
+// Maximum number of iterations for movement and thus maximum number of tiles that can be moved
+// --- movement is also influenced by the movement cost
+// --- once more transport is created this will all need to be built into an array if it desired that different ships move at different speeds
+let maxMove = 3;
+
+// Variables for clicked tiles with startEnd indicating the start or end of the move
 let startEnd = 'start';
 let chosenSquare = {start: '', end: ''};
 let chosenHolding = {start: '', end: ''};
@@ -163,13 +172,17 @@ theBoard.addEventListener('click', function(element) {
     // Piece move is then made
     if (startEnd == 'end') {
         if (pieceMovement.movementArray[startEnd].activeStatus == 'active') {
-            pieceMovement.deactivateTiles();
-            pieceMovement.shipTransition();
+            pieceMovement.deactivateTiles(maxMove);
+            // CURRENTLY DEACTIVATED UNTIL PATH MOVE CHAINS ALL TRANSITIONS TOGETHER
+            // pieceMovement.shipTransition();
+            // Applying moves to game board array
+            gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces = {populatedSquare: true, type: 'cargo', direction: 0, used: 'used', team: gameManagement.turn};
+            gameBoard.boardArray[pieceMovement.movementArray['start'].row][pieceMovement.movementArray['start'].col].pieces = {populatedSquare: false, type: 'none', direction: '', used: 'unused', team: 'none'};
             stockDashboard.stockTake();
             stockDashboard.drawStock();
         } else {
             // Resetting if second click is not valid
-            pieceMovement.deactivateTiles();
+            pieceMovement.deactivateTiles(maxMove);
         }
         // Resetting movement array once second click has been made (whether valid or invalid)
         pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
@@ -186,7 +199,10 @@ theBoard.addEventListener('click', function(element) {
             }
             // If "Start" piece is validated potential tiles are activated
             if (startEnd == 'end') {
-                pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col);
+
+                pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, maxMove);
+                //pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col);
+
                 // Redraw gameboard to show activated tiles
                 gameBoard.drawBoard(row, col, gridSize);
             }
