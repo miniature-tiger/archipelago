@@ -64,7 +64,7 @@ let stockDashboard = {
         // Loops through all the piece types
         for (var i = 0; i < this.pieceTypes.length; i++) {
 
-            console.log(this.pieceTypes[i].category);
+            //console.log(this.pieceTypes[i].category);
             // Check if a new category is to be created
             if (this.pieceTypes[i].category != stockCategory) {
                 stockCategory = this.pieceTypes[i].category;
