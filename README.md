@@ -17,26 +17,33 @@ https://miniature-tiger.github.io/archipelago/
 ----------------------------------------------
 
 # Road map (short term):
-Board and ship movement:
+
+# Phase 1 - Board and ship movement: COMPLETE!!!
 * Board set up - COMPLETE
 * Basic ship creation: functionality and graphics  - COMPLETE 
 * Manual ship movement and board updating  - COMPLETE
 * Basic compass creation: functionality and graphics - COMPLETE
 * Turn based activity of ship movement - COMPLETE
-* Logic of length of longer moves around obstacles
-* Chaining together transitions to allow graphics of longer moves
-* Refactoring to allow CSS transitions layer above "refresh" layer
+* Logic of length of longer moves around obstacles - COMPLETE
+* Chaining together transitions to allow graphics of longer moves - COMPLETE
+* Refactoring to allow CSS transitions layer above "refresh" layer - may not now be necessary - for consideration in future.
 
+# Phase 2 
 Land Squares and goods discovery:
-* Resource tiles (forest, iron, flax, gold etc)
-* Dashboard of player pieces
+* Resource tiles (forest, iron, flax, gold etc) - in progress: forest and ironworks added
+* Dashboard of player pieces - COMPLETE
 * Summaries of produce and populations and functioning for each Resource
 
+Contracts for delivery:
+* Semi-random (equitable) generation of trade delivery contracts
+* Creation of trade settlements
+* Dashboard for contracts
+* Mechanics for contract sign-up
+* Mechanics for contract delivery
 
 
 # Road map (longer term):
 * Building: (recipes, times etc)
-* Contracts for delivery:
 * Islands (naming: for describing location ot pieces, trading settlements)
 * Central trading centre:
 * Conflicts:
