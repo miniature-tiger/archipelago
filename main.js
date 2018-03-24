@@ -173,16 +173,15 @@ theBoard.addEventListener('click', function(element) {
     if (startEnd == 'end') {
         if (pieceMovement.movementArray[startEnd].activeStatus == 'active') {
             pieceMovement.deactivateTiles(maxMove);
-            // CURRENTLY DEACTIVATED UNTIL PATH MOVE CHAINS ALL TRANSITIONS TOGETHER
-            // pieceMovement.shipTransition();
-            // Applying moves to game board array
-            gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces = {populatedSquare: true, type: 'cargo', direction: 0, used: 'used', team: gameManagement.turn};
-            gameBoard.boardArray[pieceMovement.movementArray['start'].row][pieceMovement.movementArray['start'].col].pieces = {populatedSquare: false, type: 'none', direction: '', used: 'unused', team: 'none'};
+            pieceMovement.shipTransition();
             stockDashboard.stockTake();
             stockDashboard.drawStock();
         } else {
             // Resetting if second click is not valid
             pieceMovement.deactivateTiles(maxMove);
+
+            // Redraw gameboard to show deactivated tiles
+            gameBoard.drawBoard(row, col, gridSize);
         }
         // Resetting movement array once second click has been made (whether valid or invalid)
         pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
@@ -199,16 +198,12 @@ theBoard.addEventListener('click', function(element) {
             }
             // If "Start" piece is validated potential tiles are activated
             if (startEnd == 'end') {
-
                 pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, maxMove);
-                //pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col);
 
                 // Redraw gameboard to show activated tiles
                 gameBoard.drawBoard(row, col, gridSize);
             }
         }
     }
-    setTimeout(function() {
-        gameBoard.drawBoard(row, col, gridSize);
-    }, 2200);
+
 });
