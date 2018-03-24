@@ -206,37 +206,60 @@ let pieceMovement = {
 
     shipTransition: function() {
 
-        // Calculate placement on board of start and end tiles for move
+        // Variables for transition movements
+        let topDirection = 0;
+        let leftDirection = 0;
+        let rotateDirection = 0;
+
+        // Calculate placement on board of start tile for move
         IDHoldingStart = '#holding' + Number(this.movementArray.start.row*1000 + this.movementArray.start.col);
         chosenHolding.start = document.querySelector(IDHoldingStart);
-
+        // Allowing ship to overflow edges of its tile on transition
         chosenSquare.start = chosenHolding.start.parentElement;
         chosenSquare.start.style.overflow = 'visible';
 
-        IDHoldingEnd = '#holding' + Number(this.findPath.end.row*1000 + this.findPath.end.col);
+        // Obtaining path of piece that leads to end tile of move from findPath array
+        let localPath = this.findPath[this.movementArray.end.row][this.movementArray.end.col].path;
+        // Length gives number of steps in path
+        let numberOfTiles = localPath.length - 1;
 
-        // Transitions to be applied (added separately to allow separate transitions to be applied in future)
-        chosenHolding.start.style.transition += 'transform 0.4s 0s ease-in-out';
-        chosenHolding.start.style.transition += ', left 1.1s 0.4s ease-in-out';
-        chosenHolding.start.style.transition += ', top 1.1s 0.4s ease-in-out';
+        // Loop through each step of move
+        for (var i = 0; i < numberOfTiles; i++) {
 
-        // temp -----------------
-        //this.moveCost(this.movementArray.start.row, this.movementArray.start.col ,this.findPath.end.row, this.findPath.end.col, needleDirection);
-        // temp -----------------
+            // Calculating transformations to be applied to square holding piece
+            // Directional translation
+            topDirection += (localPath[i+1].fromRow - localPath[i].fromRow);
+            leftDirection += (localPath[i+1].fromCol - localPath[i].fromCol);
+            // Rotational translation
+            rotateDirection = this.movementDirection[(localPath[i+1].fromCol - localPath[i].fromCol)+1][(localPath[i+1].fromRow - localPath[i].fromRow)+1];
 
-        // Calculating transformations to be applied to square holding piece
-        // Directional translation
-        topDirection = (this.findPath.end.row - this.movementArray.start.row);
-        leftDirection = (this.findPath.end.col - this.movementArray.start.col);
-        chosenHolding.start.style.left = leftDirection *  gridSize + 'px';
-        chosenHolding.start.style.top = topDirection *  gridSize + 'px';
+            // Applying the transformation for step i of the move path
+            this.turnAndMove(i, chosenHolding.start, topDirection, leftDirection, rotateDirection);
+        }
 
-        // Rotational translation
-        rotateDirection = this.movementDirection[leftDirection+1][topDirection+1];
-        chosenHolding.start.style.transform = 'rotate(' + rotateDirection + 'deg)';
+        // Applying moves to game board array
+        gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces = {populatedSquare: true, type: 'cargo', direction: rotateDirection, used: 'used', team: gameManagement.turn};
+        gameBoard.boardArray[pieceMovement.movementArray['start'].row][pieceMovement.movementArray['start'].col].pieces = {populatedSquare: false, type: 'none', direction: '', used: 'unused', team: 'none'};
 
-        // Removing octagon from end tile
-        chosenSquare.end.removeChild(chosenSquare.end.firstChild);
+        // Redraw of board delayed in proportion to number of moves
+        setTimeout(function() {
+            gameBoard.drawBoard(row, col, gridSize);
+        }, numberOfTiles * 1000);
+
+    },
+
+
+    turnAndMove: function(n, localStartHolding, topDirection, leftDirection, rotateDirection) {
+        // n is number of transition in chain
+        // Transitions to be applied (added here to allow different transitions to be applied dynamically in future)
+        localStartHolding.style.transition = 'transform 0.2s 0s ease-in-out, left 0.7s 0.2s ease-in-out, top 0.7s 0.2s ease-in-out';
+
+        // Delayed application of transformations to give board game style move effect
+        setTimeout(function() {
+            localStartHolding.style.left = leftDirection *  gridSize + 'px';
+            localStartHolding.style.top = topDirection *  gridSize + 'px';
+            localStartHolding.style.transform = 'rotate(' + rotateDirection + 'deg)';
+        }, n * 1000);
     },
 
 // LAST BRACKET OF OBJECT
