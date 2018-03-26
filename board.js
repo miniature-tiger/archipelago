@@ -87,10 +87,10 @@ let gameBoard = {
         this.overlayTiles(boardCenter-1, boardCenter+2, 0, 1, 'land');
 
         // Creation of bases
-        this.boardArray[boardCenter][col-1].pieces = {populatedSquare: true, type: 'hut', direction: '0', used: 'unused', team: 'teamOrange'};
-        this.boardArray[0][boardCenter].pieces = {populatedSquare: true, type: 'hut', direction: '0', used: 'unused', team: 'teamLemon'};
-        this.boardArray[row-1][boardCenter].pieces = {populatedSquare: true, type: 'hut', direction: '0', used: 'unused', team: 'teamLime'};
-        this.boardArray[boardCenter][0].pieces = {populatedSquare: true, type: 'hut', direction: '0', used: 'unused', team: 'teamPlum'};
+        this.boardArray[boardCenter][col-1].pieces = {populatedSquare: true, type: 'fort', direction: '-135', used: 'unused', team: 'teamOrange'};
+        this.boardArray[0][boardCenter].pieces = {populatedSquare: true, type: 'fort', direction: '135', used: 'unused', team: 'teamLemon'};
+        this.boardArray[row-1][boardCenter].pieces = {populatedSquare: true, type: 'fort', direction: '-45', used: 'unused', team: 'teamLime'};
+        this.boardArray[boardCenter][0].pieces = {populatedSquare: true, type: 'fort', direction: '45', used: 'unused', team: 'teamPlum'};
 
         // Creation of ships
         this.boardArray[boardCenter-1][col-2].pieces = {populatedSquare: true, type: 'cargo', direction: '-90', used: 'unused', team: 'teamOrange'};

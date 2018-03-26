@@ -10,7 +10,7 @@ let stockDashboard = {
     // Array to hold list of all piece types
     // -------------------------------------
     // Pieces must be added in the order: Settlements, Transport, Resources
-    pieceTypes: [{type: 'hut', category: 'Settlements'}, {type: 'cargo', category: 'Transport'}, {type: 'forest', category: 'Resources'}, {type: 'ironworks', category: 'Resources'}],
+    pieceTypes: [{type: 'fort', category: 'Settlements'}, {type: 'hut', category: 'Settlements'}, {type: 'cargo', category: 'Transport'}, {type: 'forest', category: 'Resources'}, {type: 'ironworks', category: 'Resources'}],
 
 
     // Method to count items in boardArray for leader board
@@ -82,7 +82,7 @@ let stockDashboard = {
             divType.setAttribute('class', 'inner_item_holder');
             divCat.appendChild(divType);
 
-            let divTypeIcon = gameBoard.buildActionTile(this.pieceTypes[i].type, '0', gameManagement.teamArray[0], 18);
+            let divTypeIcon = gameBoard.buildActionTile(this.pieceTypes[i].type, '0', gameManagement.teamArray[0], gridSize);
             divType.appendChild(divTypeIcon);
 
 
