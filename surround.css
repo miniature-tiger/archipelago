@@ -3,9 +3,10 @@
 
 html {
     background-color: rgb(254,252,250);
+    font-family: 'Palatino';
     margin: 0;
     color: rgb(137, 113, 82);
-    font-size: 16px;
+    font-size: 20px;
 }
 
 /* style for the frame corners */
@@ -20,7 +21,7 @@ html {
 
  /* style for the header */
 .the_header {
-    font-family: 'Palatino';
+
     font-size: 2em;
 
     text-align: center;
@@ -36,7 +37,7 @@ html {
 
 /* style for the footer */
 .the_footer {
-    font-family: 'Palatino';
+
 
     text-align: right;
     background-color: rgb(231, 175, 126);
@@ -66,7 +67,7 @@ html {
 /* style for the frame sidebars */
 .sidebar {
     position: fixed;
-    font-family: 'Palatino';
+    
     font-size: 1em;
 
     background-color: rgb(251, 242, 234);
@@ -136,7 +137,7 @@ html {
     overflow: hidden;
     padding: 1% 1% 1% 1%;
     color: grey;
-    font-size: 80%;
+    font-size: 100%;
 }
 
 /* Side bar item holders and inner item formats*/
@@ -158,7 +159,7 @@ html {
     width: 75%;
     display: inline-block;
     text-align: left;
-    font-size: 80%;
+    font-size: 100%;
 }
 
 /* Footer icon holders */
