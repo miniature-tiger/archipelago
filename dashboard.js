@@ -85,9 +85,12 @@ let stockDashboard = {
             let divTypeIcon = gameBoard.buildActionTile(this.pieceTypes[i].type, '0', gameManagement.teamArray[0], gridSize);
             divType.appendChild(divTypeIcon);
 
+            let divForText = document.createElement('div');
+            divForText.setAttribute('class', 'dashboard_text');
+            divType.appendChild(divForText);
 
             let divTypeTitle = document.createTextNode(' ' + this.pieceTypes[i].type + ': ' + this.pieceTotals[0].pieces[this.pieceTypes[i].type]);
-            divType.appendChild(divTypeTitle);
+            divForText.appendChild(divTypeTitle);
 
             //console.log(this.pieceTypes[i].type);
             //console.log(this.pieceTotals[0].pieces[this.pieceTypes[i].type]);
