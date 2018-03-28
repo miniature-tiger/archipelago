@@ -67,7 +67,7 @@ html {
 /* style for the frame sidebars */
 .sidebar {
     position: fixed;
-    
+
     font-size: 1em;
 
     background-color: rgb(251, 242, 234);
@@ -137,7 +137,7 @@ html {
     overflow: hidden;
     padding: 1% 1% 1% 1%;
     color: grey;
-    font-size: 100%;
+    font-size:0.6em;
 }
 
 /* Side bar item holders and inner item formats*/
