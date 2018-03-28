@@ -9,6 +9,11 @@ html {
     font-size: 20px;
 }
 
+.dashboard_text {
+
+    font-size: 0.8em;
+}
+
 /* style for the frame corners */
 .corner {
     font-family: 'Palatino';
@@ -21,9 +26,7 @@ html {
 
  /* style for the header */
 .the_header {
-
-    font-size: 2em;
-
+    font-size: 1.5em;
     text-align: center;
     background-color: rgb(251, 242, 234);
     top: 0%;
@@ -37,8 +40,6 @@ html {
 
 /* style for the footer */
 .the_footer {
-
-
     text-align: right;
     background-color: rgb(231, 175, 126);
     bottom: 0%;
@@ -154,13 +155,23 @@ html {
 .inner_item_holder {
     position: relative;
     vertical-align: bottom;
-    padding-top: 3.5%;
-    padding-bottom: 2.5%;
+    padding-top: 4%;
+    padding-bottom: 2%;
     width: 75%;
     display: inline-block;
     text-align: left;
     font-size: 100%;
 }
+
+.dashboard_text {
+    position: relative;
+    display: inline-block;
+    padding-left: 4%;
+    padding-bottom: 2%;
+    font-size: 0.8em;
+    vertical-align: bottom;
+}
+
 
 /* Footer icon holders */
 .icon_holder {
@@ -190,7 +201,7 @@ html {
     text-align: center;
     overflow: hidden;
     white-space: nowrap;
-    font-size: 60%;
+    font-size: 50%;
 }
 
 /* End of turn icon */
