@@ -89,22 +89,30 @@ needle.style.transform = 'rotate(' + needleDirection + 'deg)';
 // -----------------------
 var endTurn = document.querySelector('.end_turn');
 endTurn.setAttribute('class', 'end_turn ' + gameManagement.turn + ' team_colours');
-endTurn.addEventListener('click', function(element) {
+endTurn.addEventListener('click', function() {
     // Used pieces are resert to unused
     pieceMovement.usedPiecesReset();
     // Team is changed
     gameManagement.nextTurn();
     // Wind direction is set for next turn
     windDirection = compass.newWindDirection(windDirection);
-    console.log('windDirection: ' + compass.directionArray[windDirection].wind);
-    console.log('windDirection: ' + compass.directionArray[windDirection].needle);
     needleDirection = compass.directionArray[windDirection].needle;
     needle = document.querySelector('.compass.needle');
     needle.style.transform = 'rotate(' + needleDirection + 'deg)';
+
+    // Automated movement for pirates
+    if(gameManagement.turn == 'teamPirate') {
+        pirates.automatePirates();
+    }
+
+
     // Comment for next player
     commentary.innerText = ' turn: ' + gameManagement.turn + ': click on piece';
     // End turn button colour is changed
     endTurn.setAttribute('class', 'end_turn ' + gameManagement.turn + ' team_colours');
+
+
+
 });
 
 // Settings pop-up box
@@ -142,7 +150,7 @@ window.addEventListener('click', function(element) {
 // Maximum number of iterations for movement and thus maximum number of tiles that can be moved
 // --- movement is also influenced by the movement cost
 // --- once more transport is created this will all need to be built into an array if it desired that different ships move at different speeds
-let maxMove = 5;
+let maxMove = 3;
 
 // Variables for clicked tiles with startEnd indicating the start or end of the move
 let startEnd = 'start';
@@ -198,7 +206,7 @@ theBoard.addEventListener('click', function(element) {
             }
             // If "Start" piece is validated potential tiles are activated
             if (startEnd == 'end') {
-                pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, maxMove);
+                pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, maxMove, true);
 
                 // Redraw gameboard to show activated tiles
                 gameBoard.drawBoard(row, col, gridSize);

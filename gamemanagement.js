@@ -6,7 +6,7 @@ let gameManagement = {
     // List of teams
     // -------------
     // Future update: set up based on user inputs for number of players and player names
-    teamArray: ['teamLime', 'teamPlum', 'teamLemon', 'teamOrange'],
+    teamArray: ['teamLime', 'teamPlum', 'teamLemon', 'teamOrange', 'teamPirate'],
 
     // Current turn
     // ------------
@@ -16,7 +16,7 @@ let gameManagement = {
     // Method to activate next turn
     // ----------------------------
     nextTurn: function() {
-        this.turn = this.teamArray[(this.teamArray.indexOf(this.turn)+1) % 4];
+        this.turn = this.teamArray[(this.teamArray.indexOf(this.turn)+1) % (this.teamArray.length)];
     }
 
 }

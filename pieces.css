@@ -251,7 +251,7 @@
 
 .detail.ironworks::after {
     content: 'I';
-    color: dark: ;slategrey;
+    color: darkslategrey;
     font-size: 1em;
     height: 100%;
     width: 100%;
@@ -279,6 +279,15 @@
 .teamLime.team_colours {
     background-color: rgb(159, 255, 26);
 }
+
+.teamKingdom.team_colours {
+    background-color: rgb(162, 236, 246);
+}
+
+.teamPirate.team_colours {
+    background-color: slategrey;
+}
+
 
 .deg90 {
     transform: rotate(90deg);
