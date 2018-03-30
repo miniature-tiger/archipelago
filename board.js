@@ -115,6 +115,8 @@ let gameBoard = {
         this.boardArray[row-6][col-6].pieces = {populatedSquare: true, type: 'cargo', direction: '-45', used: 'unused', team: 'teamPirate'};
         this.boardArray[5][col-6].pieces = {populatedSquare: true, type: 'cargo', direction: '-135', used: 'unused', team: 'teamPirate'};
 
+        this.boardArray[row-4][boardCenter].pieces = {populatedSquare: true, type: 'cargo', direction: '135', used: 'unused', team: 'teamPirate'};
+
         // Creation of forests
         this.boardArray[boardCenter+1][col-1].pieces = {populatedSquare: true, type: 'forest', direction: '0', used: 'unused', team: 'teamOrange'};
         this.boardArray[0][boardCenter+1].pieces = {populatedSquare: true, type: 'forest', direction: '0', used: 'unused', team: 'teamLemon'};
@@ -126,6 +128,9 @@ let gameBoard = {
         this.boardArray[0][boardCenter-1].pieces = {populatedSquare: true, type: 'ironworks', direction: '0', used: 'unused', team: 'teamLemon'};
         this.boardArray[row-1][boardCenter+1].pieces = {populatedSquare: true, type: 'ironworks', direction: '0', used: 'unused', team: 'teamLime'};
         this.boardArray[boardCenter+1][0].pieces = {populatedSquare: true, type: 'ironworks', direction: '0', used: 'unused', team: 'teamPlum'};
+
+        // Creation of quarry
+        this.boardArray[row-6][boardCenter-1].pieces = {populatedSquare: true, type: 'quarry', direction: '0', used: 'unused', team: 'teamLime'};      
     },
 
     // Method to create triangle shaped overlay
