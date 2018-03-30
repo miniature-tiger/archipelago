@@ -262,6 +262,58 @@
     border: 0;
 }
 
+/* ironworks */
+.square.quarry {
+    display: inline-block;
+    vertical-align: top;
+    margin: 0px;
+    padding: 0px;
+    overflow: hidden;
+    text-align: center;
+    border: 1px solid rgb(230, 230, 0);
+    background-color: rgb(77, 210, 55);
+}
+
+.piece.quarry {
+    display: inline-block;
+    padding: 0px;
+    background-color: rgb(89, 53, 20);
+    transform:  rotate(45deg) translate(-5%, -18%) scale(0.9, 0.15) ;
+    border-top: 5px solid rgb(89, 53, 20);
+    border-bottom: 5px solid rgb(89, 53, 20);
+    border-left: 1px solid rgb(89, 53, 20);
+    border-right: 1px solid rgb(89, 53, 20);
+    border-radius: 20%;
+}
+
+.detail.quarry {
+    display: inline-block;
+    padding: 0px;
+    background-color: silver;
+    border: 5px solid rgb(89, 53, 20);
+    transform: translate(-38%, -15%) scale(0.1, 3) rotate(45deg);
+    border-radius: 20%;
+}
+
+.piece.quarry::after {
+    content: '';
+    font-size: 1em;
+    height: 100%;
+    width: 100%;
+    display: inline-block;
+    padding: 0px;
+    background-color: rgb(255, 253, 208);
+    border: 2px solid rgb(89, 53, 20);
+    transform:  translate(-10%, 140%) scale(0.4, 2.4) rotate(45deg);
+    border-radius: 20%;
+}
+
+
+
+
+
+
+
 
 /* Team colours */
 .teamPlum.team_colours {
