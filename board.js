@@ -131,6 +131,17 @@ let gameBoard = {
 
         // Creation of quarry
         this.boardArray[row-6][boardCenter-1].pieces = {populatedSquare: true, type: 'quarry', direction: '0', used: 'unused', team: ''};
+
+        // Test overlay
+        /*
+        this.boardArray[0][0].terrain = 'sea';
+        this.boardArray[0][0].pieces = {populatedSquare: true, type: 'cargo', direction: '0', used: 'unused', team: 'teamLime'};
+
+        this.boardArray[0][1].terrain = 'sea';
+        this.boardArray[0][1].pieces = {populatedSquare: true, type: 'cargo', direction: '0', used: 'unused', team: 'teamLime'};
+
+        this.boardArray[1][0].terrain = 'sea';
+        this.boardArray[1][0].pieces = {populatedSquare: true, type: 'cargo', direction: '0', used: 'unused', team: 'teamLime'};*/
     },
 
     // Method to create triangle shaped overlay
@@ -210,17 +221,45 @@ let gameBoard = {
     // Method to create a single action tile
     // -------------------------------------
     // tileSize is the size of the tile
-    createActionTile: function(locali, localj, tileSize) {
+    createActionTile: function(locali, localj, gridSize, tileBorder, boardSurround) {
 
         // Use guildActionTile function to construct tile then label it with id
-        let identifiedTile = this.buildActionTile(this.boardArray[locali][localj].pieces.type, this.boardArray[locali][localj].pieces.direction, this.boardArray[locali][localj].pieces.team, tileSize)
+        let actionTile = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        actionTile.setAttribute('width', gridSize + tileBorder);
+        actionTile.setAttribute('height', gridSize + tileBorder);
 
-        // Adding an id for each tile - DECIDE IF NECESSARY IN NEXT STAGE
-        identifiedTile.id = locali*1000 + localj;
-        identifiedTile.firstChild.id = 'holding' + Number(locali*1000 + localj);
+        actionTile.style.top = boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * locali + 'px';
+        actionTile.style.left = boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * localj + 'px';
+        actionTile.style.transform = 'rotate(' + this.boardArray[locali][localj].pieces.direction + 'deg)';
+
+        actionTile.setAttribute('viewBox', '0, 0, 25, 25');
+        actionTile.setAttribute('class', 'cargo');
+
+        // Adding an id for each tile
+        actionTile.setAttribute('id', locali*1000 + localj);
+
+        let cargoDeck = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        cargoDeck.setAttribute('class', this.boardArray[locali][localj].pieces.team + ' team_fill team_stroke');
+        cargoDeck.setAttribute('d', 'M 12.5 1 C 8 6.2 7 11.1 7.3 15.6 Q 7.7 20.2 9.25 24 L 15.75 24 Q 17 20.2 17.5 15.6 C 17.8 11.1 16.6 6.2 12.5 1 Z');
+        cargoDeck.style.strokeWidth = '1px';
+
+        let cargoSail = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
+        cargoSail.setAttribute('d', 'M 2 16 L 22 16 C 20.5 13.5 16.5 12 12 12 C 7.5 12 3.5 13.5 2 16 Z');
+        cargoSail.setAttribute('class', this.boardArray[locali][localj].pieces.team + ' team_stroke');
+        cargoSail.setAttribute('fill', 'white');
+
+        cargoSail.style.strokeWidth = '1px';
+
+        // Building the tile
+        actionTile.appendChild(cargoDeck);
+        actionTile.appendChild(cargoSail);
 
         // tile is returned to drawBoard
-        return identifiedTile;
+        return actionTile;
+
+        //  let identifiedTile = this.buildActionTile(this.boardArray[locali][localj].pieces.type, this.boardArray[locali][localj].pieces.direction, this.boardArray[locali][localj].pieces.team, tileSize)
+  
     },
 
     // Method allows "non-specific" action tile to be created without reference to the boardArray
@@ -273,9 +312,7 @@ let gameBoard = {
 
         // Variables to help define the board layout
         let tileBorder = 5;
-        let boardSurround = 8;
-
-
+        let boardSurround = 15;
 
         // Canavs 'canvasBoard' is created and size is set dynamically
         let board = document.getElementById('board');
@@ -285,18 +322,15 @@ let gameBoard = {
         canvasBoard.canvas.width = row * (gridSize + tileBorder * 2) + boardSurround * 2;
         canvasBoard.canvas.height = col * (gridSize + tileBorder * 2) + boardSurround * 2;
 
-
-
         // Loop through board array to draw tiles
-
-        let octagonArray = [ {gap: 0, width: 1, colour: 'rgb(240, 220, 190)'}, {gap: 6, width: 6, colour: 'rgb(213, 191, 163)'}, {gap: 4, width: 1.5, colour: 'rgb(138, 87, 50)'} ]
+        let octagonArray = [ {gap: 0, width: 1, colour: 'rgb(235, 215, 195)'}, {gap: 6, width: 6, colour: 'rgb(213, 191, 163)'}, {gap: 4, width: 1.5, colour: 'rgb(138, 87, 50)'} ]
 
         for (var h = 0; h < octagonArray.length; h++) {
             canvasBoard.beginPath();
-            for (var i = 0; i < col; i++) {
+            for (var i = 0; i < row; i++) {
                 Ycenter = (gridSize + tileBorder * 2) * i + (gridSize/2 + boardSurround + tileBorder);
 
-                for (var j = 0; j < row; j++) {
+                for (var j = 0; j < col; j++) {
                     Xcenter = (gridSize + tileBorder * 2) * j + (gridSize/2 + boardSurround + tileBorder);
 
                     if (h==0 && this.boardArray[i][j].terrain != 'invis') {
@@ -312,9 +346,18 @@ let gameBoard = {
             canvasBoard.stroke();
         }
 
+        for (var i = 0; i < row; i++) {
+            Ycenter = (gridSize + tileBorder * 2) * i + (gridSize/2 + boardSurround + tileBorder);
 
+            for (var j = 0; j < col; j++) {
+                Xcenter = (gridSize + tileBorder * 2) * j + (gridSize/2 + boardSurround + tileBorder);
 
-
+                if ((this.boardArray[i][j].pieces.populatedSquare == true) && (this.boardArray[i][j].pieces.type == 'cargo')){
+                    // Create action tile svg and add to the board
+                    boardMarkNode.appendChild(this.createActionTile(i, j, gridSize, tileBorder, boardSurround));
+                }
+            }
+        }
 
     },
 

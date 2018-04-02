@@ -1,12 +1,21 @@
 /* styles for the game board */
 /* ------------------------- */
 
-/* style for game board holder */
+
 .boardmark {
-    background-color: rgb(251, 242, 234);
-    text-align: center;
-    margin: auto;
-    /* display: inline-block; */
+    position: relative;
+    display: block;
+    left: 9.5%;
+    top: 6%;
+    width: 88%;
+    height: 1112px;
+    background-color: transparent;
+}
+
+#board {
+    position: absolute;
+    background-color: rgb(246, 232, 206);
+    z-index: 1;
 }
 
 /* style for row holders within game board */
