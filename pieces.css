@@ -27,8 +27,13 @@
     z-index: 1;
 }
 
+.cargo {
+    position: absolute;
+    background-color: transparent;
+    z-index: 2;
+}
 
-.piece.cargo {
+/*.piece.cargo {
   /*Tile is gridsize -2
     Inner tile is gridsize -6 (space for border 2 like in sea tiles)
     Left border is 2, others are 1
@@ -50,7 +55,7 @@
     background-color: rgb(181, 110, 43);
     text-align: center;
     transition: transform 1s;
-}
+}*/
 
 .detail.cargo {
     display: inline-block;
@@ -316,30 +321,55 @@
 
 
 /* Team colours */
-.teamPlum.team_colours {
-    background-color: rgb(224, 165, 247);
+.teamPlum.team_fill {
+    background-color: #0099cc;
+    fill: #0099cc;
 }
 
-.teamOrange.team_colours {
-    background-color: rgb(255, 198, 167);
+.teamPlum.team_stroke {
+    stroke: #00394d;
 }
 
-.teamLemon.team_colours {
-    background-color: rgb(255, 255, 0);
+
+.teamOrange.team_fill  {
+    background-color: #bd5d0f;
+    fill: #bd5d0f;
 }
 
-.teamLime.team_colours {
-    background-color: rgb(159, 255, 26);
+.teamOrange.team_stroke {
+    stroke: #472306;
+}
+
+.teamLemon.team_fill {
+    background-color: #a52746;
+    fill: #a52746;
+}
+
+.teamLemon.team_stroke {
+    stroke: #3e0f1a;
+}
+
+.teamLime.team_fill {
+    background-color: #34987d;
+    fill: #34987d;
+}
+
+.teamLime.team_stroke {
+    stroke: #14392f;
 }
 
 .teamKingdom.team_colours {
     background-color: rgb(162, 236, 246);
 }
 
-.teamPirate.team_colours {
-    background-color: slategrey;
+.teamPirate.team_fill {
+    background-color: #353839;
+    fill: #353839;
 }
 
+.teamPirate.team_stroke {
+    stroke: black;
+}
 
 .deg90 {
     transform: rotate(90deg);

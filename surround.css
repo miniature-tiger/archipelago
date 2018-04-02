@@ -55,7 +55,7 @@ html {
 .over_text {
     position: fixed;
     background-color: rgb(251, 242, 234);
-    z-index: 2;
+    z-index: 10;
 }
 
 .under_text {

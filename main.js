@@ -88,7 +88,7 @@ needle.style.transform = 'rotate(' + needleDirection + 'deg)';
 // Next turn functionality
 // -----------------------
 var endTurn = document.querySelector('.end_turn');
-endTurn.setAttribute('class', 'end_turn ' + gameManagement.turn + ' team_colours');
+endTurn.setAttribute('class', 'end_turn ' + gameManagement.turn + ' team_fill');
 endTurn.addEventListener('click', function() {
     // Used pieces are resert to unused
     pieceMovement.usedPiecesReset();
