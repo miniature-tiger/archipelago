@@ -41,6 +41,7 @@ html {
 /* style for the footer */
 .the_footer {
     text-align: right;
+    display: block;
     background-color: rgb(231, 175, 126);
     bottom: 0%;
     left: 10%;

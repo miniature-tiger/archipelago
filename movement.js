@@ -208,10 +208,10 @@ let pieceMovement = {
 
     // Method for capturing moves
     // --------------------------
-    captureMove: function(fromTo, square) {
+    captureMove: function(fromTo, yClickTile, xClickTile) {
         // Calculate row and column of square from id and record in movement array
-        this.movementArray[fromTo].col = square[fromTo].id % 1000;
-        this.movementArray[fromTo].row = Math.round((square[fromTo].id - this.movementArray.start.col)/1000);
+        this.movementArray[fromTo].col = xClickTile;
+        this.movementArray[fromTo].row = yClickTile;
         // Obtain board piece information and record in movement array
         this.movementArray[fromTo].type = gameBoard.boardArray[this.movementArray[fromTo].row][this.movementArray[fromTo].col].pieces.type;
         this.movementArray[fromTo].used = gameBoard.boardArray[this.movementArray[fromTo].row][this.movementArray[fromTo].col].pieces.used;
@@ -236,12 +236,14 @@ let pieceMovement = {
         let rotateDirection = 0;
 
         // Calculate placement on board of start tile for move
-        IDHoldingStart = '#holding' + Number(this.movementArray.start.row*1000 + this.movementArray.start.col);
-        chosenHolding.start = document.querySelector(IDHoldingStart);
+        IDPieceStart = 'tile' + Number(this.movementArray.start.row*1000 + this.movementArray.start.col);
+        console.log(IDPieceStart);
+        let chosenPiece = document.getElementById(IDPieceStart);
+
         // Allowing ship to overflow edges of its tile on transition
-        // console.log(IDHoldingStart);
-        chosenSquare.start = chosenHolding.start.parentElement;
-        chosenSquare.start.style.overflow = 'visible';
+        console.log(chosenPiece);
+        //chosenSquare.start = chosenHolding.start.parentElement;
+        //chosenSquare.start.style.overflow = 'visible';
 
         // Obtaining path of piece that leads to end tile of move from findPath array
         let localPath = this.findPath[this.movementArray.end.row][this.movementArray.end.col].path;
@@ -253,13 +255,13 @@ let pieceMovement = {
 
             // Calculating transformations to be applied to square holding piece
             // Directional translation
-            topDirection += (localPath[i+1].fromRow - localPath[i].fromRow);
-            leftDirection += (localPath[i+1].fromCol - localPath[i].fromCol);
+            topDirection = (localPath[i+1].fromRow - localPath[i].fromRow);
+            leftDirection = (localPath[i+1].fromCol - localPath[i].fromCol);
             // Rotational translation
             rotateDirection = this.movementDirection[(localPath[i+1].fromCol - localPath[i].fromCol)+1][(localPath[i+1].fromRow - localPath[i].fromRow)+1];
 
             // Applying the transformation for step i of the move path
-            this.turnAndMove(i, chosenHolding.start, topDirection, leftDirection, rotateDirection);
+            this.turnAndMove(i, chosenPiece, topDirection, leftDirection, rotateDirection);
         }
 
         // Applying moves to game board array
@@ -276,16 +278,17 @@ let pieceMovement = {
 
     // Method for piece to turn in direction of move and then move
     // -----------------------------------------------------------
-    turnAndMove: function(n, localStartHolding, topDirection, leftDirection, rotateDirection) {
+    turnAndMove: function(n, chosenPiece, topDirection, leftDirection, rotateDirection) {
         // n is number of transition in chain
         // Transitions to be applied (added here to allow different transitions to be applied dynamically in future)
-        localStartHolding.style.transition = 'transform 0.2s 0s ease-in-out, left 0.7s 0.2s ease-in-out, top 0.7s 0.2s ease-in-out';
+        chosenPiece.style.transition = 'transform 0.2s 0s ease-in-out, left 0.7s 0.2s ease-in-out, top 0.7s 0.2s ease-in-out';
 
         // Delayed application of transformations to give board game style move effect
         setTimeout(function() {
-            localStartHolding.style.left = leftDirection *  gridSize + 'px';
-            localStartHolding.style.top = topDirection *  gridSize + 'px';
-            localStartHolding.style.transform = 'rotate(' + rotateDirection + 'deg)';
+             console.log(chosenPiece.style.left, chosenPiece.style.top);
+            chosenPiece.style.left = parseFloat(chosenPiece.style.left) + (leftDirection * (gridSize + tileBorder*2)) + 'px';
+            chosenPiece.style.top = parseFloat(chosenPiece.style.top) + (topDirection * (gridSize + tileBorder*2)) + 'px';
+            chosenPiece.style.transform = 'rotate(' + rotateDirection + 'deg)';
         }, n * 1000);
     },
 

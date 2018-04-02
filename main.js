@@ -51,6 +51,8 @@ elShape.addEventListener('click', function(element) {
 // Tile size (gridSize) is set here
 
 let row = 31, col = 31, gridSize = 22, boardShape='octagon';
+let tileBorder = 5;
+let boardSurround = 15;
 
 // Set up the board
 boardSetUp(row, col, gridSize, boardShape);
@@ -109,7 +111,7 @@ endTurn.addEventListener('click', function() {
     // Comment for next player
     commentary.innerText = ' turn: ' + gameManagement.turn + ': click on piece';
     // End turn button colour is changed
-    endTurn.setAttribute('class', 'end_turn ' + gameManagement.turn + ' team_colours');
+    endTurn.setAttribute('class', 'end_turn ' + gameManagement.turn + ' team_fill');
 
 
 
@@ -163,15 +165,35 @@ commentary.innerText = ' turn: ' + gameManagement.turn + ': click on piece'
 
 // handler for capturing clicks on board tiles
 // As the logic of this section is expanded it will be moved across into the piece movement object
-var theBoard = document.querySelector('.boardmark');
+
+
+
+// boardMarkNode is board holder in document
+let boardMarkNode = document.querySelector('div.boardmark');
+let boardMarkLeft = boardMarkNode.offsetLeft;
+let boardMarkTop = boardMarkNode.offsetTop;
+
+boardMarkNode.addEventListener('click', function(event) {
+    let xClick = event.pageX - boardMarkLeft;
+    let yClick = event.pageY - boardMarkTop;
+
+
+    let xClickTile = Math.floor((xClick - boardSurround) / (gridSize + tileBorder * 2));
+    let yClickTile = Math.floor((yClick - boardSurround) / (gridSize + tileBorder * 2));
+
+    console.log(event.pageX, boardMarkLeft, xClick, xClickTile);
+    console.log(event.pageY, boardMarkTop, yClick, yClickTile);
+
+/*var theBoard = document.querySelector('.boardmark');
 theBoard.addEventListener('click', function(element) {
     // Capturing the clicked tile information and recording moves
 
     chosenSquare[startEnd] = element.target.closest('.square');
     chosenHolding[startEnd] = element.target.closest('.holding');
-
+*/
     // Obtain details of most recent tile clicked on - separated between start and end points
-    pieceMovement.captureMove(startEnd, chosenSquare);
+    pieceMovement.captureMove(startEnd, yClickTile, xClickTile);
+
 
     // Commentary on tile clicked on
     commentary.innerText = gameManagement.turn + ' turn: ' + pieceMovement.movementArray[startEnd].team + ' ' + pieceMovement.movementArray[startEnd].used + ' ' + pieceMovement.movementArray[startEnd].type + ' on row ' + pieceMovement.movementArray[startEnd].row + ' col ' + pieceMovement.movementArray[startEnd].col;

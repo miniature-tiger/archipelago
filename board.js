@@ -236,7 +236,7 @@ let gameBoard = {
         actionTile.setAttribute('class', 'cargo');
 
         // Adding an id for each tile
-        actionTile.setAttribute('id', locali*1000 + localj);
+        actionTile.setAttribute('id', 'tile' + Number(locali*1000 + localj));
 
         let cargoDeck = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         cargoDeck.setAttribute('class', this.boardArray[locali][localj].pieces.team + ' team_fill team_stroke');
@@ -259,7 +259,7 @@ let gameBoard = {
         return actionTile;
 
         //  let identifiedTile = this.buildActionTile(this.boardArray[locali][localj].pieces.type, this.boardArray[locali][localj].pieces.direction, this.boardArray[locali][localj].pieces.team, tileSize)
-  
+
     },
 
     // Method allows "non-specific" action tile to be created without reference to the boardArray
@@ -309,13 +309,18 @@ let gameBoard = {
         let boardMarkNode = document.querySelector('div.boardmark');
 
         // Board no longer needs to be cleared each time pieces are moved
+        // Any existing board is deleted
+        while (boardMarkNode.firstChild) {
+            boardMarkNode.removeChild(boardMarkNode.firstChild);
+        }
 
-        // Variables to help define the board layout
-        let tileBorder = 5;
-        let boardSurround = 15;
+        let board = document.createElement('canvas');
+        board.setAttribute('id', 'board');
+        boardMarkNode.appendChild(board);
+
 
         // Canavs 'canvasBoard' is created and size is set dynamically
-        let board = document.getElementById('board');
+        //let board = document.getElementById('board');
         let canvasBoard = board.getContext('2d');
         let islandBoard = board.getContext('2d');
         let waveBoard = board.getContext('2d');
@@ -323,7 +328,7 @@ let gameBoard = {
         canvasBoard.canvas.height = col * (gridSize + tileBorder * 2) + boardSurround * 2;
 
         // Loop through board array to draw tiles
-        let octagonArray = [ {gap: 0, width: 1, colour: 'rgb(235, 215, 195)'}, {gap: 6, width: 6, colour: 'rgb(213, 191, 163)'}, {gap: 4, width: 1.5, colour: 'rgb(138, 87, 50)'} ]
+        let octagonArray = [ {gap: 0, width: 1, colour: 'rgb(235, 215, 195)'}, {gap: 0, width: 1, colour: 'rgb(255, 153, 153)'}, {gap: 6, width: 6, colour: 'rgb(213, 191, 163)'}, {gap: 4, width: 1.5, colour: 'rgb(138, 87, 50)'} ]
 
         for (var h = 0; h < octagonArray.length; h++) {
             canvasBoard.beginPath();
@@ -335,8 +340,9 @@ let gameBoard = {
 
                     if (h==0 && this.boardArray[i][j].terrain != 'invis') {
                         this.drawOctagon(canvasBoard, octagonArray[h].gap);
-                    }
-                    if (h!=0 && this.boardArray[i][j].terrain == 'land') {
+                    } else if (h==1 && this.boardArray[i][j].activeStatus == 'active') {
+                        this.drawOctagon(canvasBoard, octagonArray[h].gap);
+                    } else if (h>1 && this.boardArray[i][j].terrain == 'land') {
                         this.drawOctagon(canvasBoard, octagonArray[h].gap);
                     }
                 }
