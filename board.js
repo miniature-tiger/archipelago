@@ -130,7 +130,7 @@ let gameBoard = {
         this.boardArray[boardCenter+1][0].pieces = {populatedSquare: true, type: 'ironworks', direction: '0', used: 'unused', team: 'teamPlum'};
 
         // Creation of quarry
-        this.boardArray[row-6][boardCenter-1].pieces = {populatedSquare: true, type: 'quarry', direction: '0', used: 'unused', team: 'teamLime'};      
+        this.boardArray[row-6][boardCenter-1].pieces = {populatedSquare: true, type: 'quarry', direction: '0', used: 'unused', team: ''};
     },
 
     // Method to create triangle shaped overlay
@@ -260,10 +260,79 @@ let gameBoard = {
         return newActionTile;
     },
 
+    // New method to create the board display based on the boardArray using canvas
+    // ----------------------------------------------------------------------------
+    // gridSize is the size of the tile, row and col depict the number of tiles on the board
+
+    drawBoard: function(row, col, gridSize) {
+
+        // boardMarkNode is board holder in document
+        let boardMarkNode = document.querySelector('div.boardmark');
+
+        // Board no longer needs to be cleared each time pieces are moved
+
+        // Variables to help define the board layout
+        let tileBorder = 5;
+        let boardSurround = 8;
+
+
+
+        // Canavs 'canvasBoard' is created and size is set dynamically
+        let board = document.getElementById('board');
+        let canvasBoard = board.getContext('2d');
+        let islandBoard = board.getContext('2d');
+        let waveBoard = board.getContext('2d');
+        canvasBoard.canvas.width = row * (gridSize + tileBorder * 2) + boardSurround * 2;
+        canvasBoard.canvas.height = col * (gridSize + tileBorder * 2) + boardSurround * 2;
+
+
+
+        // Loop through board array to draw tiles
+
+        let octagonArray = [ {gap: 0, width: 1, colour: 'rgb(240, 220, 190)'}, {gap: 6, width: 6, colour: 'rgb(213, 191, 163)'}, {gap: 4, width: 1.5, colour: 'rgb(138, 87, 50)'} ]
+
+        for (var h = 0; h < octagonArray.length; h++) {
+            canvasBoard.beginPath();
+            for (var i = 0; i < col; i++) {
+                Ycenter = (gridSize + tileBorder * 2) * i + (gridSize/2 + boardSurround + tileBorder);
+
+                for (var j = 0; j < row; j++) {
+                    Xcenter = (gridSize + tileBorder * 2) * j + (gridSize/2 + boardSurround + tileBorder);
+
+                    if (h==0 && this.boardArray[i][j].terrain != 'invis') {
+                        this.drawOctagon(canvasBoard, octagonArray[h].gap);
+                    }
+                    if (h!=0 && this.boardArray[i][j].terrain == 'land') {
+                        this.drawOctagon(canvasBoard, octagonArray[h].gap);
+                    }
+                }
+            }
+            canvasBoard.lineWidth = octagonArray[h].width;
+            canvasBoard.strokeStyle = octagonArray[h].colour;
+            canvasBoard.stroke();
+        }
+
+
+
+
+
+    },
+
+    drawOctagon: function(canvasBoard, ocatagonGap) {
+        let octagonAngle = (2 * Math.PI) / 8;
+        canvasBoard.moveTo (Xcenter + (gridSize/2 + ocatagonGap) * Math.cos(0.5 * octagonAngle), Ycenter + (gridSize/2 + ocatagonGap) *  Math.sin(0.5 * octagonAngle));
+
+        for (var k = 1; k <= 8; k++) {
+            canvasBoard.lineTo (Xcenter + (gridSize/2 + ocatagonGap) * Math.cos((k+0.5) * octagonAngle), Ycenter + (gridSize/2 + ocatagonGap) * Math.sin((k+0.5) * octagonAngle));
+        }
+    },
+
+
     // Method to create the board display based on the boardArray
     // ----------------------------------------------------------
     // gridSize is the size of the tile, row and col depict the number of tiles on the board
-    drawBoard: function(row, col, gridSize) {
+
+    /*drawBoard: function(row, col, gridSize) {
 
         // boardMarkNode is board holder in document
         boardMarkNode = document.querySelector('div.boardmark');
@@ -301,7 +370,7 @@ let gameBoard = {
             // Add row to board
             boardMarkNode.appendChild(newRow);
         }
-    },
+    },*/
 
 
 

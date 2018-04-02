@@ -50,7 +50,7 @@ elShape.addEventListener('click', function(element) {
 // Intial values for the board size and shape
 // Tile size (gridSize) is set here
 
-let row = 31, col = 31, gridSize = 25, boardShape='octagon';
+let row = 31, col = 31, gridSize = 22, boardShape='octagon';
 
 // Set up the board
 boardSetUp(row, col, gridSize, boardShape);
@@ -182,6 +182,7 @@ theBoard.addEventListener('click', function(element) {
         if (pieceMovement.movementArray[startEnd].activeStatus == 'active') {
             pieceMovement.deactivateTiles(maxMove);
             pieceMovement.shipTransition();
+            //pieceMovement.landDiscovery();
             stockDashboard.stockTake();
             stockDashboard.drawStock();
         } else {

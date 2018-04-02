@@ -37,7 +37,7 @@ All tiles are set up to be dynamic so can be created in different sizes */
     border: 1px solid rgb(77, 210, 255);
 }
 
-.square.land.inactive, .square.base.inactive {
+.square.land {
     background-color: rgb(230, 230, 0);
     border: 1px solid rgb(230, 230, 0);
 }
@@ -70,11 +70,6 @@ All tiles are set up to be dynamic so can be created in different sizes */
 .land {
     background-color: rgb(77, 210, 55);
     border: 2px solid green;
-}
-
-.base {
-    background-color: rgb(255, 179, 102);
-    border: 2px solid brown;
 }
 
 /* style for square not on the board */
