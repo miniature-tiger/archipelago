@@ -274,6 +274,8 @@ let pieceMovement = {
     },
 
 
+    // Method for piece to turn in direction of move and then move
+    // -----------------------------------------------------------
     turnAndMove: function(n, localStartHolding, topDirection, leftDirection, rotateDirection) {
         // n is number of transition in chain
         // Transitions to be applied (added here to allow different transitions to be applied dynamically in future)
@@ -286,6 +288,9 @@ let pieceMovement = {
             localStartHolding.style.transform = 'rotate(' + rotateDirection + 'deg)';
         }, n * 1000);
     },
+
+
+
 
 // LAST BRACKET OF OBJECT
 }
