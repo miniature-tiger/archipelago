@@ -223,32 +223,32 @@ let gameBoard = {
     // tileSize is the size of the tile
     createActionTile: function(locali, localj, gridSize, tileBorder, boardSurround) {
 
-        // Use guildActionTile function to construct tile then label it with id
+        // Create SVG tile of designated height and width
         let actionTile = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         actionTile.setAttribute('width', gridSize + tileBorder);
         actionTile.setAttribute('height', gridSize + tileBorder);
 
+        // Position tile based on coordinates passed from boardArray
         actionTile.style.top = boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * locali + 'px';
         actionTile.style.left = boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * localj + 'px';
         actionTile.style.transform = 'rotate(' + this.boardArray[locali][localj].pieces.direction + 'deg)';
 
+        // Set view size, class and id
         actionTile.setAttribute('viewBox', '0, 0, 25, 25');
         actionTile.setAttribute('class', 'cargo');
-
-        // Adding an id for each tile
         actionTile.setAttribute('id', 'tile' + Number(locali*1000 + localj));
 
+        // Cargo ship deck SVG design
         let cargoDeck = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         cargoDeck.setAttribute('class', this.boardArray[locali][localj].pieces.team + ' team_fill team_stroke');
         cargoDeck.setAttribute('d', 'M 12.5 1 C 8 6.2 7 11.1 7.3 15.6 Q 7.7 20.2 9.25 24 L 15.75 24 Q 17 20.2 17.5 15.6 C 17.8 11.1 16.6 6.2 12.5 1 Z');
         cargoDeck.style.strokeWidth = '1px';
 
+        // Cargo ship sail SVG design
         let cargoSail = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-
         cargoSail.setAttribute('d', 'M 2 16 L 22 16 C 20.5 13.5 16.5 12 12 12 C 7.5 12 3.5 13.5 2 16 Z');
         cargoSail.setAttribute('class', this.boardArray[locali][localj].pieces.team + ' team_stroke');
         cargoSail.setAttribute('fill', 'white');
-
         cargoSail.style.strokeWidth = '1px';
 
         // Building the tile
@@ -257,9 +257,6 @@ let gameBoard = {
 
         // tile is returned to drawBoard
         return actionTile;
-
-        //  let identifiedTile = this.buildActionTile(this.boardArray[locali][localj].pieces.type, this.boardArray[locali][localj].pieces.direction, this.boardArray[locali][localj].pieces.team, tileSize)
-
     },
 
     // Method allows "non-specific" action tile to be created without reference to the boardArray
@@ -302,25 +299,23 @@ let gameBoard = {
     // New method to create the board display based on the boardArray using canvas
     // ----------------------------------------------------------------------------
     // gridSize is the size of the tile, row and col depict the number of tiles on the board
-
     drawBoard: function(row, col, gridSize) {
-
         // boardMarkNode is board holder in document
         let boardMarkNode = document.querySelector('div.boardmark');
 
-        // Board no longer needs to be cleared each time pieces are moved
-        // Any existing board is deleted
+        // Clears board for redrawing
+        // Future Update  - In future board will no longer need to be cleared each time pieces are moved or tiles activated
+        //                - Add activation canvas layer overlay and separate drawing of board from updating of active tiles
         while (boardMarkNode.firstChild) {
             boardMarkNode.removeChild(boardMarkNode.firstChild);
         }
 
+        // Canvas element createed for board
         let board = document.createElement('canvas');
         board.setAttribute('id', 'board');
         boardMarkNode.appendChild(board);
 
-
         // Canavs 'canvasBoard' is created and size is set dynamically
-        //let board = document.getElementById('board');
         let canvasBoard = board.getContext('2d');
         let islandBoard = board.getContext('2d');
         let waveBoard = board.getContext('2d');
@@ -331,6 +326,7 @@ let gameBoard = {
         let octagonArray = [ {gap: 0, width: 1, colour: 'rgb(235, 215, 195)'}, {gap: 0, width: 1, colour: 'rgb(255, 153, 153)'}, {gap: 6, width: 6, colour: 'rgb(213, 191, 163)'}, {gap: 4, width: 1.5, colour: 'rgb(138, 87, 50)'} ]
 
         for (var h = 0; h < octagonArray.length; h++) {
+            // Start path for each array of octagons
             canvasBoard.beginPath();
             for (var i = 0; i < row; i++) {
                 Ycenter = (gridSize + tileBorder * 2) * i + (gridSize/2 + boardSurround + tileBorder);
@@ -339,89 +335,50 @@ let gameBoard = {
                     Xcenter = (gridSize + tileBorder * 2) * j + (gridSize/2 + boardSurround + tileBorder);
 
                     if (h==0 && this.boardArray[i][j].terrain != 'invis') {
+                        // Tiles - 'invis' gives shape to octagonal board
                         this.drawOctagon(canvasBoard, octagonArray[h].gap);
                     } else if (h==1 && this.boardArray[i][j].activeStatus == 'active') {
+                        // Activation of tiles - will be moved to a separate canvas overlay in future
                         this.drawOctagon(canvasBoard, octagonArray[h].gap);
                     } else if (h>1 && this.boardArray[i][j].terrain == 'land') {
+                        // Islands
                         this.drawOctagon(canvasBoard, octagonArray[h].gap);
                     }
                 }
             }
+            // Draw path for each array of octagons
             canvasBoard.lineWidth = octagonArray[h].width;
             canvasBoard.strokeStyle = octagonArray[h].colour;
             canvasBoard.stroke();
         }
 
+        // Loops for pieces
         for (var i = 0; i < row; i++) {
             Ycenter = (gridSize + tileBorder * 2) * i + (gridSize/2 + boardSurround + tileBorder);
 
             for (var j = 0; j < col; j++) {
                 Xcenter = (gridSize + tileBorder * 2) * j + (gridSize/2 + boardSurround + tileBorder);
 
+                // Currently just cargo ships - other tiles to be update to svg
                 if ((this.boardArray[i][j].pieces.populatedSquare == true) && (this.boardArray[i][j].pieces.type == 'cargo')){
                     // Create action tile svg and add to the board
                     boardMarkNode.appendChild(this.createActionTile(i, j, gridSize, tileBorder, boardSurround));
                 }
             }
         }
-
     },
 
+    // Method to draw octagons for creation of board
+    // ---------------------------------------------
     drawOctagon: function(canvasBoard, ocatagonGap) {
         let octagonAngle = (2 * Math.PI) / 8;
+        // Moves to start of octagon
         canvasBoard.moveTo (Xcenter + (gridSize/2 + ocatagonGap) * Math.cos(0.5 * octagonAngle), Ycenter + (gridSize/2 + ocatagonGap) *  Math.sin(0.5 * octagonAngle));
-
+        // Draws eight sides
         for (var k = 1; k <= 8; k++) {
             canvasBoard.lineTo (Xcenter + (gridSize/2 + ocatagonGap) * Math.cos((k+0.5) * octagonAngle), Ycenter + (gridSize/2 + ocatagonGap) * Math.sin((k+0.5) * octagonAngle));
         }
     },
-
-
-    // Method to create the board display based on the boardArray
-    // ----------------------------------------------------------
-    // gridSize is the size of the tile, row and col depict the number of tiles on the board
-
-    /*drawBoard: function(row, col, gridSize) {
-
-        // boardMarkNode is board holder in document
-        boardMarkNode = document.querySelector('div.boardmark');
-
-        // Any existing board is deleted
-        while (boardMarkNode.firstChild) {
-            boardMarkNode.removeChild(boardMarkNode.firstChild);
-        }
-
-        // board holder size is created dynamically
-        boardMarkNode.style.height = row * gridSize + 'px';
-        boardMarkNode.style.width = col * gridSize + 'px';
-        boardMarkNode.style.padding = gridSize * 0.5 + 'px';
-
-        // Loop through each board row
-        for (var i = 0; i < this.boardArray.length; i++) {
-            let newRow = document.createElement('div');
-            newRow.setAttribute('class', 'board_row');
-            newRow.style.width = col * gridSize + 'px';
-            newRow.style.height = gridSize + 'px';
-            // Adding an id for each row - DECIDE IF NECESSARY IN NEXT STAGE
-            newRow.id = 'rowID' + i + '-' + j;
-
-            // Loop through each tile j of each board row i
-            for (var j = 0; j < this.boardArray[i].length; j++) {
-
-                if (this.boardArray[i][j].pieces.populatedSquare == true) {
-                    // Create action tile and add tile to row
-                    newRow.appendChild(this.createActionTile(i, j, gridSize));
-                } else {
-                    // Create empty tile and add tile to row
-                    newRow.appendChild(this.createTile( i, j, gridSize));
-                }
-            }
-            // Add row to board
-            boardMarkNode.appendChild(newRow);
-        }
-    },*/
-
-
 
 // LAST BRACKET OF OBJECT
 }

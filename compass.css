@@ -69,10 +69,10 @@
 /* Compass needle*/
 .needle {
     position: absolute;
-    top: -35%;
+    top: -40%;
     left: 48.5%;
     width: 4%;
-    height: 170%;
+    height: 180%;
     background-color: rgb(219, 158, 54);
     transition: transform 1s;
 }
@@ -82,8 +82,8 @@
     width: 0;
     height: 0;
     top: -4%;
-    left: -80%;
-    border-left: 0.2em solid transparent;
-    border-bottom: 0.5em solid rgb(219, 158, 54);
-    border-right: 0.2em solid transparent;
+    left: -60%;
+    border-left: 0.25em solid transparent;
+    border-bottom: 0.6em solid rgb(219, 158, 54);
+    border-right: 0.25em solid transparent;
 }

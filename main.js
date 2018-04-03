@@ -74,8 +74,9 @@ for (var iconHolder_i = 0; iconHolder_i < iconHolder.length; iconHolder_i++) {
 
 // Set up of stock dashboard
 // -------------------------
-stockDashboard.stockTake();
-stockDashboard.drawStock();
+// Disengaged until graphics updated
+//stockDashboard.stockTake();
+//stockDashboard.drawStock();
 
 // Set up of compass
 // -----------------
@@ -205,8 +206,9 @@ theBoard.addEventListener('click', function(element) {
             pieceMovement.deactivateTiles(maxMove);
             pieceMovement.shipTransition();
             //pieceMovement.landDiscovery();
-            stockDashboard.stockTake();
-            stockDashboard.drawStock();
+            // Disengaged until graphics updated
+            //stockDashboard.stockTake();
+            //stockDashboard.drawStock();
         } else {
             // Resetting if second click is not valid
             pieceMovement.deactivateTiles(maxMove);

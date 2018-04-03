@@ -42,8 +42,9 @@ let pirates = {
                 pieceMovement.movementArray.end = pirates.pirateShips[i].end;
                 pieceMovement.deactivateTiles(maxMove);
                 pieceMovement.shipTransition();
-                stockDashboard.stockTake();
-                stockDashboard.drawStock();
+                // Disengaged until graphics updated
+                //stockDashboard.stockTake();
+                //stockDashboard.drawStock();
 
                 // Resets movement array
                 pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
