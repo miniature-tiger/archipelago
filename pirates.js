@@ -18,9 +18,9 @@ let pirates = {
                 pieceMovement.movementArray.start = pirates.pirateShips[i].start;
                 // Tiles activated which also finds path for moves and target information on reachable area
                 // true / false allow red boundaries to be highlighted or not
-                pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, maxMove, true);
-                // Redraw gameboard after activation to show activated tiles
-                gameBoard.drawBoard(row, col, gridSize);
+                pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, maxMove, false);
+                // Redraw active tile layer after activation to show activated tiles
+                gameBoard.drawActiveTiles();
                 // Finds targetable cargo ships within reach
                 pirates.findTarget();
                 if (pirates.targetCargo.length > 0) {
@@ -42,6 +42,7 @@ let pirates = {
                 pieceMovement.movementArray.end = pirates.pirateShips[i].end;
                 pieceMovement.deactivateTiles(maxMove);
                 pieceMovement.shipTransition();
+
                 // Disengaged until graphics updated
                 //stockDashboard.stockTake();
                 //stockDashboard.drawStock();
@@ -53,15 +54,21 @@ let pirates = {
 
             // Loops through with delay
             if(i < pirates.pirateShips.length) {
+
                 setTimeout(moves, 1000 * pirates.minCostTiles[0].distance);
 
             } else {
                 // Resets pirate ship array once all moves made
                 pirates.pirateShips = [];
+
             }
+
         }
         // Calls function above
+
         moves();
+
+
     },
 
 
