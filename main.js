@@ -7,11 +7,53 @@
 // High level function to set up the game board
 // Calls the various methods of the game board object
 // -------------------------------------------------
+
+// Parameters for board set up
+// Intial values for the board size and shape
+// Tile size (gridSize) is set here
+let row = 31, col = 31, gridSize = 22, boardShape='octagon';
+let tileBorder = 5;
+let boardSurround = 15;
+
+// boardMarkNode is board holder in document
+let boardMarkNode = document.querySelector('div.boardmark');
+
+// Canvas element createed for board
+let board = document.createElement('canvas');
+board.setAttribute('id', 'board');
+boardMarkNode.appendChild(board);
+// Canavs 'canvasBoard' is created and size is set dynamically
+let canvasBoard = board.getContext('2d');
+canvasBoard.canvas.width = row * (gridSize + tileBorder * 2) + boardSurround * 2;
+canvasBoard.canvas.height = col * (gridSize + tileBorder * 2) + boardSurround * 2;
+
+
+// Canavs 'activeBoard' is created and size is set dynamically
+let activeBoard = document.createElement('canvas');
+boardMarkNode.appendChild(activeBoard);
+let canvasActive = activeBoard.getContext('2d');
+canvasActive.canvas.width = row * (gridSize + tileBorder * 2) + boardSurround * 2;
+canvasActive.canvas.height = col * (gridSize + tileBorder * 2) + boardSurround * 2;
+// ID is set with CSS styles of higher z-index and transparent background to function as overlay
+activeBoard.setAttribute('id', 'activeBoard');
+
 function boardSetUp(row, col, gridSize, boardShape) {
     gameBoard.populateBoardArray(row, col, boardShape);
     gameBoard.overlayBoardArray(row, col, boardShape);
     gameBoard.drawBoard(row, col, gridSize);
+    gameBoard.drawPieces();
 }
+
+// CONSIDER A RESET FUNCTION TO REDRAW WHOLE BOARD BASED ON CURRENT BOARDARRAY
+// Clears board for redrawing
+//while (boardMarkNode.firstChild) {
+//    boardMarkNode.removeChild(boardMarkNode.firstChild);
+//}
+
+
+// Set up the board
+boardSetUp(row, col, gridSize, boardShape);
+
 
 
 // Some button handlers
@@ -44,20 +86,6 @@ elShape.addEventListener('click', function(element) {
         boardSetUp(row, col, gridSize, boardShape);
     }
 });
-
-// Parameters for board set up
-// ---------------------------
-// Intial values for the board size and shape
-// Tile size (gridSize) is set here
-
-let row = 31, col = 31, gridSize = 22, boardShape='octagon';
-let tileBorder = 5;
-let boardSurround = 15;
-
-// Set up the board
-boardSetUp(row, col, gridSize, boardShape);
-
-
 
 
 // ------------------------------------------------------------------------------------
@@ -170,7 +198,6 @@ commentary.innerText = ' turn: ' + gameManagement.turn + ': click on piece'
 
 
 // boardMarkNode is board holder in document
-let boardMarkNode = document.querySelector('div.boardmark');
 let boardMarkLeft = boardMarkNode.offsetLeft;
 let boardMarkTop = boardMarkNode.offsetTop;
 
@@ -204,6 +231,8 @@ theBoard.addEventListener('click', function(element) {
     if (startEnd == 'end') {
         if (pieceMovement.movementArray[startEnd].activeStatus == 'active') {
             pieceMovement.deactivateTiles(maxMove);
+            // Redraw active tile layer after deactivation to remove activated tiles
+            gameBoard.drawActiveTiles();
             pieceMovement.shipTransition();
             //pieceMovement.landDiscovery();
             // Disengaged until graphics updated
@@ -212,9 +241,7 @@ theBoard.addEventListener('click', function(element) {
         } else {
             // Resetting if second click is not valid
             pieceMovement.deactivateTiles(maxMove);
-
-            // Redraw gameboard to show deactivated tiles
-            gameBoard.drawBoard(row, col, gridSize);
+            gameBoard.drawActiveTiles();
         }
         // Resetting movement array once second click has been made (whether valid or invalid)
         pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
@@ -234,7 +261,8 @@ theBoard.addEventListener('click', function(element) {
                 pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, maxMove, true);
 
                 // Redraw gameboard to show activated tiles
-                gameBoard.drawBoard(row, col, gridSize);
+                gameBoard.drawActiveTiles();
+                console.log('drawactivetiles');
             }
         }
     }

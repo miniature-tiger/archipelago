@@ -268,9 +268,12 @@ let pieceMovement = {
         gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces = {populatedSquare: true, type: 'cargo', direction: rotateDirection, used: 'used', team: gameManagement.turn};
         gameBoard.boardArray[pieceMovement.movementArray['start'].row][pieceMovement.movementArray['start'].col].pieces = {populatedSquare: false, type: 'none', direction: '', used: 'unused', team: 'none'};
 
-        // Redraw of board delayed in proportion to number of moves
+        //Updating piece information
+        chosenPiece.setAttribute('id', 'tile' + Number(pieceMovement.movementArray.end.row*1000 + pieceMovement.movementArray.end.col));
+
+        // Reset of transitions delayed in proportion to number of moves
         setTimeout(function() {
-            gameBoard.drawBoard(row, col, gridSize);
+            chosenPiece.style.transition = '';
         }, numberOfTiles * 1000);
 
     },
@@ -281,6 +284,8 @@ let pieceMovement = {
     turnAndMove: function(n, chosenPiece, topDirection, leftDirection, rotateDirection) {
         // n is number of transition in chain
         // Transitions to be applied (added here to allow different transitions to be applied dynamically in future)
+        console.log(chosenPiece);
+        console.log(chosenPiece.style.transition);
         chosenPiece.style.transition = 'transform 0.2s 0s ease-in-out, left 0.7s 0.2s ease-in-out, top 0.7s 0.2s ease-in-out';
 
         // Delayed application of transformations to give board game style move effect

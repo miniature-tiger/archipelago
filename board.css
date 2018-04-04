@@ -18,6 +18,12 @@
     z-index: 1;
 }
 
+#activeBoard {
+    position: absolute;
+    background-color: transparent;
+    z-index: 2;
+}
+
 /* style for row holders within game board */
 .board_row {
     margin: 0px 0px 0px 0px;

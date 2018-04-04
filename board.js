@@ -300,58 +300,17 @@ let gameBoard = {
     // ----------------------------------------------------------------------------
     // gridSize is the size of the tile, row and col depict the number of tiles on the board
     drawBoard: function(row, col, gridSize) {
-        // boardMarkNode is board holder in document
-        let boardMarkNode = document.querySelector('div.boardmark');
-
-        // Clears board for redrawing
-        // Future Update  - In future board will no longer need to be cleared each time pieces are moved or tiles activated
-        //                - Add activation canvas layer overlay and separate drawing of board from updating of active tiles
-        while (boardMarkNode.firstChild) {
-            boardMarkNode.removeChild(boardMarkNode.firstChild);
-        }
-
-        // Canvas element createed for board
-        let board = document.createElement('canvas');
-        board.setAttribute('id', 'board');
-        boardMarkNode.appendChild(board);
-
-        // Canavs 'canvasBoard' is created and size is set dynamically
-        let canvasBoard = board.getContext('2d');
-        let islandBoard = board.getContext('2d');
-        let waveBoard = board.getContext('2d');
-        canvasBoard.canvas.width = row * (gridSize + tileBorder * 2) + boardSurround * 2;
-        canvasBoard.canvas.height = col * (gridSize + tileBorder * 2) + boardSurround * 2;
-
         // Loop through board array to draw tiles
-        let octagonArray = [ {gap: 0, width: 1, colour: 'rgb(235, 215, 195)'}, {gap: 0, width: 1, colour: 'rgb(255, 153, 153)'}, {gap: 6, width: 6, colour: 'rgb(213, 191, 163)'}, {gap: 4, width: 1.5, colour: 'rgb(138, 87, 50)'} ]
+        let octagonArray = [ {type: 'visible', gap: 0, width: 1, colour: 'rgb(235, 215, 195)'}, {type: 'land', gap: 6, width: 6, colour: 'rgb(213, 191, 163)'}, {type: 'land', gap: 4, width: 1.5, colour: 'rgb(138, 87, 50)'} ]
 
         for (var h = 0; h < octagonArray.length; h++) {
-            // Start path for each array of octagons
-            canvasBoard.beginPath();
-            for (var i = 0; i < row; i++) {
-                Ycenter = (gridSize + tileBorder * 2) * i + (gridSize/2 + boardSurround + tileBorder);
-
-                for (var j = 0; j < col; j++) {
-                    Xcenter = (gridSize + tileBorder * 2) * j + (gridSize/2 + boardSurround + tileBorder);
-
-                    if (h==0 && this.boardArray[i][j].terrain != 'invis') {
-                        // Tiles - 'invis' gives shape to octagonal board
-                        this.drawOctagon(canvasBoard, octagonArray[h].gap);
-                    } else if (h==1 && this.boardArray[i][j].activeStatus == 'active') {
-                        // Activation of tiles - will be moved to a separate canvas overlay in future
-                        this.drawOctagon(canvasBoard, octagonArray[h].gap);
-                    } else if (h>1 && this.boardArray[i][j].terrain == 'land') {
-                        // Islands
-                        this.drawOctagon(canvasBoard, octagonArray[h].gap);
-                    }
-                }
-            }
-            // Draw path for each array of octagons
-            canvasBoard.lineWidth = octagonArray[h].width;
-            canvasBoard.strokeStyle = octagonArray[h].colour;
-            canvasBoard.stroke();
+            this.drawTiles (octagonArray[h].type, canvasBoard, octagonArray[h].gap, octagonArray[h].width, octagonArray[h].colour)
         }
+    },
 
+    // New method to create the board pieces based on the boardArray using SVG
+    // ----------------------------------------------------------------------------
+    drawPieces: function() {
         // Loops for pieces
         for (var i = 0; i < row; i++) {
             Ycenter = (gridSize + tileBorder * 2) * i + (gridSize/2 + boardSurround + tileBorder);
@@ -366,6 +325,48 @@ let gameBoard = {
                 }
             }
         }
+    },
+
+    // Method for looping through tiles and drawing
+    // --------------------------------------------
+
+    drawTiles: function(octagonType, boardLayer, ocatagonGap, octagonWidth, octagonColour) {
+        // Start path for each array of octagons
+        boardLayer.beginPath();
+        for (var i = 0; i < row; i++) {
+            Ycenter = (gridSize + tileBorder * 2) * i + (gridSize/2 + boardSurround + tileBorder);
+
+            for (var j = 0; j < col; j++) {
+                Xcenter = (gridSize + tileBorder * 2) * j + (gridSize/2 + boardSurround + tileBorder);
+
+                if (octagonType=='visible' && this.boardArray[i][j].terrain != 'invis') {
+                    // Tiles - 'invis' gives shape to octagonal board
+                    this.drawOctagon(boardLayer, ocatagonGap);
+                } else if (octagonType=='active' && this.boardArray[i][j].activeStatus == 'active') {
+                    // Activation of tiles - will be moved to a separate canvas overlay in future
+                    this.drawOctagon(boardLayer, ocatagonGap);
+                } else if (octagonType=='land' && this.boardArray[i][j].terrain == 'land') {
+                    // Islands
+                    this.drawOctagon(boardLayer, ocatagonGap);
+                }
+            }
+        }
+        // Draw path for each array of octagons
+        boardLayer.lineWidth = octagonWidth;
+        boardLayer.strokeStyle = octagonColour;
+        boardLayer.stroke();
+    },
+
+    // Method to set up canvas overlay layer for piece activation
+    // ----------------------------------------------------------
+
+    drawActiveTiles: function () {
+        // Clears the canvas for redraw
+        canvasActive.clearRect(0, 0, canvasActive.canvas.width, canvasActive.canvas.height);
+
+        // drawTiles is used to colour tiles on active layer
+        gameBoard.drawTiles ('active', canvasActive, 0, 1, 'rgb(255, 153, 153)');
+
     },
 
     // Method to draw octagons for creation of board
