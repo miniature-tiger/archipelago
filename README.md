@@ -26,7 +26,7 @@ https://miniature-tiger.github.io/archipelago/
 * Turn based activity of ship movement - COMPLETE
 * Logic of length of longer moves around obstacles - COMPLETE
 * Chaining together transitions to allow graphics of longer moves - COMPLETE
-* Refactoring to allow CSS transitions layer above "refresh" layer - may not now be necessary - for consideration in future.
+* Separation of board layers (Canvas base layer, Canvas activation layer overlay, SVG piece overlays) - COMPLETE
 
 # Phase 2 
 Land Squares and goods discovery:
