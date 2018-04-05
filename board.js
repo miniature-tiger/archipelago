@@ -87,10 +87,10 @@ let gameBoard = {
         this.overlayTiles(boardCenter-1, boardCenter+2, 0, 1, 'land');
 
         // Creation of forts
-        this.boardArray[boardCenter][col-1].pieces = {populatedSquare: true, type: 'fort', direction: '-135', used: 'unused', team: 'teamOrange'};
-        this.boardArray[0][boardCenter].pieces = {populatedSquare: true, type: 'fort', direction: '135', used: 'unused', team: 'teamLemon'};
-        this.boardArray[row-1][boardCenter].pieces = {populatedSquare: true, type: 'fort', direction: '-45', used: 'unused', team: 'teamLime'};
-        this.boardArray[boardCenter][0].pieces = {populatedSquare: true, type: 'fort', direction: '45', used: 'unused', team: 'teamPlum'};
+        this.boardArray[boardCenter][col-1].pieces = {populatedSquare: true, type: 'fort', direction: '270', used: 'unused', team: 'teamOrange'};
+        this.boardArray[0][boardCenter].pieces = {populatedSquare: true, type: 'fort', direction: '180', used: 'unused', team: 'teamLemon'};
+        this.boardArray[row-1][boardCenter].pieces = {populatedSquare: true, type: 'fort', direction: '0', used: 'unused', team: 'teamLime'};
+        this.boardArray[boardCenter][0].pieces = {populatedSquare: true, type: 'fort', direction: '90', used: 'unused', team: 'teamPlum'};
         this.boardArray[boardCenter][boardCenter].pieces = {populatedSquare: true, type: 'fort', direction: '0', used: 'unused', team: 'teamKingdom'};
 
         // Creation of Kingdom huts
@@ -122,12 +122,14 @@ let gameBoard = {
         this.boardArray[0][boardCenter+1].pieces = {populatedSquare: true, type: 'forest', direction: '0', used: 'unused', team: 'teamLemon'};
         this.boardArray[row-1][boardCenter-1].pieces = {populatedSquare: true, type: 'forest', direction: '0', used: 'unused', team: 'teamLime'};
         this.boardArray[boardCenter-1][0].pieces = {populatedSquare: true, type: 'forest', direction: '0', used: 'unused', team: 'teamPlum'};
+        this.boardArray[boardCenter-1][boardCenter].pieces = {populatedSquare: true, type: 'forest', direction: '0', used: 'unused', team: 'Unclaimed'};
 
         // Creation of ironworks
         this.boardArray[boardCenter-1][col-1].pieces = {populatedSquare: true, type: 'ironworks', direction: '0', used: 'unused', team: 'teamOrange'};
         this.boardArray[0][boardCenter-1].pieces = {populatedSquare: true, type: 'ironworks', direction: '0', used: 'unused', team: 'teamLemon'};
         this.boardArray[row-1][boardCenter+1].pieces = {populatedSquare: true, type: 'ironworks', direction: '0', used: 'unused', team: 'teamLime'};
         this.boardArray[boardCenter+1][0].pieces = {populatedSquare: true, type: 'ironworks', direction: '0', used: 'unused', team: 'teamPlum'};
+        this.boardArray[boardCenter+1][boardCenter].pieces = {populatedSquare: true, type: 'ironworks', direction: '0', used: 'unused', team: 'Unclaimed'};
 
         // Creation of quarry
         this.boardArray[row-6][boardCenter-1].pieces = {populatedSquare: true, type: 'quarry', direction: '0', used: 'unused', team: ''};
@@ -235,9 +237,29 @@ let gameBoard = {
 
         // Set view size, class and id
         actionTile.setAttribute('viewBox', '0, 0, 25, 25');
-        actionTile.setAttribute('class', 'cargo');
         actionTile.setAttribute('id', 'tile' + Number(locali*1000 + localj));
 
+        if (this.boardArray[locali][localj].pieces.type == 'cargo') {
+            actionTile.setAttribute('class', 'cargo');
+            this.createCargoTile(actionTile, locali, localj);
+        } else if (this.boardArray[locali][localj].pieces.type == 'fort') {
+            actionTile.setAttribute('class', 'fort');
+            this.createFortTile(actionTile, locali, localj);
+        } else if (this.boardArray[locali][localj].pieces.type == 'forest') {
+            actionTile.setAttribute('class', 'forest');
+            this.createForestTile(actionTile, locali, localj);
+        } else if (this.boardArray[locali][localj].pieces.type == 'ironworks') {
+            actionTile.setAttribute('class', 'ironworks');
+            this.createIronworksTile(actionTile, locali, localj);
+        }
+
+        // tile is returned to drawBoard
+        return actionTile;
+    },
+
+    // Method to create cargo tile
+    // ---------------------------
+    createCargoTile: function(actionTile, locali, localj) {
         // Cargo ship deck SVG design
         let cargoDeck = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         cargoDeck.setAttribute('class', this.boardArray[locali][localj].pieces.team + ' team_fill team_stroke');
@@ -255,7 +277,164 @@ let gameBoard = {
         actionTile.appendChild(cargoDeck);
         actionTile.appendChild(cargoSail);
 
-        // tile is returned to drawBoard
+        return actionTile;
+    },
+
+    // Method to create fort tile
+    // ---------------------------
+    createFortTile: function(actionTile, locali, localj) {
+        // Fort turret design
+        console.log(locali, localj);
+        let fortTurret1 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        fortTurret1.setAttribute('class', this.boardArray[locali][localj].pieces.team + ' team_stroke');
+        fortTurret1.setAttribute('cx', '7');
+        fortTurret1.setAttribute('cy', '7');
+        fortTurret1.setAttribute('r', '2.5');
+        fortTurret1.style.strokeWidth = '1px';
+        fortTurret1.style.strokeLinecap = 'round';
+
+        let fortTurret2 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        fortTurret2.setAttribute('class', this.boardArray[locali][localj].pieces.team + ' team_stroke');
+        fortTurret2.setAttribute('cx', '7');
+        fortTurret2.setAttribute('cy', '18');
+        fortTurret2.setAttribute('r', '2.5');
+        fortTurret2.style.strokeWidth = '1px';
+        fortTurret2.style.strokeLinecap = 'round';
+
+        let fortTurret3 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        fortTurret3.setAttribute('class', this.boardArray[locali][localj].pieces.team + ' team_stroke');
+        fortTurret3.setAttribute('cx', '18');
+        fortTurret3.setAttribute('cy', '7');
+        fortTurret3.setAttribute('r', '2.5');
+        fortTurret3.style.strokeWidth = '1px';
+        fortTurret3.style.strokeLinecap = 'round';
+
+        let fortTurret4 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        fortTurret4.setAttribute('class', this.boardArray[locali][localj].pieces.team + ' team_stroke');
+        fortTurret4.setAttribute('cx', '18');
+        fortTurret4.setAttribute('cy', '18');
+        fortTurret4.setAttribute('r', '2.5');
+        fortTurret4.style.strokeWidth = '1px';
+        fortTurret4.style.strokeLinecap = 'round';
+
+        // Fort wall rectangle design
+        let fortWall = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        fortWall.setAttribute('x', '6');
+        fortWall.setAttribute('y', '6');
+        fortWall.setAttribute('width', '13');
+        fortWall.setAttribute('height', '13');
+        fortWall.setAttribute('rx', '1');
+        fortWall.setAttribute('ry', '1');
+        fortWall.style.strokeWidth = '1px';
+        fortWall.setAttribute('class', this.boardArray[locali][localj].pieces.team + ' team_fill team_stroke');
+
+        // Fort cannon design
+        let fortCannon = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        fortCannon.setAttribute('d', 'M 15 12.5 Q 12.5 16 10 12.5 L 11.5 2 L 13.5 2 L 15 12.5');
+        fortCannon.setAttribute('class', this.boardArray[locali][localj].pieces.team + ' team_stroke');
+        fortCannon.style.strokeLinejoin = 'round';
+        fortCannon.style.strokeLinecap = 'round';
+        fortCannon.style.strokeWidth = '1px';
+
+        // Building the tile
+        actionTile.appendChild(fortWall);
+        actionTile.appendChild(fortTurret1);
+        actionTile.appendChild(fortTurret2);
+        actionTile.appendChild(fortTurret3);
+        actionTile.appendChild(fortTurret4);
+        actionTile.appendChild(fortCannon);
+
+        return actionTile;
+    },
+
+
+    // Method to create forest tile
+    // ---------------------------
+    createForestTile: function(actionTile, locali, localj) {
+
+        // Canopy circle design
+        let treeCanopy1 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        treeCanopy1.setAttribute('class', this.boardArray[locali][localj].pieces.team + ' team_fill team_stroke');
+        treeCanopy1.setAttribute('cx', '15');
+        treeCanopy1.setAttribute('cy', '9');
+        treeCanopy1.setAttribute('r', '5.5');
+        treeCanopy1.style.strokeWidth = '1px';
+        treeCanopy1.style.strokeLinecap = 'round';
+
+        let treeCanopy2 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        treeCanopy2.setAttribute('class', this.boardArray[locali][localj].pieces.team + ' team_stroke');
+        treeCanopy2.setAttribute('cx', '8');
+        treeCanopy2.setAttribute('cy', '10.5');
+        treeCanopy2.setAttribute('r', '4.5');
+        treeCanopy2.setAttribute('fill', 'rgb(213, 191, 163)');
+        treeCanopy2.style.strokeWidth = '1px';
+        treeCanopy2.style.strokeLinecap = 'round';
+
+        // Trunk rectangle design
+        let treeTrunk1 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        treeTrunk1.setAttribute('class', this.boardArray[locali][localj].pieces.team + ' team_stroke');
+        treeTrunk1.setAttribute('x', '14.5');
+        treeTrunk1.setAttribute('y', '15');
+        treeTrunk1.setAttribute('width', '1.5');
+        treeTrunk1.setAttribute('height', '5');
+        treeTrunk1.setAttribute('fill', 'rgb(89, 53, 20)');
+        treeTrunk1.style.strokeWidth = '1px';
+
+        let treeTrunk2 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        treeTrunk2.setAttribute('class', this.boardArray[locali][localj].pieces.team + ' team_stroke');
+        treeTrunk2.setAttribute('x', '7.5');
+        treeTrunk2.setAttribute('y', '15');
+        treeTrunk2.setAttribute('width', '1');
+        treeTrunk2.setAttribute('height', '5');
+        treeTrunk2.setAttribute('fill', 'rgb(89, 53, 20)');
+        treeTrunk2.style.strokeWidth = '1px';
+
+        // Building the tile
+        actionTile.appendChild(treeTrunk1);
+        actionTile.appendChild(treeTrunk2);
+        actionTile.appendChild(treeCanopy1);
+        actionTile.appendChild(treeCanopy2);
+        return actionTile;
+    },
+
+    // Method to create ironworks tile
+    // ---------------------------
+    createIronworksTile: function(actionTile, locali, localj) {
+
+        // Mountain background design
+        let mountainBackground = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        mountainBackground.setAttribute('d', 'M 21.5 18 L 12.5 2.5 L 3.5 18');
+        mountainBackground.setAttribute('class', this.boardArray[locali][localj].pieces.team + ' team_fill team_stroke');
+        mountainBackground.style.strokeLinejoin = 'round';
+        mountainBackground.style.strokeLinecap = 'round';
+        mountainBackground.style.strokeWidth = '1px';
+
+        // Mountain snow design
+        let mountainSnow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        mountainSnow.setAttribute('d', 'M 9.3 8 A 5 5 0 0 0 15.7 8 L 12.5 2.5 Z');
+        mountainSnow.setAttribute('class', this.boardArray[locali][localj].pieces.team + ' team_stroke');
+        mountainSnow.style.strokeLinejoin = 'round';
+        mountainSnow.style.strokeLinecap = 'round';
+        mountainSnow.setAttribute('fill', 'white');
+        mountainSnow.style.strokeWidth = '1px';
+
+        // Iron square design
+        let ironSquare = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        ironSquare.setAttribute('class', this.boardArray[locali][localj].pieces.team + ' team_stroke');
+        ironSquare.setAttribute('x', '9');
+        ironSquare.setAttribute('y', '14');
+        ironSquare.setAttribute('width', '7');
+        ironSquare.setAttribute('height', '7');
+        ironSquare.setAttribute('fill', 'silver');
+        ironSquare.style.strokeWidth = '1px';
+        ironSquare.setAttribute('rx', '1');
+        ironSquare.setAttribute('ry', '1');
+        ironSquare.style.strokeLinecap = 'round';
+
+        // Building the tile
+        actionTile.appendChild(mountainBackground);
+        actionTile.appendChild(mountainSnow);
+        actionTile.appendChild(ironSquare);
         return actionTile;
     },
 
@@ -301,7 +480,7 @@ let gameBoard = {
     // gridSize is the size of the tile, row and col depict the number of tiles on the board
     drawBoard: function(row, col, gridSize) {
         // Loop through board array to draw tiles
-        let octagonArray = [ {type: 'visible', gap: 0, width: 1, colour: 'rgb(235, 215, 195)'}, {type: 'land', gap: 6, width: 6, colour: 'rgb(213, 191, 163)'}, {type: 'land', gap: 4, width: 1.5, colour: 'rgb(138, 87, 50)'} ]
+          let octagonArray = [ {type: 'visible', gap: 0, width: 1, colour: 'rgb(235, 215, 195)'}, {type: 'land', gap: 6, width: 6, colour: 'rgb(213, 191, 163)'}, {type: 'land', gap: 4, width: 1.5, colour: 'rgb(138, 87, 50)'} ]
 
         for (var h = 0; h < octagonArray.length; h++) {
             this.drawTiles (octagonArray[h].type, canvasBoard, octagonArray[h].gap, octagonArray[h].width, octagonArray[h].colour)
@@ -319,7 +498,7 @@ let gameBoard = {
                 Xcenter = (gridSize + tileBorder * 2) * j + (gridSize/2 + boardSurround + tileBorder);
 
                 // Currently just cargo ships - other tiles to be update to svg
-                if ((this.boardArray[i][j].pieces.populatedSquare == true) && (this.boardArray[i][j].pieces.type == 'cargo')){
+                if (this.boardArray[i][j].pieces.populatedSquare == true) {
                     // Create action tile svg and add to the board
                     boardMarkNode.appendChild(this.createActionTile(i, j, gridSize, tileBorder, boardSurround));
                 }

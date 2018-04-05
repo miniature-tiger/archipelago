@@ -98,6 +98,14 @@
 
 
 /* Fort */
+
+.fort {
+    position: absolute;
+    background-color: transparent;
+    fill: lightgrey;
+    z-index: 2;
+}
+
 .square.fort {
     display: inline-block;
     position: relative;
@@ -176,10 +184,15 @@
     transform: translate(220%, -250%) rotate(-45deg) scale(2, 1);
 }
 
-
-
-
 /* forests */
+
+.forest {
+    position: absolute;
+    background-color: transparent;
+    fill: rgb(77, 210, 55);
+    z-index: 2;
+}
+
 .square.forest {
     display: inline-block;
     vertical-align: top;
@@ -221,6 +234,14 @@
 }
 
 /* ironworks */
+
+.ironworks {
+    position: absolute;
+    background-color: transparent;
+    fill: rgb(77, 210, 55);
+    z-index: 2;
+}
+
 .square.ironworks {
     display: inline-block;
     vertical-align: top;
@@ -358,8 +379,13 @@
     stroke: #14392f;
 }
 
-.teamKingdom.team_colours {
+.teamKingdom.team_stroke {
+    stroke: #251934;
+}
+
+.teamKingdom.team_fill {
     background-color: rgb(162, 236, 246);
+    fill: #7851a9;
 }
 
 .teamPirate.team_fill {
@@ -369,6 +395,14 @@
 
 .teamPirate.team_stroke {
     stroke: black;
+}
+
+.Unclaimed.team_stroke {
+    stroke: rgb(138, 87, 50);
+}
+
+.Unclaimed.team_fill {
+    fill: rgb(235, 215, 195);
 }
 
 .deg90 {
