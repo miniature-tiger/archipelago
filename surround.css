@@ -30,10 +30,10 @@ html {
     text-align: center;
     background-color: rgb(251, 242, 234);
     top: 0%;
-    left: 10%;
+    left: 6%;
     margin: 0%;
     padding: 0%;
-    width: 80%;
+    width: 88%;
     height: 8%;
     border-bottom: 1px solid grey;
 }
@@ -44,10 +44,10 @@ html {
     display: block;
     background-color: rgb(231, 175, 126);
     bottom: 0%;
-    left: 10%;
+    left: 6%;
     margin: 0%;
     padding: 0%;
-    width: 80%;
+    width: 88%;
     height: 8%;
     border-top: 1px solid grey;
 }
@@ -56,7 +56,7 @@ html {
 .over_text {
     position: fixed;
     background-color: rgb(251, 242, 234);
-    z-index: 10;
+    z-index: 20;
 }
 
 .under_text {
@@ -82,12 +82,12 @@ html {
 
 .left {
     left: 0%;
-    width: 10%;
+    width: 6%;
 }
 
 .right {
     right: 0%;
-    width: 10%;
+    width: 6%;
 }
 
 .top {
@@ -104,8 +104,7 @@ html {
 }
 
 .right.sidebar {
-    right: 0%;
-    width: 10%;
+
     border-left: 1px solid grey;
     text-align: center;
 }

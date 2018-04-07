@@ -2,6 +2,22 @@
 /* ----------------- */
 
 /* Compass circles*/
+
+.compass {
+    position: absolute;
+    background-color: rgb(246, 232, 206);
+    z-index: 1;
+
+}
+
+#needle2 {
+    position: absolute;
+    background-color: transparent;
+    z-index: 3;
+    transition: transform 1s;
+
+}
+
 .compass.outer {
     position: relative;
     top: 100px;

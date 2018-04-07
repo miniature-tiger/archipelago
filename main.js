@@ -13,7 +13,7 @@
 // Tile size (gridSize) is set here
 let row = 31, col = 31, gridSize = 22, boardShape='octagon';
 let tileBorder = 5;
-let boardSurround = 15;
+let boardSurround = 35;
 
 // boardMarkNode is board holder in document
 let boardMarkNode = document.querySelector('div.boardmark');
@@ -24,8 +24,8 @@ board.setAttribute('id', 'board');
 boardMarkNode.appendChild(board);
 // Canavs 'canvasBoard' is created and size is set dynamically
 let canvasBoard = board.getContext('2d');
-canvasBoard.canvas.width = row * (gridSize + tileBorder * 2) + boardSurround * 2;
-canvasBoard.canvas.height = col * (gridSize + tileBorder * 2) + boardSurround * 2;
+canvasBoard.canvas.width = col * (gridSize + tileBorder * 2) + boardSurround * 2;
+canvasBoard.canvas.height = row * (gridSize + tileBorder * 2) + boardSurround * 2;
 
 
 // Canavs 'activeBoard' is created and size is set dynamically
@@ -112,7 +112,7 @@ for (var iconHolder_i = 0; iconHolder_i < iconHolder.length; iconHolder_i++) {
 let windDirection = compass.largeWindChange();
 let needleDirection = compass.directionArray[windDirection].needle;
 // Transform / Transition for compass
-let needle = document.querySelector('.compass.needle');
+let needle = document.getElementById('needle2');
 needle.style.transform = 'rotate(' + needleDirection + 'deg)';
 
 
@@ -128,7 +128,7 @@ endTurn.addEventListener('click', function() {
     // Wind direction is set for next turn
     windDirection = compass.newWindDirection(windDirection);
     needleDirection = compass.directionArray[windDirection].needle;
-    needle = document.querySelector('.compass.needle');
+
     needle.style.transform = 'rotate(' + needleDirection + 'deg)';
 
     // Automated movement for pirates

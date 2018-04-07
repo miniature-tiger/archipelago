@@ -30,7 +30,7 @@
 .cargo {
     position: absolute;
     background-color: transparent;
-    z-index: 2;
+    z-index: 10;
 }
 
 /*.piece.cargo {
@@ -103,7 +103,8 @@
     position: absolute;
     background-color: transparent;
     fill: lightgrey;
-    z-index: 2;
+    z-index: 10;
+
 }
 
 .square.fort {
@@ -190,7 +191,7 @@
     position: absolute;
     background-color: transparent;
     fill: rgb(77, 210, 55);
-    z-index: 2;
+    z-index: 10;
 }
 
 .square.forest {
@@ -239,7 +240,7 @@
     position: absolute;
     background-color: transparent;
     fill: rgb(77, 210, 55);
-    z-index: 2;
+    z-index: 10;
 }
 
 .square.ironworks {
