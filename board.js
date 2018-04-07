@@ -115,8 +115,6 @@ let gameBoard = {
         this.boardArray[row-6][col-6].pieces = {populatedSquare: true, type: 'cargo', direction: '-45', used: 'unused', team: 'teamPirate'};
         this.boardArray[5][col-6].pieces = {populatedSquare: true, type: 'cargo', direction: '-135', used: 'unused', team: 'teamPirate'};
 
-        this.boardArray[row-4][boardCenter].pieces = {populatedSquare: true, type: 'cargo', direction: '135', used: 'unused', team: 'teamPirate'};
-
         // Creation of forests
         this.boardArray[boardCenter+1][col-1].pieces = {populatedSquare: true, type: 'forest', direction: '0', used: 'unused', team: 'teamOrange'};
         this.boardArray[0][boardCenter+1].pieces = {populatedSquare: true, type: 'forest', direction: '0', used: 'unused', team: 'teamLemon'};
@@ -480,11 +478,14 @@ let gameBoard = {
     // gridSize is the size of the tile, row and col depict the number of tiles on the board
     drawBoard: function(row, col, gridSize) {
         // Loop through board array to draw tiles
-          let octagonArray = [ {type: 'visible', gap: 0, width: 1, colour: 'rgb(235, 215, 195)'}, {type: 'land', gap: 6, width: 6, colour: 'rgb(213, 191, 163)'}, {type: 'land', gap: 4, width: 1.5, colour: 'rgb(138, 87, 50)'} ]
+          let octagonArray = [  {type: 'visible', gap: 0, width: 1, colour: 'rgb(235, 215, 195)', background: 'rgb(246, 232, 206)'},
+                                {type: 'land', gap: 6, width: 6, colour: 'rgb(213, 191, 163)', background: 'rgb(246, 232, 206)'},
+                                {type: 'land', gap: 4, width: 1.5, colour: 'rgb(138, 87, 50)', background: 'transparent'} ]
 
         for (var h = 0; h < octagonArray.length; h++) {
-            this.drawTiles (octagonArray[h].type, canvasBoard, octagonArray[h].gap, octagonArray[h].width, octagonArray[h].colour)
+            this.drawTiles (octagonArray[h].type, canvasBoard, octagonArray[h].gap, octagonArray[h].width, octagonArray[h].colour, octagonArray[h].background)
         }
+        this.drawCompass();
     },
 
     // New method to create the board pieces based on the boardArray using SVG
@@ -509,7 +510,7 @@ let gameBoard = {
     // Method for looping through tiles and drawing
     // --------------------------------------------
 
-    drawTiles: function(octagonType, boardLayer, ocatagonGap, octagonWidth, octagonColour) {
+    drawTiles: function(octagonType, boardLayer, ocatagonGap, octagonWidth, octagonColour, octagonBackground) {
         // Start path for each array of octagons
         boardLayer.beginPath();
         for (var i = 0; i < row; i++) {
@@ -532,8 +533,12 @@ let gameBoard = {
         }
         // Draw path for each array of octagons
         boardLayer.lineWidth = octagonWidth;
+        boardLayer.lineCap='round';
         boardLayer.strokeStyle = octagonColour;
+        boardLayer.fillStyle = octagonBackground;
         boardLayer.stroke();
+        boardLayer.fill();
+
     },
 
     // Method to set up canvas overlay layer for piece activation
@@ -544,7 +549,7 @@ let gameBoard = {
         canvasActive.clearRect(0, 0, canvasActive.canvas.width, canvasActive.canvas.height);
 
         // drawTiles is used to colour tiles on active layer
-        gameBoard.drawTiles ('active', canvasActive, 0, 1, 'rgb(255, 153, 153)');
+        gameBoard.drawTiles ('active', canvasActive, 0, 1, 'rgb(255, 153, 153)', 'transparent');
 
     },
 
@@ -558,6 +563,129 @@ let gameBoard = {
         for (var k = 1; k <= 8; k++) {
             canvasBoard.lineTo (Xcenter + (gridSize/2 + ocatagonGap) * Math.cos((k+0.5) * octagonAngle), Ycenter + (gridSize/2 + ocatagonGap) * Math.sin((k+0.5) * octagonAngle));
         }
+    },
+
+    // Method to draw compass on board
+    // -------------------------------
+    drawCompass: function() {
+
+        let compassSize = (gridSize + tileBorder * 2) * 2;
+        let Xsize = (col * (gridSize + tileBorder * 2) + boardSurround * 2);
+        let Ysize = (row * (gridSize + tileBorder * 2) + boardSurround * 2);
+        let Xcenter = (gridSize + tileBorder * 2) * (col - 3.5) + (gridSize/2 + boardSurround + tileBorder);
+        let Ycenter = (gridSize + tileBorder * 2) * (row - 3.5) + (gridSize/2 + boardSurround + tileBorder);
+
+        // Create SVG layer of same height and width as board
+        let compassLayer = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        compassLayer.setAttribute('width', col * (gridSize + tileBorder * 2) + boardSurround * 2);
+        compassLayer.setAttribute('height', row * (gridSize + tileBorder * 2) + boardSurround * 2);
+        compassLayer.setAttribute('viewBox', '0, 0, ' + (col * (gridSize + tileBorder * 2) + boardSurround * 2) +  ', ' + (row * (gridSize + tileBorder * 2) + boardSurround * 2));
+        compassLayer.setAttribute('class', 'compass');
+
+        // Compass outer circle
+        let compassOuter = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        compassOuter.setAttribute('cx', Xcenter);
+        compassOuter.setAttribute('cy', Ycenter);
+        compassOuter.setAttribute('r', compassSize);
+        compassOuter.style.strokeWidth = '1px';
+        compassOuter.setAttribute('stroke', 'rgb(235, 215, 195)');
+        compassOuter.setAttribute('fill', 'none');
+        compassOuter.style.strokeLinecap = 'round';
+
+        // Compass inner circle
+        let compassInner = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        compassInner.setAttribute('cx', Xcenter);
+        compassInner.setAttribute('cy', Ycenter);
+        compassInner.setAttribute('r', compassSize - tileBorder*2);
+        compassInner.style.strokeWidth = '1px';
+        compassInner.setAttribute('stroke', 'rgb(235, 215, 195)');
+        compassInner.setAttribute('fill', 'rgb(246, 232, 206)');
+        compassInner.style.strokeLinecap = 'round';
+
+        // Compass reading lines that stretch across board
+        let compassLines = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        compassLines.setAttribute('d', 'M ' + (Xsize - boardSurround) + ' ' + (Ysize - boardSurround) + 'L ' + boardSurround + ' ' + boardSurround + 'M ' + (Xsize - boardSurround) + ' ' + Ycenter + 'L ' + boardSurround + ' ' + Ycenter
+                                        + 'M ' + Xcenter + ' ' + (Ysize - boardSurround) + 'L ' + Xcenter + ' ' + boardSurround + 'M ' + (2 * Xcenter + boardSurround - Xsize) + ' ' + (Ysize - boardSurround) + 'L ' + (Xsize - boardSurround) + ' ' + (2 * Ycenter + boardSurround - Ysize) );
+        compassLines.style.strokeWidth = '1px';
+        compassLines.setAttribute('stroke', 'rgb(235, 215, 195)');
+        compassLines.setAttribute('opacity', '0.5');
+        compassLines.setAttribute('fill', 'none');
+        compassLines.style.strokeLinecap = 'round';
+
+        // Coloured compass points
+        let compassPointsFill = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        compassPointsFill.setAttribute('d', 'M ' + Xcenter + ' ' + Ycenter  + ' L ' + (Xcenter) + ' ' + (Ycenter - compassSize) + ' L ' + (Xcenter + gridSize/2) + ' ' + (Ycenter - gridSize/2) + 'L ' + Xcenter + ' ' + Ycenter
+                                                                            + ' L ' + (Xcenter + compassSize) + ' ' + (Ycenter) + ' L ' + (Xcenter + gridSize/2) + ' ' + (Ycenter + gridSize/2) + 'L ' + Xcenter + ' ' + Ycenter
+                                                                            + ' L ' + (Xcenter) + ' ' + (Ycenter + compassSize) + ' L ' + (Xcenter - gridSize/2) + ' ' + (Ycenter + gridSize/2) + 'L ' + Xcenter + ' ' + Ycenter
+                                                                            + ' L ' + (Xcenter - compassSize) + ' ' + (Ycenter) + ' L ' + (Xcenter - gridSize/2) + ' ' + (Ycenter - gridSize/2) + 'L ' + Xcenter + ' ' + Ycenter
+                                                                      );
+        compassPointsFill.setAttribute('fill', 'rgb(213, 191, 163)');
+
+        // Empty compass points
+        let compassPointsEmpty = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        compassPointsEmpty.setAttribute('d', 'M ' + Xcenter + ' ' + Ycenter + ' L ' + (Xcenter) + ' ' + (Ycenter - compassSize) + ' L ' + (Xcenter - gridSize/2) + ' ' + (Ycenter - gridSize/2) + 'L ' + Xcenter + ' ' + Ycenter
+                                                                            + ' L ' + (Xcenter + compassSize) + ' ' + (Ycenter) + ' L ' + (Xcenter + gridSize/2) + ' ' + (Ycenter - gridSize/2) + 'L ' + Xcenter + ' ' + Ycenter
+                                                                            + ' L ' + (Xcenter) + ' ' + (Ycenter + compassSize) + ' L ' + (Xcenter + gridSize/2) + ' ' + (Ycenter + gridSize/2) + 'L ' + Xcenter + ' ' + Ycenter
+                                                                            + ' L ' + (Xcenter - compassSize) + ' ' + (Ycenter) + ' L ' + (Xcenter - gridSize/2) + ' ' + (Ycenter + gridSize/2) + 'L ' + Xcenter + ' ' + Ycenter
+                                                                      );
+        compassPointsEmpty.setAttribute('stroke','rgb(235, 215, 195)');
+        compassPointsEmpty.setAttribute('fill', 'rgb(246, 232, 206)');
+
+        // Alternating colours of compass circle
+        let compassRing = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        let octagonAngle = (2 * Math.PI) / 8;
+        let ringPath = '';
+        for (var k = 1; k <= 8; k++) {
+            ringPath += 'M ' + Xcenter + ' ' + Ycenter + ' L ' + (Ycenter + compassSize * Math.cos((k) * octagonAngle)) + ' ' + (Ycenter + compassSize * Math.sin((k) * octagonAngle)) + ' A ' + (compassSize) + ' ' + (compassSize) + ' 0 0 0 ' + (Ycenter + compassSize * Math.cos((k-0.5) * octagonAngle)) + ' ' + (Ycenter + compassSize * Math.sin((k-0.5) * octagonAngle)) + 'L ' + Xcenter + ' ' + Ycenter + 'L ' + Xcenter + ' ' + Ycenter
+        }
+        compassRing.setAttribute('d', ringPath);
+        compassRing.setAttribute('stroke','rgb(235, 215, 195)');
+        compassRing.setAttribute('fill', 'rgb(213, 191, 163)');
+
+        // Compass needle
+        let compassNeedleBox = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        compassNeedleBox.setAttribute('width', compassSize * 2);
+        compassNeedleBox.setAttribute('height', compassSize * 2);
+        compassNeedleBox.style.top = (Ycenter - compassSize) + 'px';
+        compassNeedleBox.style.left = (Xcenter - compassSize) + 'px';
+        compassNeedleBox.setAttribute('viewBox', '0, 0, ' + compassSize * 2 +  ', ' + compassSize * 2);
+        compassNeedleBox.setAttribute('class', 'compass');
+        compassNeedleBox.setAttribute('id', 'needle2');
+
+        let compassNeedle = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        compassNeedle.setAttribute('d', 'M ' + (compassSize - 2.5) + ' ' + (tileBorder * 2) + ' L ' + (compassSize - 0.5) + ' ' + (2 * compassSize - tileBorder * 2)
+         + ' L ' + (compassSize + 0.5) + ' ' + (2 * compassSize - tileBorder * 2) + ' L ' + (compassSize + 2.5) + ' ' + (tileBorder * 2)
+         + ' L ' + (compassSize) + ' ' + (tileBorder) + ' Z');
+        compassNeedle.style.strokeWidth = '1px';
+        compassNeedle.setAttribute('opacity', '0.75');
+        compassNeedle.setAttribute('stroke', 'rgb(138, 87, 50)');
+        compassNeedle.setAttribute('stroke', '#666666');
+        compassNeedle.setAttribute('fill', '#A6A6A6');
+
+        // Compass pin (centre circle)
+        let compassCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        compassCircle.setAttribute('cx', + compassSize);
+        compassCircle.setAttribute('cy', + compassSize);
+        compassCircle.setAttribute('r', '4');
+        compassCircle.setAttribute('fill', '#666666');
+        compassCircle.setAttribute('stroke', '#666666');
+        compassCircle.style.strokeWidth = '1px';
+        compassCircle.style.strokeLinecap = 'round';
+
+        // Add all SVG elements to board
+        compassLayer.appendChild(compassRing);
+        compassLayer.appendChild(compassOuter);
+        compassLayer.appendChild(compassInner);
+        compassLayer.appendChild(compassLines);
+        compassLayer.appendChild(compassPointsFill);
+        compassLayer.appendChild(compassPointsEmpty);
+
+        compassNeedleBox.appendChild(compassNeedle);
+        compassNeedleBox.appendChild(compassCircle);
+
+        boardMarkNode.appendChild(compassLayer);
+        boardMarkNode.appendChild(compassNeedleBox);
+
     },
 
 // LAST BRACKET OF OBJECT

@@ -5,7 +5,7 @@
 .boardmark {
     position: relative;
     display: block;
-    left: 9.5%;
+    left: 9%;
     top: 6%;
     width: 88%;
     height: 1020px;
@@ -14,8 +14,8 @@
 
 #board {
     position: absolute;
-    background-color: rgb(246, 232, 206);
-    z-index: 1;
+    background-color: transparent;
+    z-index: 2;
 }
 
 #activeBoard {
