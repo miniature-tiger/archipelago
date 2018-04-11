@@ -94,10 +94,10 @@ let gameBoard = {
         this.boardArray[boardCenter][boardCenter].pieces = {populatedSquare: true, type: 'fort', direction: '0', used: 'unused', team: 'teamKingdom'};
 
         // Creation of Kingdom huts
-        this.boardArray[row-9][8].pieces = {populatedSquare: true, type: 'hut', direction: '45', used: 'unused', team: 'teamKingdom'};
+        /*this.boardArray[row-9][8].pieces = {populatedSquare: true, type: 'hut', direction: '45', used: 'unused', team: 'teamKingdom'};
         this.boardArray[8][8].pieces = {populatedSquare: true, type: 'hut', direction: '45', used: 'unused', team: 'teamKingdom'};
         this.boardArray[8][col-9].pieces = {populatedSquare: true, type: 'hut', direction: '45', used: 'unused', team: 'teamKingdom'};
-        this.boardArray[row-9][col-9].pieces = {populatedSquare: true, type: 'hut', direction: '45', used: 'unused', team: 'teamKingdom'};
+        this.boardArray[row-9][col-9].pieces = {populatedSquare: true, type: 'hut', direction: '45', used: 'unused', team: 'teamKingdom'};*/
 
         // Creation of ships
         this.boardArray[boardCenter-1][col-2].pieces = {populatedSquare: true, type: 'cargo', direction: '-90', used: 'unused', team: 'teamOrange'};
@@ -130,7 +130,7 @@ let gameBoard = {
         this.boardArray[boardCenter+1][boardCenter].pieces = {populatedSquare: true, type: 'ironworks', direction: '0', used: 'unused', team: 'Unclaimed'};
 
         // Creation of quarry
-        this.boardArray[row-6][boardCenter-1].pieces = {populatedSquare: true, type: 'quarry', direction: '0', used: 'unused', team: ''};
+        /*this.boardArray[row-6][boardCenter-1].pieces = {populatedSquare: true, type: 'quarry', direction: '0', used: 'unused', team: ''};*/
 
         // Test overlay
         /*
@@ -282,7 +282,6 @@ let gameBoard = {
     // ---------------------------
     createFortTile: function(actionTile, locali, localj) {
         // Fort turret design
-        console.log(locali, localj);
         let fortTurret1 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         fortTurret1.setAttribute('class', this.boardArray[locali][localj].pieces.team + ' team_stroke');
         fortTurret1.setAttribute('cx', '7');
@@ -572,8 +571,8 @@ let gameBoard = {
         let compassSize = (gridSize + tileBorder * 2) * 2;
         let Xsize = (col * (gridSize + tileBorder * 2) + boardSurround * 2);
         let Ysize = (row * (gridSize + tileBorder * 2) + boardSurround * 2);
-        let Xcenter = (gridSize + tileBorder * 2) * (col - 3.5) + (gridSize/2 + boardSurround + tileBorder);
-        let Ycenter = (gridSize + tileBorder * 2) * (row - 3.5) + (gridSize/2 + boardSurround + tileBorder);
+        let Xcenter = (gridSize + tileBorder * 2) * (col - 3) + (gridSize/2 + boardSurround + tileBorder);
+        let Ycenter = (gridSize + tileBorder * 2) * (row - 3) + (gridSize/2 + boardSurround + tileBorder);
 
         // Create SVG layer of same height and width as board
         let compassLayer = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -608,7 +607,7 @@ let gameBoard = {
                                         + 'M ' + Xcenter + ' ' + (Ysize - boardSurround) + 'L ' + Xcenter + ' ' + boardSurround + 'M ' + (2 * Xcenter + boardSurround - Xsize) + ' ' + (Ysize - boardSurround) + 'L ' + (Xsize - boardSurround) + ' ' + (2 * Ycenter + boardSurround - Ysize) );
         compassLines.style.strokeWidth = '1px';
         compassLines.setAttribute('stroke', 'rgb(235, 215, 195)');
-        compassLines.setAttribute('opacity', '0.5');
+        compassLines.setAttribute('opacity', '1');
         compassLines.setAttribute('fill', 'none');
         compassLines.style.strokeLinecap = 'round';
 
@@ -653,14 +652,17 @@ let gameBoard = {
         compassNeedleBox.setAttribute('id', 'needle2');
 
         let compassNeedle = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        compassNeedle.setAttribute('d', 'M ' + (compassSize - 2.5) + ' ' + (tileBorder * 2) + ' L ' + (compassSize - 0.5) + ' ' + (2 * compassSize - tileBorder * 2)
-         + ' L ' + (compassSize + 0.5) + ' ' + (2 * compassSize - tileBorder * 2) + ' L ' + (compassSize + 2.5) + ' ' + (tileBorder * 2)
+        compassNeedle.setAttribute('d', 'M ' + (compassSize - 3) + ' ' + (tileBorder * 2) + ' L ' + (compassSize - 0.5) + ' ' + (2 * compassSize - tileBorder * 2)
+         + ' L ' + (compassSize + 0.5) + ' ' + (2 * compassSize - tileBorder * 2) + ' L ' + (compassSize + 3) + ' ' + (tileBorder * 2)
          + ' L ' + (compassSize) + ' ' + (tileBorder) + ' Z');
-        compassNeedle.style.strokeWidth = '1px';
+        compassNeedle.style.strokeWidth = '0.5px';
         compassNeedle.setAttribute('opacity', '0.75');
-        compassNeedle.setAttribute('stroke', 'rgb(138, 87, 50)');
         compassNeedle.setAttribute('stroke', '#666666');
+
+        compassNeedle.setAttribute('stroke', 'rgb(138, 87, 50)');
+        compassNeedle.setAttribute('stroke', '#4b2f1b');
         compassNeedle.setAttribute('fill', '#A6A6A6');
+        compassNeedle.setAttribute('fill', 'rgb(138, 87, 50)');
 
         // Compass pin (centre circle)
         let compassCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
@@ -668,8 +670,9 @@ let gameBoard = {
         compassCircle.setAttribute('cy', + compassSize);
         compassCircle.setAttribute('r', '4');
         compassCircle.setAttribute('fill', '#666666');
-        compassCircle.setAttribute('stroke', '#666666');
-        compassCircle.style.strokeWidth = '1px';
+          compassCircle.setAttribute('fill', 'rgb(138, 87, 50)');
+        compassCircle.setAttribute('stroke', '#4b2f1b');
+        compassCircle.style.strokeWidth = '0.5px';
         compassCircle.style.strokeLinecap = 'round';
 
         // Add all SVG elements to board

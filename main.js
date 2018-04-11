@@ -100,6 +100,11 @@ for (var iconHolder_i = 0; iconHolder_i < iconHolder.length; iconHolder_i++) {
     iconHolder[iconHolder_i].style.height = 2 * gridSize + 'px';
 }
 
+// Set up of resources
+// -------------------
+resourceManagement.populateResourceDeck();
+
+
 // Set up of stock dashboard
 // -------------------------
 // Disengaged until graphics updated
@@ -205,12 +210,11 @@ boardMarkNode.addEventListener('click', function(event) {
     let xClick = event.pageX - boardMarkLeft;
     let yClick = event.pageY - boardMarkTop;
 
-
     let xClickTile = Math.floor((xClick - boardSurround) / (gridSize + tileBorder * 2));
     let yClickTile = Math.floor((yClick - boardSurround) / (gridSize + tileBorder * 2));
 
-    console.log(event.pageX, boardMarkLeft, xClick, xClickTile);
-    console.log(event.pageY, boardMarkTop, yClick, yClickTile);
+    //console.log(event.pageX, boardMarkLeft, xClick, xClickTile);
+    //console.log(event.pageY, boardMarkTop, yClick, yClickTile);
 
 /*var theBoard = document.querySelector('.boardmark');
 theBoard.addEventListener('click', function(element) {
@@ -234,7 +238,7 @@ theBoard.addEventListener('click', function(element) {
             // Redraw active tile layer after deactivation to remove activated tiles
             gameBoard.drawActiveTiles();
             pieceMovement.shipTransition();
-            //pieceMovement.landDiscovery();
+
             // Disengaged until graphics updated
             //stockDashboard.stockTake();
             //stockDashboard.drawStock();
@@ -242,10 +246,12 @@ theBoard.addEventListener('click', function(element) {
             // Resetting if second click is not valid
             pieceMovement.deactivateTiles(maxMove);
             gameBoard.drawActiveTiles();
+
+            // Resetting movement array once second click has been made (if invalid)
+            pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
+            startEnd = 'start';
         }
-        // Resetting movement array once second click has been made (whether valid or invalid)
-        pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
-        startEnd = 'start';
+
     }
 
     // "Start" piece validation on first click
@@ -262,7 +268,6 @@ theBoard.addEventListener('click', function(element) {
 
                 // Redraw gameboard to show activated tiles
                 gameBoard.drawActiveTiles();
-                console.log('drawactivetiles');
             }
         }
     }
