@@ -63,7 +63,7 @@ let pieceMovement = {
         if (displayActive) {
             gameBoard.boardArray[localStartRow][localStartCol].activeStatus = 'inactive';
         }
-         console.log(this.findPath.slice(0));
+         //console.log(this.findPath.slice(0));
     },
 
     initialisefindPath: function(localStartRow, localStartCol, localMaxMove) {
@@ -237,11 +237,11 @@ let pieceMovement = {
 
         // Calculate placement on board of start tile for move
         IDPieceStart = 'tile' + Number(this.movementArray.start.row*1000 + this.movementArray.start.col);
-        console.log(IDPieceStart);
+        // console.log(IDPieceStart);
         let chosenPiece = document.getElementById(IDPieceStart);
 
         // Allowing ship to overflow edges of its tile on transition
-        console.log(chosenPiece);
+        // console.log(chosenPiece);
         //chosenSquare.start = chosenHolding.start.parentElement;
         //chosenSquare.start.style.overflow = 'visible';
 
@@ -274,7 +274,9 @@ let pieceMovement = {
         // Reset of transitions delayed in proportion to number of moves
         setTimeout(function() {
             chosenPiece.style.transition = '';
+            pieceMovement.landDiscovery();
         }, numberOfTiles * 1000);
+
 
     },
 
@@ -284,21 +286,48 @@ let pieceMovement = {
     turnAndMove: function(n, chosenPiece, topDirection, leftDirection, rotateDirection) {
         // n is number of transition in chain
         // Transitions to be applied (added here to allow different transitions to be applied dynamically in future)
-        console.log(chosenPiece);
-        console.log(chosenPiece.style.transition);
+        //console.log(chosenPiece);
+        //console.log(chosenPiece.style.transition);
         chosenPiece.style.transition = 'transform 0.2s 0s ease-in-out, left 0.7s 0.2s ease-in-out, top 0.7s 0.2s ease-in-out';
 
         // Delayed application of transformations to give board game style move effect
         setTimeout(function() {
-             console.log(chosenPiece.style.left, chosenPiece.style.top);
+            //console.log(chosenPiece.style.left, chosenPiece.style.top);
             chosenPiece.style.left = parseFloat(chosenPiece.style.left) + (leftDirection * (gridSize + tileBorder*2)) + 'px';
             chosenPiece.style.top = parseFloat(chosenPiece.style.top) + (topDirection * (gridSize + tileBorder*2)) + 'px';
             chosenPiece.style.transform = 'rotate(' + rotateDirection + 'deg)';
         }, n * 1000);
     },
 
+    // Method to allow discovery of new land tiles
+    // -------------------------------------------
+    landDiscovery: function() {
 
+        // At end of each move check a 1x1 grid to see if the ship is next to land that is unpopulated
+        let searchDistance = 1;
+        for (var i = -searchDistance; i < searchDistance + 1; i++) {
+            if(this.movementArray.start.row+i >=0 && this.movementArray.start.row+i <row) {
+                for (var j = -searchDistance; j < searchDistance + 1; j++) {
+                    if(this.movementArray.start.col+j >=0 && this.movementArray.start.col+j <col) {
+                        // Reduces seacrh to exclude diagonals
+                        if(i == 0 || j == 0) {
+                            // Checks if tile is land and unpopulated
+                            if(gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].terrain == 'land' && !gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].pieces.populatedSquare) {
+                                // If so - picks a reource card type using resourceManagement.pickFromResourceDeck() and updates boardArray to this tile tile with unoccupied team
+                                gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].pieces = {populatedSquare: true, type: resourceManagement.pickFromResourceDeck(), direction: '0', used: 'unused', team: 'Unclaimed'};
+                                // and then creates an SVG resource tile for the land space
+                                boardMarkNode.appendChild(gameBoard.createActionTile(this.movementArray.end.row+i, this.movementArray.end.col+j, gridSize, tileBorder, boardSurround));
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
+        // Resetting movement array once second click has been made (if move valid)
+        pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
+        startEnd = 'start';
+    },
 
 // LAST BRACKET OF OBJECT
 }
