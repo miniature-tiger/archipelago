@@ -37,9 +37,16 @@ canvasActive.canvas.height = col * (gridSize + tileBorder * 2) + boardSurround *
 // ID is set with CSS styles of higher z-index and transparent background to function as overlay
 activeBoard.setAttribute('id', 'activeBoard');
 
+// Function to set up board and resource deck and allocate resources
 function boardSetUp(row, col, gridSize, boardShape) {
     gameBoard.populateBoardArray(row, col, boardShape);
     gameBoard.overlayBoardArray(row, col, boardShape);
+
+    // Set up of resources
+    resourceManagement.populateResourceDeck();
+    gameBoard.allocateStartTiles();
+
+    // Drawing of board
     gameBoard.drawBoard(row, col, gridSize);
     gameBoard.drawPieces();
 }
@@ -99,10 +106,6 @@ for (var iconHolder_i = 0; iconHolder_i < iconHolder.length; iconHolder_i++) {
     iconHolder[iconHolder_i].style.width = 1.5 * gridSize + 'px';
     iconHolder[iconHolder_i].style.height = 2 * gridSize + 'px';
 }
-
-// Set up of resources
-// -------------------
-resourceManagement.populateResourceDeck();
 
 
 // Set up of stock dashboard
