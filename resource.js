@@ -13,9 +13,10 @@ let resourceManagement = {
       // finds total number of unoccupied land tiles on board at start
       let unoccupiedIslands = this.countIslands();
       // sets number of each type of resource in deck and remainder are empty land
-      let numberIronworks = 20;
-      let numberForest = 20;
-      let numberEmpty = unoccupiedIslands - numberIronworks - numberForest;
+      let numberIronworks = 12;
+      let numberForest = 12;
+      let numberQuarry = 12;
+      let numberDesert = unoccupiedIslands - numberIronworks - numberForest - numberQuarry;
 
       // populates deck based on above numbers
       for (var i = 0; i < numberForest; i++) {
@@ -24,8 +25,11 @@ let resourceManagement = {
       for (var j = 0; j < numberForest; j++) {
           this.resourceDeck.push('ironworks');
       }
-      for (var k = 0; k < numberEmpty; k++) {
-          this.resourceDeck.push('emptyLand');
+      for (var k = 0; k < numberQuarry; k++) {
+          this.resourceDeck.push('quarry');
+      }
+      for (var l = 0; l < numberDesert; l++) {
+          this.resourceDeck.push('desert');
       }
   },
 
