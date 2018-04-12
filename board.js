@@ -130,7 +130,7 @@ let gameBoard = {
         this.boardArray[boardCenter+1][boardCenter].pieces = {populatedSquare: true, type: 'ironworks', direction: '0', used: 'unused', team: 'Unclaimed'};
 
         // Creation of quarry
-        /*this.boardArray[row-6][boardCenter-1].pieces = {populatedSquare: true, type: 'quarry', direction: '0', used: 'unused', team: ''};*/
+        this.boardArray[boardCenter][boardCenter-1].pieces = {populatedSquare: true, type: 'quarry', direction: '0', used: 'unused', team: 'teamKingdom'};
 
         // Test overlay
         /*
@@ -249,6 +249,12 @@ let gameBoard = {
         } else if (this.boardArray[locali][localj].pieces.type == 'ironworks') {
             actionTile.setAttribute('class', 'ironworks');
             this.createIronworksTile(actionTile, locali, localj);
+        } else if (this.boardArray[locali][localj].pieces.type == 'quarry') {
+            actionTile.setAttribute('class', 'quarry');
+            this.createQuarryTile(actionTile, locali, localj);
+        } else if (this.boardArray[locali][localj].pieces.type == 'desert') {
+            actionTile.setAttribute('class', 'desert');
+            this.createDesertTile(actionTile, locali, localj);
         }
 
         // tile is returned to drawBoard
@@ -434,6 +440,88 @@ let gameBoard = {
         actionTile.appendChild(ironSquare);
         return actionTile;
     },
+
+    // Method to create desert tile
+    // ---------------------------
+    createDesertTile: function(actionTile, locali, localj) {
+        // rear dune
+        let rearSandDune = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        rearSandDune.setAttribute('class', this.boardArray[locali][localj].pieces.team + ' team_fill team_stroke');
+        rearSandDune.setAttribute('d', 'M 2 13 C 3 9 6 7 9 6 L 16 13');
+        rearSandDune.style.strokeWidth = '1px';
+
+        // front dune
+        let frontSandDune = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        frontSandDune.setAttribute('d', 'M 9 18 C 10 14 13 12 16 11 L 23 18');
+        frontSandDune.setAttribute('class', this.boardArray[locali][localj].pieces.team + ' team_fill team_stroke');
+        frontSandDune.setAttribute('fill', 'white');
+        frontSandDune.style.strokeWidth = '1px';
+
+        // Building the tile
+        actionTile.appendChild(rearSandDune);
+        actionTile.appendChild(frontSandDune);
+
+        return actionTile;
+    },
+
+
+    // Method to create quarry tile
+    // ---------------------------
+    createQuarryTile: function(actionTile, locali, localj) {
+        // Pick handle rectangle
+        let pickHandle = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        pickHandle.setAttribute('class', this.boardArray[locali][localj].pieces.team + ' team_fill team_stroke');
+        pickHandle.setAttribute('d', 'M 7.5 5.7 Q 7.4 4 9.2 4 L 21.2 16 L 19.5 17.7 L 8.2 6.7 Z');
+        pickHandle.style.strokeLinejoin = 'round';
+        pickHandle.style.strokeWidth = '1px';
+
+        // Pick metal left
+        let pickLeft = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        pickLeft.setAttribute('d', 'M 8.2 7.8 Q 5.4 10.1 5.5 14.5 Q 6.8 10.9 9.5 9.1 Z');
+        pickLeft.setAttribute('class', this.boardArray[locali][localj].pieces.team + ' team_stroke');
+        pickLeft.setAttribute('fill', 'silver');
+        pickLeft.style.strokeLinejoin = 'round';
+        pickLeft.style.strokeWidth = '1px';
+
+        // Pick metal right
+        let pickRight = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        pickRight.setAttribute('d', 'M 11.3 4.7 Q 13.6 1.9 18 2 Q 14.4 3.3 12.6 6 Z');
+        pickRight.setAttribute('class', this.boardArray[locali][localj].pieces.team + ' team_stroke');
+        pickRight.setAttribute('fill', 'silver');
+        pickRight.style.strokeLinejoin = 'round';
+        pickRight.style.strokeWidth = '1px';
+
+        // Pick square
+        let pickSquare = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        pickSquare.setAttribute('d', 'M 7.5 7 L 10.3 4.2 L 13.1 7 L 10.3 9.8 Z');
+        pickSquare.setAttribute('class', this.boardArray[locali][localj].pieces.team + ' team_stroke');
+        pickSquare.setAttribute('fill', 'silver');
+        pickSquare.style.strokeLinejoin = 'round';
+        pickSquare.style.strokeWidth = '1px';
+
+        // Stone square in quarry
+        let stoneSquare = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        stoneSquare.setAttribute('class', this.boardArray[locali][localj].pieces.team + ' team_stroke');
+        stoneSquare.setAttribute('x', '5.5');
+        stoneSquare.setAttribute('y', '15.5');
+        stoneSquare.setAttribute('width', '6');
+        stoneSquare.setAttribute('height', '6');
+        stoneSquare.setAttribute('rx', '1');
+        stoneSquare.setAttribute('ry', '1');
+        stoneSquare.setAttribute('fill', 'white');
+        stoneSquare.style.strokeWidth = '1px';
+
+        // Building the tile
+        actionTile.appendChild(pickHandle);
+        actionTile.appendChild(pickLeft);
+        actionTile.appendChild(pickRight);
+        actionTile.appendChild(pickSquare);
+        actionTile.appendChild(stoneSquare);
+
+        return actionTile;
+    },
+
+
 
     // Method allows "non-specific" action tile to be created without reference to the boardArray
     // ------------------------------------------------------------------------------------------
