@@ -216,35 +216,62 @@ boardMarkNode.addEventListener('click', function(event) {
     let xClickTile = Math.floor((xClick - boardSurround) / (gridSize + tileBorder * 2));
     let yClickTile = Math.floor((yClick - boardSurround) / (gridSize + tileBorder * 2));
 
-    //console.log(event.pageX, boardMarkLeft, xClick, xClickTile);
-    //console.log(event.pageY, boardMarkTop, yClick, yClickTile);
-
-/*var theBoard = document.querySelector('.boardmark');
-theBoard.addEventListener('click', function(element) {
-    // Capturing the clicked tile information and recording moves
-
-    chosenSquare[startEnd] = element.target.closest('.square');
-    chosenHolding[startEnd] = element.target.closest('.holding');
-*/
     // Obtain details of most recent tile clicked on - separated between start and end points
+    console.log(startEnd, yClickTile, xClickTile);
     pieceMovement.captureMove(startEnd, yClickTile, xClickTile);
 
-
     // Commentary on tile clicked on
-    commentary.innerText = gameManagement.turn + ' turn: ' + pieceMovement.movementArray[startEnd].team + ' ' + pieceMovement.movementArray[startEnd].used + ' ' + pieceMovement.movementArray[startEnd].type + ' on row ' + pieceMovement.movementArray[startEnd].row + ' col ' + pieceMovement.movementArray[startEnd].col;
+    commentary.innerText = gameManagement.turn + ' turn: ' + pieceMovement.movementArray[startEnd].pieces.team + ' ' + pieceMovement.movementArray[startEnd].pieces.used + ' ' + pieceMovement.movementArray[startEnd].pieces.type + ' on row ' + pieceMovement.movementArray[startEnd].row + ' col ' + pieceMovement.movementArray[startEnd].col;
 
+    // "Start" piece validation on first click
+    if (startEnd == 'start') {
+        if (pieceMovement.movementArray[startEnd].pieces.populatedSquare) {
+            // Claiming of unclaimed resources
+            if (pieceMovement.movementArray[startEnd].pieces.category == 'Resources' && pieceMovement.movementArray[startEnd].pieces.type != 'desert' && pieceMovement.movementArray[startEnd].pieces.team == 'Unclaimed') {
+                if (pieceMovement.shipAvailable()) {
+                    // TO ADD - Check that ship has not previously landed crew somewhere
+                    startEnd  = 'end';
+                    gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].activeStatus = 'active';
+                    gameBoard.drawActiveTiles();
+                }
+
+            // Piece movement
+            } else if (pieceMovement.movementArray[startEnd].pieces.team  == gameManagement.turn && pieceMovement.movementArray[startEnd].pieces.used == 'unused') {
+                if (pieceMovement.movementArray[startEnd].pieces.type == 'cargo') {
+                    // If "Start" piece is validated startEnd gate is opened and potential tiles are activated
+                    startEnd  = 'end';
+                    pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, maxMove, true);
+                    // Redraw gameboard to show activated tiles
+                    gameBoard.drawActiveTiles();
+                }
+            }
+        }
     // Once "start" piece has been selected second click needs to be to an active "end" square
     // Piece move is then made
-    if (startEnd == 'end') {
-        if (pieceMovement.movementArray[startEnd].activeStatus == 'active') {
-            pieceMovement.deactivateTiles(maxMove);
-            // Redraw active tile layer after deactivation to remove activated tiles
-            gameBoard.drawActiveTiles();
-            pieceMovement.shipTransition();
+    } else if (startEnd == 'end') {
 
-            // Disengaged until graphics updated
-            //stockDashboard.stockTake();
-            //stockDashboard.drawStock();
+        if (pieceMovement.movementArray[startEnd].activeStatus == 'active') {
+            // Claiming of unclaimed resources
+            if (pieceMovement.movementArray[startEnd].pieces.category == 'Resources' && pieceMovement.movementArray[startEnd].pieces.type != 'desert' && pieceMovement.movementArray[startEnd].pieces.team == 'Unclaimed') {
+                pieceMovement.deactivateTiles(1);
+                gameBoard.drawActiveTiles();
+                // Calculate placement on board of resource tile to be altered
+                let IDPiece = 'tile' + Number(pieceMovement.movementArray.end.row*1000 + pieceMovement.movementArray.end.col);
+                document.getElementById(IDPiece).remove();
+                gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces.team = gameManagement.turn;
+                boardMarkNode.appendChild(gameBoard.createActionTile(pieceMovement.movementArray.end.row, pieceMovement.movementArray.end.col, gridSize, tileBorder, boardSurround));
+                startEnd = 'start';
+            // Piece movement
+            } else if (pieceMovement.movementArray.start.pieces.type == 'cargo') {
+                pieceMovement.deactivateTiles(maxMove);
+                // Redraw active tile layer after deactivation to remove activated tiles
+                gameBoard.drawActiveTiles();
+                pieceMovement.shipTransition();
+
+                // Disengaged until graphics updated
+                //stockDashboard.stockTake();
+                //stockDashboard.drawStock();
+            }
         } else {
             // Resetting if second click is not valid
             pieceMovement.deactivateTiles(maxMove);
@@ -254,25 +281,5 @@ theBoard.addEventListener('click', function(element) {
             pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
             startEnd = 'start';
         }
-
     }
-
-    // "Start" piece validation on first click
-    if (startEnd == 'start') {
-        if (pieceMovement.movementArray[startEnd].team  == gameManagement.turn && pieceMovement.movementArray[startEnd].used == 'unused') {
-            if (pieceMovement.movementArray[startEnd].type == 'cargo') {
-                startEnd  = 'end';
-            } else if (pieceMovement.movementArray[startEnd].type == 'hut') {
-                // Future update: hut actions
-            }
-            // If "Start" piece is validated potential tiles are activated
-            if (startEnd == 'end') {
-                pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, maxMove, true);
-
-                // Redraw gameboard to show activated tiles
-                gameBoard.drawActiveTiles();
-            }
-        }
-    }
-
 });

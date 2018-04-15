@@ -210,18 +210,23 @@ let pieceMovement = {
     // --------------------------
     captureMove: function(fromTo, yClickTile, xClickTile) {
         // Calculate row and column of square from id and record in movement array
+        console.log('capturemove', xClickTile);
         this.movementArray[fromTo].col = xClickTile;
         this.movementArray[fromTo].row = yClickTile;
         // Obtain board piece information and record in movement array
-        this.movementArray[fromTo].type = gameBoard.boardArray[this.movementArray[fromTo].row][this.movementArray[fromTo].col].pieces.type;
-        this.movementArray[fromTo].used = gameBoard.boardArray[this.movementArray[fromTo].row][this.movementArray[fromTo].col].pieces.used;
-        this.movementArray[fromTo].team = gameBoard.boardArray[this.movementArray[fromTo].row][this.movementArray[fromTo].col].pieces.team;
+        this.movementArray[fromTo].pieces = gameBoard.boardArray[this.movementArray[fromTo].row][this.movementArray[fromTo].col].pieces;
+        //this.movementArray[fromTo].type = gameBoard.boardArray[this.movementArray[fromTo].row][this.movementArray[fromTo].col].pieces.type;
+        //this.movementArray[fromTo].used = gameBoard.boardArray[this.movementArray[fromTo].row][this.movementArray[fromTo].col].pieces.used;
+        //this.movementArray[fromTo].team = gameBoard.boardArray[this.movementArray[fromTo].row][this.movementArray[fromTo].col].pieces.team;
         //console.log('movement array', this.movementArray);
+        //console.log('movement array .pieces', this.movementArray[fromTo].pieces);
 
         if (fromTo == 'start') {
             this.movementArray[fromTo].activeStatus = 'inactive';
-        } else {
+        } else if (this.movementArray[fromTo].pieces.category == 'Transport') {
             this.movementArray[fromTo].activeStatus = this.findPath[this.movementArray[fromTo].row][this.movementArray[fromTo].col].activeStatus;
+        } else {
+            this.movementArray[fromTo].activeStatus = gameBoard.boardArray[this.movementArray[fromTo].row][this.movementArray[fromTo].col].activeStatus;
         }
     },
 
@@ -314,7 +319,7 @@ let pieceMovement = {
                             // Checks if tile is land and unpopulated
                             if(gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].terrain == 'land' && !gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].pieces.populatedSquare) {
                                 // If so - picks a reource card type using resourceManagement.pickFromResourceDeck() and updates boardArray to this tile tile with unoccupied team
-                                gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].pieces = {populatedSquare: true, type: resourceManagement.pickFromResourceDeck(), direction: '0', used: 'unused', team: 'Unclaimed'};
+                                gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].pieces = {populatedSquare: true, category: 'Resources', type: resourceManagement.pickFromResourceDeck(), direction: '0', used: 'unused', team: 'Unclaimed'};
                                 // and then creates an SVG resource tile for the land space
                                 boardMarkNode.appendChild(gameBoard.createActionTile(this.movementArray.end.row+i, this.movementArray.end.col+j, gridSize, tileBorder, boardSurround));
                             }
@@ -327,7 +332,32 @@ let pieceMovement = {
         // Resetting movement array once second click has been made (if move valid)
         pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
         startEnd = 'start';
+        console.log('valid cargo - start');
     },
+
+    // Method to check a ship is nearby to allow resource to be settled
+    // ----------------------------------------------------------------
+    shipAvailable: function() {
+        let searchDistance = 1;
+        let result = false;
+        for (var i = -searchDistance; i < searchDistance + 1; i++) {
+            if(this.movementArray.start.row+i >=0 && this.movementArray.start.row+i <row) {
+                for (var j = -searchDistance; j < searchDistance + 1; j++) {
+                    if(this.movementArray.start.col+j >=0 && this.movementArray.start.col+j <col) {
+                        // Reduces seacrh to exclude diagonals
+                        if(i == 0 || j == 0) {
+                            // Checks if tile is ship or correct team
+                            if(gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.type == 'cargo' && gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.team == gameManagement.turn) {
+                                result = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+    },
+
 
 // LAST BRACKET OF OBJECT
 }
