@@ -3,10 +3,10 @@
 
 
 .boardmark {
-    position: relative;
+    position: absolute;
     display: block;
-    left: 9%;
-    top: 6%;
+    left: 0%;
+    top: 0%;
     width: 88%;
     height: 1020px;
     background-color: transparent;
