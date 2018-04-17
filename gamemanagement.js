@@ -6,12 +6,12 @@ let gameManagement = {
     // List of teams
     // -------------
     // Future update: set up based on user inputs for number of players and player names
-    teamArray: ['teamLime', 'teamPlum', 'teamLemon', 'teamOrange', 'teamPirate'],
+    teamArray: ['Green Team', 'Blue Team', 'Red Team', 'Orange Team', 'Pirate'],
 
     // Current turn
     // ------------
     // Future update: initialise first go randomly
-    turn: 'teamLime',
+    turn: 'Green Team',
 
     // Method to activate next turn
     // ----------------------------

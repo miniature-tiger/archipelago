@@ -354,58 +354,58 @@
 
 
 /* Team colours */
-.teamPlum.team_fill {
+.Blue.team_fill {
     background-color: #0099cc;
     fill: #0099cc;
 }
 
-.teamPlum.team_stroke {
+.Blue.team_stroke {
     stroke: #00394d;
 }
 
 
-.teamOrange.team_fill  {
+.Orange.team_fill  {
     background-color: #bd5d0f;
     fill: #bd5d0f;
 }
 
-.teamOrange.team_stroke {
+.Orange.team_stroke {
     stroke: #472306;
 }
 
-.teamLemon.team_fill {
+.Red.team_fill {
     background-color: #a52746;
     fill: #a52746;
 }
 
-.teamLemon.team_stroke {
+.Red.team_stroke {
     stroke: #3e0f1a;
 }
 
-.teamLime.team_fill {
+.Green.team_fill {
     background-color: #34987d;
     fill: #34987d;
 }
 
-.teamLime.team_stroke {
+.Green.team_stroke {
     stroke: #14392f;
 }
 
-.teamKingdom.team_stroke {
+.Kingdom.team_stroke {
     stroke: #251934;
 }
 
-.teamKingdom.team_fill {
+.Kingdom.team_fill {
     background-color: rgb(162, 236, 246);
     fill: #7851a9;
 }
 
-.teamPirate.team_fill {
+.Pirate.team_fill {
     background-color: #353839;
     fill: #353839;
 }
 
-.teamPirate.team_stroke {
+.Pirate.team_stroke {
     stroke: black;
 }
 

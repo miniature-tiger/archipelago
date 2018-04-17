@@ -23,11 +23,7 @@ let gridSize = Math.round( (mapWidth - 2*surroundSize) / ((col + 3)*1.5) );
 let tileBorder = Math.round( 0.25 * gridSize);
 let boardSurround = (mapWidth - 31 * (gridSize + tileBorder * 2))/2;
 
-console.log(surroundSize, gridSize, tileBorder, boardSurround, mapWidth, 31 * (gridSize + tileBorder * 2), window.screen.width);
-console.log(window.screen.availHeight, window.screen.height);
-
 let sideCollection = document.querySelectorAll('.left, .right');
-console.log(sideCollection);
 
 for (var a = 0; a < sideCollection.length; a++) {
   sideCollection[a].style.width = surroundSize + 'px';
@@ -40,8 +36,6 @@ for (var c = 0; c < headFootCollection.length; c++) {
     headFootCollection[c].style.width = (screenWidth - 2*surroundSize) + 'px';
     headFootCollection[c].style.left = surroundSize + 'px';
 }
-
-
 
 
 // boardMarkNode is board holder in document
@@ -170,13 +164,13 @@ endTurn.addEventListener('click', function() {
     needle.style.transform = 'rotate(' + needleDirection + 'deg)';
 
     // Automated movement for pirates
-    if(gameManagement.turn == 'teamPirate') {
+    if(gameManagement.turn == 'Pirate') {
         pirates.automatePirates();
     }
 
 
-    // Comment for next player
-    commentary.innerText = ' turn: ' + gameManagement.turn + ': click on piece';
+    // Comment bar reset
+    commentary.style.bottom = '-10%';
     // End turn button colour is changed
     endTurn.setAttribute('class', 'end_turn ' + gameManagement.turn + ' team_fill');
 
@@ -228,7 +222,6 @@ let chosenHolding = {start: '', end: ''};
 
 // commentary box - Future work: develop into illustrated commentary by side of board (with flags and pieces)
 let commentary = document.querySelector('.commentary');
-commentary.innerText = ' turn: ' + gameManagement.turn + ': click on piece'
 
 // handler for capturing clicks on board tiles
 // As the logic of this section is expanded it will be moved across into the piece movement object
@@ -247,19 +240,22 @@ boardMarkNode.addEventListener('click', function(event) {
     let yClickTile = Math.floor((yClick - boardSurround) / (gridSize + tileBorder * 2));
 
     // Obtain details of most recent tile clicked on - separated between start and end points
-    console.log(startEnd, yClickTile, xClickTile);
     pieceMovement.captureMove(startEnd, yClickTile, xClickTile);
 
-    // Commentary on tile clicked on
-    commentary.innerText = gameManagement.turn + ' turn: ' + pieceMovement.movementArray[startEnd].pieces.team + ' ' + pieceMovement.movementArray[startEnd].pieces.used + ' ' + pieceMovement.movementArray[startEnd].pieces.type + ' on row ' + pieceMovement.movementArray[startEnd].row + ' col ' + pieceMovement.movementArray[startEnd].col;
 
     // "Start" piece validation on first click
     if (startEnd == 'start') {
+        // Commentary on tile clicked on
+        commentary.innerHTML = pieceMovement.movementArray[startEnd].pieces.team + ' ' + pieceMovement.movementArray[startEnd].pieces.type;
+        commentary.style.bottom = 0;
+        commentary.appendChild(gameBoard.createActionTile(pieceMovement.movementArray[startEnd].row, pieceMovement.movementArray[startEnd].col, gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.type, 'startPiece', 10, screenWidth  * 0.4, 1.5, 0));
+
         if (pieceMovement.movementArray[startEnd].pieces.populatedSquare) {
             // Claiming of unclaimed resources
             if (pieceMovement.movementArray[startEnd].pieces.category == 'Resources' && pieceMovement.movementArray[startEnd].pieces.type != 'desert' && pieceMovement.movementArray[startEnd].pieces.team == 'Unclaimed') {
                 if (pieceMovement.shipAvailable()) {
                     // TO ADD - Check that ship has not previously landed crew somewhere
+                    commentary.innerHTML += ' <br>(click again to claim resource)';
                     startEnd  = 'end';
                     gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].activeStatus = 'active';
                     gameBoard.drawActiveTiles();
@@ -267,7 +263,8 @@ boardMarkNode.addEventListener('click', function(event) {
 
             // Piece movement
             } else if (pieceMovement.movementArray[startEnd].pieces.team  == gameManagement.turn && pieceMovement.movementArray[startEnd].pieces.used == 'unused') {
-                if (pieceMovement.movementArray[startEnd].pieces.type == 'cargo') {
+                if (pieceMovement.movementArray[startEnd].pieces.type == 'cargo ship') {
+                    commentary.innerHTML += ' <br>(click any red tile to move)';
                     // If "Start" piece is validated startEnd gate is opened and potential tiles are activated
                     startEnd  = 'end';
                     pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, maxMove, true);
@@ -279,7 +276,8 @@ boardMarkNode.addEventListener('click', function(event) {
     // Once "start" piece has been selected second click needs to be to an active "end" square
     // Piece move is then made
     } else if (startEnd == 'end') {
-
+        // Removing commentary
+        commentary.style.bottom = '-10%';
         if (pieceMovement.movementArray[startEnd].activeStatus == 'active') {
             // Claiming of unclaimed resources
             if (pieceMovement.movementArray[startEnd].pieces.category == 'Resources' && pieceMovement.movementArray[startEnd].pieces.type != 'desert' && pieceMovement.movementArray[startEnd].pieces.team == 'Unclaimed') {
@@ -289,10 +287,11 @@ boardMarkNode.addEventListener('click', function(event) {
                 let IDPiece = 'tile' + Number(pieceMovement.movementArray.end.row*1000 + pieceMovement.movementArray.end.col);
                 document.getElementById(IDPiece).remove();
                 gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces.team = gameManagement.turn;
-                boardMarkNode.appendChild(gameBoard.createActionTile(pieceMovement.movementArray.end.row, pieceMovement.movementArray.end.col, gridSize, tileBorder, boardSurround));
+                boardMarkNode.appendChild(gameBoard.createActionTile(pieceMovement.movementArray.end.row, pieceMovement.movementArray.end.col, gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces.type,
+                  'tile' + Number((pieceMovement.movementArray.end.row)*1000 + (pieceMovement.movementArray.end.col)), boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * pieceMovement.movementArray.end.row, boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * pieceMovement.movementArray.end.col, 1, gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces.direction));
                 startEnd = 'start';
             // Piece movement
-            } else if (pieceMovement.movementArray.start.pieces.type == 'cargo') {
+            } else if (pieceMovement.movementArray.start.pieces.type == 'cargo ship') {
                 pieceMovement.deactivateTiles(maxMove);
                 // Redraw active tile layer after deactivation to remove activated tiles
                 gameBoard.drawActiveTiles();
