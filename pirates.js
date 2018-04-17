@@ -77,8 +77,8 @@ let pirates = {
     populatePirateShipsArray: function() {
         for (var i = 0; i < gameBoard.boardArray.length; i++) {
             for (var j = 0; j < gameBoard.boardArray[i].length; j++) {
-                if((gameBoard.boardArray[i][j].pieces.team == 'teamPirate') && (gameBoard.boardArray[i][j].pieces.type = 'cargo')) {
-                    this.pirateShips.push({start: {row: + i, col: + j, category: 'Transport', type: 'cargo', used: 'unused', team: 'teamPirate', activeStatus: 'active'}, end: {row: + i, col: + j, type: 'no piece', used: 'unused', team: '', activeStatus: 'active'}});
+                if((gameBoard.boardArray[i][j].pieces.team == 'Pirate') && (gameBoard.boardArray[i][j].pieces.type = 'cargo ship')) {
+                    this.pirateShips.push({start: {row: + i, col: + j, category: 'Transport', type: 'cargo ship', used: 'unused', team: 'Pirate', activeStatus: 'active'}, end: {row: + i, col: + j, type: 'no piece', used: 'unused', team: '', activeStatus: 'active'}});
                 }
             }
         }
@@ -88,7 +88,7 @@ let pirates = {
 
     minCostTiles: [],
 
-    targetCargo: [],
+    targetcargo: [],
 
 
     // Method to get array of tiles in findPath with target cargo ships
@@ -97,7 +97,7 @@ let pirates = {
         this.targetCargo = [];
         for (var i = 0; i < col; i++) {
             for (var j = 0; j < row; j++) {
-                if ((pieceMovement.findPath[i][j].target == 'cargo') && (gameBoard.boardArray[i][j].pieces.team != 'teamPirate')) {
+                if ((pieceMovement.findPath[i][j].target == 'cargo ship') && (gameBoard.boardArray[i][j].pieces.team != 'Pirate')) {
                     this.targetCargo.push({row: + i, col: + j, distance: + pieceMovement.findPath[i][j].distance, moveCost: + pieceMovement.findPath[i][j].moveCost});
                 }
             }

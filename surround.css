@@ -131,19 +131,25 @@ html {
 
 /* commentary box */
 .commentary {
+
     position: fixed;
     text-align: center;
-    bottom: 2%;
-    height: 2%;
+
+    bottom: -10%;
+    height: 6%;
     width: 100%;
     left: 0%;
-    font-style: bold;
+    font-style: italic;
 
-    overflow: hidden;
-    padding: 1% 1% 1% 1%;
-    color: grey;
+
+    padding: 1% 0.5% 0.5% 0.5%;
+    color: rgb(137, 113, 82);
     font-size:0.8em;
     z-index: 15;
+    background-color: rgba(138, 87, 50, 0.1);
+    transition: bottom 0.2s ease-in-out
+
+
 }
 
 /* Side bar item holders and inner item formats*/

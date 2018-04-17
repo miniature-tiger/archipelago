@@ -128,10 +128,10 @@ let pieceMovement = {
                                           gameBoard.boardArray[localStartRow+i][localStartCol+j].activeStatus = 'active';
                                     }
                                     // Sets cargo ship tile to inactive to prevent moving there
-                                    if (gameBoard.boardArray[localStartRow+i][localStartCol+j].pieces.type == 'cargo') {
+                                    if (gameBoard.boardArray[localStartRow+i][localStartCol+j].pieces.type == 'cargo ship') {
                                         this.findPath[localStartRow+i][localStartCol+j].activeStatus = 'inactive';
                                         gameBoard.boardArray[localStartRow+i][localStartCol+j].activeStatus = 'inactive';
-                                        this.findPath[localStartRow+i][localStartCol+j].target = 'cargo';
+                                        this.findPath[localStartRow+i][localStartCol+j].target = 'cargo ship';
                                         this.findPath[localStartRow+i][localStartCol+j].team = gameBoard.boardArray[localStartRow+i][localStartCol+j].pieces.team.slice(0);
                                         //console.log(this.findPath[localStartRow+i][localStartCol+j]);
                                     }
@@ -210,7 +210,7 @@ let pieceMovement = {
     // --------------------------
     captureMove: function(fromTo, yClickTile, xClickTile) {
         // Calculate row and column of square from id and record in movement array
-        console.log('capturemove', xClickTile);
+        //console.log('capturemove', xClickTile);
         this.movementArray[fromTo].col = xClickTile;
         this.movementArray[fromTo].row = yClickTile;
         // Obtain board piece information and record in movement array
@@ -270,7 +270,7 @@ let pieceMovement = {
         }
 
         // Applying moves to game board array
-        gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces = {populatedSquare: true, type: 'cargo', direction: rotateDirection, used: 'used', team: gameManagement.turn};
+        gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces = {populatedSquare: true, type: 'cargo ship', direction: rotateDirection, used: 'used', team: gameManagement.turn};
         gameBoard.boardArray[pieceMovement.movementArray['start'].row][pieceMovement.movementArray['start'].col].pieces = {populatedSquare: false, type: 'none', direction: '', used: 'unused', team: 'none'};
 
         //Updating piece information
@@ -321,7 +321,8 @@ let pieceMovement = {
                                 // If so - picks a reource card type using resourceManagement.pickFromResourceDeck() and updates boardArray to this tile tile with unoccupied team
                                 gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].pieces = {populatedSquare: true, category: 'Resources', type: resourceManagement.pickFromResourceDeck(), direction: '0', used: 'unused', team: 'Unclaimed'};
                                 // and then creates an SVG resource tile for the land space
-                                boardMarkNode.appendChild(gameBoard.createActionTile(this.movementArray.end.row+i, this.movementArray.end.col+j, gridSize, tileBorder, boardSurround));
+                                boardMarkNode.appendChild(gameBoard.createActionTile(this.movementArray.end.row+i, this.movementArray.end.col+j, gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].pieces.type,
+                                  'tile' + Number((this.movementArray.end.row+i)*1000 + (this.movementArray.end.col+j)), boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * (this.movementArray.end.row+i), boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * (this.movementArray.end.col+j), 1, gameBoard.boardArray[this.movementArray.end.row+i][(this.movementArray.end.col+j)].pieces.direction));
                             }
                         }
                     }
@@ -332,7 +333,7 @@ let pieceMovement = {
         // Resetting movement array once second click has been made (if move valid)
         pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
         startEnd = 'start';
-        console.log('valid cargo - start');
+        //console.log('valid cargo - start');
     },
 
     // Method to check a ship is nearby to allow resource to be settled
@@ -347,7 +348,7 @@ let pieceMovement = {
                         // Reduces seacrh to exclude diagonals
                         if(i == 0 || j == 0) {
                             // Checks if tile is ship or correct team
-                            if(gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.type == 'cargo' && gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.team == gameManagement.turn) {
+                            if(gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.type == 'cargo ship' && gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.team == gameManagement.turn) {
                                 result = true;
                             }
                         }
