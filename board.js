@@ -663,11 +663,12 @@ let gameBoard = {
         }
     },
 
-    // Method to draw compass on board
-    // -------------------------------
+    // Method to draw compass and game logo on lowest layer of board
+    // -------------------------------------------------------------
     drawCompass: function() {
 
         let compassSize = (gridSize + tileBorder * 2) * 2;
+        let logoSize = (gridSize + tileBorder * 2) * 2;
         let Xsize = (col * (gridSize + tileBorder * 2) + boardSurround * 2);
         let Ysize = (row * (gridSize + tileBorder * 2) + boardSurround * 2);
         let Xcenter = (gridSize + tileBorder * 2) * (col - 3) + (gridSize/2 + boardSurround + tileBorder);
@@ -702,7 +703,7 @@ let gameBoard = {
 
         // Compass reading lines that stretch across board
         let compassLines = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        compassLines.setAttribute('d', 'M ' + (Xsize - boardSurround) + ' ' + (Ysize - boardSurround) + 'L ' + boardSurround + ' ' + boardSurround + 'M ' + (Xsize - boardSurround) + ' ' + Ycenter + 'L ' + boardSurround + ' ' + Ycenter
+        compassLines.setAttribute('d', 'M ' + (Xsize - boardSurround) + ' ' + (Ysize - boardSurround) + 'L ' + (boardSurround+logoSize*2) + ' ' + (boardSurround+logoSize*2) + 'M ' + (Xsize - boardSurround) + ' ' + Ycenter + 'L ' + boardSurround + ' ' + Ycenter
                                         + 'M ' + Xcenter + ' ' + (Ysize - boardSurround) + 'L ' + Xcenter + ' ' + boardSurround + 'M ' + (2 * Xcenter + boardSurround - Xsize) + ' ' + (Ysize - boardSurround) + 'L ' + (Xsize - boardSurround) + ' ' + (2 * Ycenter + boardSurround - Ysize) );
         compassLines.style.strokeWidth = '1px';
         compassLines.setAttribute('stroke', 'rgb(235, 215, 195)');
@@ -769,10 +770,49 @@ let gameBoard = {
         compassCircle.setAttribute('cy', + compassSize);
         compassCircle.setAttribute('r', '4');
         compassCircle.setAttribute('fill', '#666666');
-          compassCircle.setAttribute('fill', 'rgb(138, 87, 50)');
+        compassCircle.setAttribute('fill', 'rgb(138, 87, 50)');
         compassCircle.setAttribute('stroke', '#4b2f1b');
         compassCircle.style.strokeWidth = '0.5px';
         compassCircle.style.strokeLinecap = 'round';
+
+        // Game logo
+        let logoArchipelago = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        logoArchipelago.setAttribute('cx', + logoSize + boardSurround);
+        logoArchipelago.setAttribute('cy', + logoSize + boardSurround);
+        logoArchipelago.setAttribute('r', logoSize);
+        logoArchipelago.setAttribute('fill', 'none');
+        logoArchipelago.setAttribute('stroke', 'rgb(213, 191, 163)');
+        logoArchipelago.style.strokeWidth = '1px';
+        logoArchipelago.style.strokeLinecap = 'round';
+
+        let logoArchipelagoInner = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        logoArchipelagoInner.setAttribute('cx', + logoSize + boardSurround);
+        logoArchipelagoInner.setAttribute('cy', + logoSize + boardSurround);
+        logoArchipelagoInner.setAttribute('r', logoSize - 30);
+        logoArchipelagoInner.setAttribute('fill', 'none');
+        logoArchipelagoInner.setAttribute('stroke', 'rgb(213, 191, 163)');
+        logoArchipelagoInner.style.strokeWidth = '1px';
+        logoArchipelagoInner.style.strokeLinecap = 'round';
+
+        let logoText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        let logoTextPath = document.createElementNS('http://www.w3.org/2000/svg', 'textPath');
+        let logoDefsPath = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+        let logoDefsPath2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        let text = document.createTextNode('archipelago - archipelago - archipelago - ');
+
+        // Game logo text and path
+        logoDefsPath.appendChild(logoDefsPath2);
+        logoDefsPath2.setAttribute('id', 'circlePath');
+        logoDefsPath2.setAttribute('d', 'M ' + (boardSurround + 20) + ' ' + (logoSize + boardSurround) + ' A ' + (logoSize - 20) + ' ' + (logoSize - 20) + ' 0 1 1 ' + (boardSurround + 20) + ' ' + (logoSize + boardSurround + 1));
+
+        logoText.appendChild(logoTextPath);
+        logoText.setAttribute('font-size','17.3px');
+        logoText.setAttribute('stroke', 'rgb(213, 191, 163)');
+        logoTextPath.appendChild(text);
+
+        //logoDefsPath.setAttribute('path');
+        logoTextPath.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '#circlePath');
+
 
         // Add all SVG elements to board
         compassLayer.appendChild(compassRing);
@@ -782,11 +822,17 @@ let gameBoard = {
         compassLayer.appendChild(compassPointsFill);
         compassLayer.appendChild(compassPointsEmpty);
 
+        compassLayer.appendChild(logoArchipelago);
+        compassLayer.appendChild(logoArchipelagoInner);
+        compassLayer.appendChild(logoDefsPath);
+        compassLayer.appendChild(logoText);
+
         compassNeedleBox.appendChild(compassNeedle);
         compassNeedleBox.appendChild(compassCircle);
 
         boardMarkNode.appendChild(compassLayer);
         boardMarkNode.appendChild(compassNeedleBox);
+
 
     },
 

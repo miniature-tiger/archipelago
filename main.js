@@ -11,12 +11,42 @@
 // Parameters for board set up
 // Intial values for the board size and shape
 // Tile size (gridSize) is set here
-let row = 31, col = 31, gridSize = 22, boardShape='octagon';
-let tileBorder = 5;
-let boardSurround = 35;
+let row = 31, col = 31, boardShape='octagon';
+let screenWidth = window.screen.width;
+let screenHeight = window.screen.innerHeight;
+
+let surroundSize = Math.floor(0.05 * screenWidth);
+
+let mapWidth = screenWidth;
+//let gridSize = 22;
+let gridSize = Math.round( (mapWidth - 2*surroundSize) / ((col + 3)*1.5) );
+let tileBorder = Math.round( 0.25 * gridSize);
+let boardSurround = (mapWidth - 31 * (gridSize + tileBorder * 2))/2;
+
+console.log(surroundSize, gridSize, tileBorder, boardSurround, mapWidth, 31 * (gridSize + tileBorder * 2), window.screen.width);
+console.log(window.screen.availHeight, window.screen.height);
+
+let sideCollection = document.querySelectorAll('.left, .right');
+console.log(sideCollection);
+
+for (var a = 0; a < sideCollection.length; a++) {
+  sideCollection[a].style.width = surroundSize + 'px';
+}
+
+let headFootCollection = document.querySelectorAll(' .the_header, .the_footer');
+
+for (var c = 0; c < headFootCollection.length; c++) {
+
+    headFootCollection[c].style.width = (screenWidth - 2*surroundSize) + 'px';
+    headFootCollection[c].style.left = surroundSize + 'px';
+}
+
+
+
 
 // boardMarkNode is board holder in document
 let boardMarkNode = document.querySelector('div.boardmark');
+
 
 // Canvas element createed for board
 let board = document.createElement('canvas');
@@ -197,7 +227,7 @@ let chosenSquare = {start: '', end: ''};
 let chosenHolding = {start: '', end: ''};
 
 // commentary box - Future work: develop into illustrated commentary by side of board (with flags and pieces)
-let commentary = document.querySelector('.contents_box.commentary');
+let commentary = document.querySelector('.commentary');
 commentary.innerText = ' turn: ' + gameManagement.turn + ': click on piece'
 
 // handler for capturing clicks on board tiles

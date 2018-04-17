@@ -2,11 +2,12 @@
 /* ------------------------- */
 
 html {
-    background-color: rgb(254,252,250);
+    background-color: rgb(246, 232, 206);
     font-family: 'Palatino';
     margin: 0;
     color: rgb(137, 113, 82);
     font-size: 20px;
+
 }
 
 .dashboard_text {
@@ -35,7 +36,7 @@ html {
     padding: 0%;
     width: 88%;
     height: 8%;
-    border-bottom: 1px solid grey;
+
 }
 
 /* style for the footer */
@@ -49,13 +50,14 @@ html {
     padding: 0%;
     width: 88%;
     height: 8%;
-    border-top: 1px solid grey;
+
 }
 
 /* style to fix the header and footer and prevent scrolling */
 .over_text {
     position: fixed;
     background-color: rgb(251, 242, 234);
+    background-color: transparent;
     z-index: 20;
 }
 
@@ -73,6 +75,7 @@ html {
     font-size: 0.5em;
 
     background-color: rgb(251, 242, 234);
+    background-color: transparent;
     top: 0%;
     margin: 0%;
     padding: 0%;
@@ -99,13 +102,12 @@ html {
 }
 
 .left.sidebar {
-    border-right: 1px solid grey;
 
 }
 
 .right.sidebar {
 
-    border-left: 1px solid grey;
+
     text-align: center;
 }
 
@@ -129,16 +131,19 @@ html {
 
 /* commentary box */
 .commentary {
-    left: 10%;
-    bottom: 1%;
+    position: fixed;
+    text-align: center;
+    bottom: 2%;
     height: 2%;
-    width: 30%;
+    width: 100%;
+    left: 0%;
     font-style: bold;
-    text-align: left;
+
     overflow: hidden;
     padding: 1% 1% 1% 1%;
     color: grey;
-    font-size:0.6em;
+    font-size:0.8em;
+    z-index: 15;
 }
 
 /* Side bar item holders and inner item formats*/
@@ -183,8 +188,9 @@ html {
     top: 10%;
     height: 0;
     color: rgb(137, 113, 82);
-    background-color: rgb(251, 242, 234);
+    background-color: transparent;
     text-align: center;
+
 }
 
 /* Style for text under icons */
@@ -196,12 +202,14 @@ html {
     height: 35%;
     width: 100%;
     padding: 0%;
-    color: rgb(137, 113, 82);
-    background-color: rgb(251, 242, 234);
+    color: black;
+    background-color: transparent;
     text-align: center;
     overflow: hidden;
     white-space: nowrap;
-    font-size: 40%;
+    font-size: 45%;
+
+
 }
 
 /* End of turn icon */
@@ -216,7 +224,8 @@ html {
     width: 80%;
     border-radius: 50%;
     background-color: rgb(231, 190, 151);
-    border: 1px solid grey;
+    border: 1px solid black;
+
 }
 
 /* Settings icon */
@@ -231,7 +240,8 @@ html {
     width: 80%;
     border-radius: 50%;
     background-color: grey;
-    border: 1px solid rgb(251, 242, 234);
+
+
     transform:  scale(1, 1);
 }
 
@@ -243,6 +253,7 @@ html {
     width: 100%;
     background-color: grey;
     border-radius: 10%;
+
 }
 
 .teethrotate0 {
@@ -271,7 +282,7 @@ html {
     height: 70%;
     width: 70%;
     border-radius: 50%;
-    background-color: rgb(251, 242, 234);
+    background-color: rgb(246, 232, 206);
     border: 1px solid grey;
 }
 
