@@ -11,8 +11,8 @@ let stockDashboard = {
     // -------------------------------------
     // Pieces must be added in the order: Settlements, Transport, Resources
     pieceTypes: [ {type: 'fort', category: 'Settlements', maxNo: 1000},
-                  {type: 'hut', category: 'Settlements', maxNo: 1000},
-                  {type: 'cargo', category: 'Transport', maxNo: 1000},
+                  //{type: 'hut', category: 'Settlements', maxNo: 1000},
+                  {type: 'cargo ship', category: 'Transport', maxNo: 1000},
                   {type: 'forest', category: 'Resources', maxNo: 3},
                   {type: 'ironworks', category: 'Resources', maxNo: 3},
                   {type: 'quarry', category: 'Resources', maxNo: 3}],
@@ -45,7 +45,7 @@ let stockDashboard = {
                 //console.log(stockDashboard.pieceTotals[h].pieces[stockDashboard.pieceTypes[k].type]);
             }
         }
-        //console.log(stockDashboard.pieceTotals);
+        console.log(stockDashboard.pieceTotals);
     },
 
     // Method to populate stock dashboard on left-hand panel
@@ -60,11 +60,17 @@ let stockDashboard = {
             stockDashboardNode.removeChild(stockDashboardNode.firstChild);
         }
 
+        // Find array position of team
+        let a = this.pieceTotals.findIndex(i => i.team == gameManagement.turn);
+        console.log(gameManagement.turn, a);
+
         // Variable to hold current category being added to the dashboard
         let stockCategory = '';
-
+        let rotateIcon = 0;
+        let xPosition = 0;
         //Add team name?
         //let dashTeam = document.createTextNode(gameManagement.teamArray[0]);
+
 
         // Loops through all the piece types
         for (var i = 0; i < this.pieceTypes.length; i++) {
@@ -87,14 +93,25 @@ let stockDashboard = {
             divType.setAttribute('class', 'inner_item_holder');
             divCat.appendChild(divType);
 
-            let divTypeIcon = gameBoard.buildActionTile(this.pieceTypes[i].type, '0', gameManagement.teamArray[0], gridSize);
+            //let divTypeIcon = gameBoard.buildActionTile(this.pieceTypes[i].type, '0', gameManagement.teamArray[0], gridSize);
+
+            if (this.pieceTypes[i].type == 'cargo ship') {
+                rotateIcon = 90;
+                xPosition = -10;
+            } else {
+                rotateIcon = 0;
+                xPosition = 0;
+            }
+
+            let divTypeIcon = gameBoard.createActionTile(0, 0, this.pieceTypes[i].type, gameManagement.turn, 'dash_' + this.pieceTypes[i].type, 2, xPosition, 1.5, rotateIcon);
             divType.appendChild(divTypeIcon);
 
             let divForText = document.createElement('div');
             divForText.setAttribute('class', 'dashboard_text');
             divType.appendChild(divForText);
 
-            let divTypeTitle = document.createTextNode(' ' + this.pieceTypes[i].type + ': ' + this.pieceTotals[0].pieces[this.pieceTypes[i].type]);
+            //let divTypeTitle = document.createTextNode(' ' + this.pieceTypes[i].type + ': ' + this.pieceTotals[0].pieces[this.pieceTypes[i].type]);
+            let divTypeTitle = document.createTextNode(this.pieceTotals[a].pieces[this.pieceTypes[i].type]);
             divForText.appendChild(divTypeTitle);
 
             //console.log(this.pieceTypes[i].type);
