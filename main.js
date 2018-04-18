@@ -135,8 +135,8 @@ for (var iconHolder_i = 0; iconHolder_i < iconHolder.length; iconHolder_i++) {
 // Set up of stock dashboard
 // -------------------------
 // Disengaged until graphics updated
-//stockDashboard.stockTake();
-//stockDashboard.drawStock();
+stockDashboard.stockTake();
+stockDashboard.drawStock();
 
 // Set up of compass
 // -----------------
@@ -174,7 +174,9 @@ endTurn.addEventListener('click', function() {
     // End turn button colour is changed
     endTurn.setAttribute('class', 'end_turn ' + gameManagement.turn + ' team_fill');
 
-
+    // Update the stock dashboard
+    stockDashboard.stockTake();
+    stockDashboard.drawStock();
 
 });
 
@@ -248,7 +250,7 @@ boardMarkNode.addEventListener('click', function(event) {
         // Commentary on tile clicked on
         commentary.innerHTML = pieceMovement.movementArray[startEnd].pieces.team + ' ' + pieceMovement.movementArray[startEnd].pieces.type;
         commentary.style.bottom = 0;
-        commentary.appendChild(gameBoard.createActionTile(pieceMovement.movementArray[startEnd].row, pieceMovement.movementArray[startEnd].col, gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.type, 'startPiece', 10, screenWidth  * 0.4, 1.5, 0));
+        commentary.appendChild(gameBoard.createActionTile(pieceMovement.movementArray[startEnd].row, pieceMovement.movementArray[startEnd].col, gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.type, gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.team, 'startPiece', 10, screenWidth * 0.4, 1.5, 0));
 
         if (pieceMovement.movementArray[startEnd].pieces.populatedSquare) {
             // Claiming of unclaimed resources
@@ -287,7 +289,7 @@ boardMarkNode.addEventListener('click', function(event) {
                 let IDPiece = 'tile' + Number(pieceMovement.movementArray.end.row*1000 + pieceMovement.movementArray.end.col);
                 document.getElementById(IDPiece).remove();
                 gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces.team = gameManagement.turn;
-                boardMarkNode.appendChild(gameBoard.createActionTile(pieceMovement.movementArray.end.row, pieceMovement.movementArray.end.col, gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces.type,
+                boardMarkNode.appendChild(gameBoard.createActionTile(pieceMovement.movementArray.end.row, pieceMovement.movementArray.end.col, gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces.type, gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces.team,
                   'tile' + Number((pieceMovement.movementArray.end.row)*1000 + (pieceMovement.movementArray.end.col)), boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * pieceMovement.movementArray.end.row, boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * pieceMovement.movementArray.end.col, 1, gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces.direction));
                 startEnd = 'start';
             // Piece movement
@@ -297,9 +299,6 @@ boardMarkNode.addEventListener('click', function(event) {
                 gameBoard.drawActiveTiles();
                 pieceMovement.shipTransition();
 
-                // Disengaged until graphics updated
-                //stockDashboard.stockTake();
-                //stockDashboard.drawStock();
             }
         } else {
             // Resetting if second click is not valid
@@ -310,5 +309,9 @@ boardMarkNode.addEventListener('click', function(event) {
             pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
             startEnd = 'start';
         }
+
+        // Update the stock dashboard
+        stockDashboard.stockTake();
+        stockDashboard.drawStock();
     }
 });
