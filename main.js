@@ -15,10 +15,9 @@ let row = 31, col = 31, boardShape='octagon';
 let screenWidth = window.screen.width;
 let screenHeight = window.screen.innerHeight;
 
-let surroundSize = Math.floor(0.05 * screenWidth);
+let surroundSize = Math.floor(0.065 * screenWidth);
 
 let mapWidth = screenWidth;
-//let gridSize = 22;
 let gridSize = Math.round( (mapWidth - 2*surroundSize) / ((col + 3)*1.5) );
 let tileBorder = Math.round( 0.25 * gridSize);
 let boardSurround = (mapWidth - 31 * (gridSize + tileBorder * 2))/2;
@@ -29,7 +28,7 @@ for (var a = 0; a < sideCollection.length; a++) {
   sideCollection[a].style.width = surroundSize + 'px';
 }
 
-let headFootCollection = document.querySelectorAll(' .the_header, .the_footer');
+let headFootCollection = document.querySelectorAll(' .the_header, .the_footer, .commentary');
 
 for (var c = 0; c < headFootCollection.length; c++) {
 
@@ -132,11 +131,21 @@ for (var iconHolder_i = 0; iconHolder_i < iconHolder.length; iconHolder_i++) {
 }
 
 
+
 // Set up of stock dashboard
 // -------------------------
-// Disengaged until graphics updated
+stockDashboard.populateGoodsTotals();
+stockDashboard.newTurnGoods();
 stockDashboard.stockTake();
 stockDashboard.drawStock();
+
+// Set up of goods dashboard
+// -------------------------
+
+
+stockDashboard.goodsStockTake();
+
+
 
 // Set up of compass
 // -----------------
@@ -174,9 +183,17 @@ endTurn.addEventListener('click', function() {
     // End turn button colour is changed
     endTurn.setAttribute('class', 'end_turn ' + gameManagement.turn + ' team_fill');
 
+
+    // Manage goods
+    stockDashboard.newTurnGoods();
+
     // Update the stock dashboard
     stockDashboard.stockTake();
     stockDashboard.drawStock();
+
+    // Update the goods dashboard
+    stockDashboard.goodsStockTake();
+    
 
 });
 
@@ -250,7 +267,7 @@ boardMarkNode.addEventListener('click', function(event) {
         // Commentary on tile clicked on
         commentary.innerHTML = pieceMovement.movementArray[startEnd].pieces.team + ' ' + pieceMovement.movementArray[startEnd].pieces.type;
         commentary.style.bottom = 0;
-        commentary.appendChild(gameBoard.createActionTile(pieceMovement.movementArray[startEnd].row, pieceMovement.movementArray[startEnd].col, gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.type, gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.team, 'startPiece', 10, screenWidth * 0.4, 1.5, 0));
+        commentary.appendChild(gameBoard.createActionTile(pieceMovement.movementArray[startEnd].row, pieceMovement.movementArray[startEnd].col, gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.type, gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.team, 'startPiece', 10, screenWidth * 0.35, 1.5, 0));
 
         if (pieceMovement.movementArray[startEnd].pieces.populatedSquare) {
             // Claiming of unclaimed resources

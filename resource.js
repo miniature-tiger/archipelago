@@ -20,16 +20,16 @@ let resourceManagement = {
 
         // populates deck based on above numbers
         for (var i = 0; i < numberForest; i++) {
-            this.resourceDeck.push('forest');
+            this.resourceDeck.push({type: 'forest', goods: 'wood'});
         }
         for (var j = 0; j < numberForest; j++) {
-            this.resourceDeck.push('ironworks');
+            this.resourceDeck.push({type: 'ironworks', goods: 'iron'});
         }
         for (var k = 0; k < numberQuarry; k++) {
-            this.resourceDeck.push('quarry');
+            this.resourceDeck.push({type: 'quarry', goods: 'stone'});
         }
         for (var l = 0; l < numberDesert; l++) {
-            this.resourceDeck.push('desert');
+            this.resourceDeck.push({type: 'desert', goods: 'none'});
         }
     },
 
