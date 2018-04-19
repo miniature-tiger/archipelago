@@ -78,7 +78,7 @@ let pirates = {
         for (var i = 0; i < gameBoard.boardArray.length; i++) {
             for (var j = 0; j < gameBoard.boardArray[i].length; j++) {
                 if((gameBoard.boardArray[i][j].pieces.team == 'Pirate') && (gameBoard.boardArray[i][j].pieces.type = 'cargo ship')) {
-                    this.pirateShips.push({start: {row: + i, col: + j, category: 'Transport', type: 'cargo ship', used: 'unused', team: 'Pirate', activeStatus: 'active'}, end: {row: + i, col: + j, type: 'no piece', used: 'unused', team: '', activeStatus: 'active'}});
+                    this.pirateShips.push({start: {row: + i, col: + j, pieces: gameBoard.boardArray[i][j].pieces}, end: {row: + i, col: + j}});
                 }
             }
         }
