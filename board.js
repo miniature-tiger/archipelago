@@ -91,13 +91,14 @@ let gameBoard = {
         this.boardArray[0][boardCenter].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '180', used: 'unused', team: 'Red Team', goods: 'none', stock: 0};
         this.boardArray[row-1][boardCenter].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', team: 'Green Team', goods: 'none', stock: 0};
         this.boardArray[boardCenter][0].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '90', used: 'unused', team: 'Blue Team', goods: 'none', stock: 0};
-        this.boardArray[boardCenter][boardCenter].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', team: 'Kingdom', goods: 'none', stock: 0};
 
-        // Creation of Kingdom huts
-        /*this.boardArray[row-9][8].pieces = {populatedSquare: true, category: 'Settlements', type: 'hut', direction: '45', used: 'unused', team: 'Kingdom', goods: 'none', stock: 0};
-        this.boardArray[8][8].pieces = {populatedSquare: true, category: 'Settlements', type: 'hut', direction: '45', used: 'unused', team: 'Kingdom', goods: 'none', stock: 0};
-        this.boardArray[8][col-9].pieces = {populatedSquare: true, category: 'Settlements', type: 'hut', direction: '45', used: 'unused', team: 'Kingdom', goods: 'none', stock: 0};
-        this.boardArray[row-9][col-9].pieces = {populatedSquare: true, category: 'Settlements', type: 'hut', direction: '45', used: 'unused', team: 'Kingdom', goods: 'none', stock: 0};*/
+
+        // Creation of Kingdom forts
+        this.boardArray[boardCenter][boardCenter].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', team: 'Kingdom', goods: 'none', stock: 0};
+        this.boardArray[row-9][8].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', team: 'Kingdom', goods: 'none', stock: 0};
+        this.boardArray[8][8].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', team: 'Kingdom', goods: 'none', stock: 0};
+        this.boardArray[8][col-9].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', team: 'Kingdom', goods: 'none', stock: 0};
+        this.boardArray[row-9][col-9].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', team: 'Kingdom', goods: 'none', stock: 0};
 
         // Creation of ships
         this.boardArray[boardCenter-1][col-2].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-90', used: 'unused', team: 'Orange Team', goods: 'none', stock: 0};

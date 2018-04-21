@@ -193,7 +193,7 @@ endTurn.addEventListener('click', function() {
 
     // Update the goods dashboard
     stockDashboard.goodsStockTake();
-    
+
 
 });
 
@@ -266,29 +266,61 @@ boardMarkNode.addEventListener('click', function(event) {
     if (startEnd == 'start') {
         // Commentary on tile clicked on
         commentary.innerHTML = pieceMovement.movementArray[startEnd].pieces.team + ' ' + pieceMovement.movementArray[startEnd].pieces.type;
+        if (pieceMovement.movementArray[startEnd].pieces.stock > 0) {
+              commentary.innerHTML += ' - ' + pieceMovement.movementArray[startEnd].pieces.goods + ": " + pieceMovement.movementArray[startEnd].pieces.stock;
+        }
         commentary.style.bottom = 0;
-        commentary.appendChild(gameBoard.createActionTile(pieceMovement.movementArray[startEnd].row, pieceMovement.movementArray[startEnd].col, gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.type, gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.team, 'startPiece', 10, screenWidth * 0.35, 1.5, 0));
-
+        commentary.appendChild(gameBoard.createActionTile(pieceMovement.movementArray[startEnd].row, pieceMovement.movementArray[startEnd].col, gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.type, gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.team, 'startPiece', 10, screenWidth * 0.25, 1.5, 0));
+        commentary.appendChild(gameBoard.createActionTile(pieceMovement.movementArray[startEnd].row, pieceMovement.movementArray[startEnd].col, gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.type, gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.team, 'startPiece', 10, screenWidth * 0.6, 1.5, 0));
         if (pieceMovement.movementArray[startEnd].pieces.populatedSquare) {
             // Claiming of unclaimed resources
             if (pieceMovement.movementArray[startEnd].pieces.category == 'Resources' && pieceMovement.movementArray[startEnd].pieces.type != 'desert' && pieceMovement.movementArray[startEnd].pieces.team == 'Unclaimed') {
-                if (pieceMovement.shipAvailable()) {
+                if (pieceMovement.shipAvailable('crew') == 'crew') {
                     // TO ADD - Check that ship has not previously landed crew somewhere
-                    commentary.innerHTML += ' <br>(click again to claim resource)';
-                    startEnd  = 'end';
-                    gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].activeStatus = 'active';
+                    commentary.innerHTML += ' <br>Click ship to land team and claim resource';
+                    startEnd = 'end';
                     gameBoard.drawActiveTiles();
+                }
+            // Loading of a ship
+          } else if (((pieceMovement.movementArray.start.pieces.category == 'Resources' && pieceMovement.movementArray.start.pieces.type != 'desert') || pieceMovement.movementArray.start.pieces.category == 'Settlements') && pieceMovement.movementArray[startEnd].pieces.team == gameManagement.turn) {
+                if (pieceMovement.shipAvailable(pieceMovement.movementArray.start.pieces.goods) == 'compatible') {
+                    if (pieceMovement.movementArray.start.pieces.stock > 0) {
+                        commentary.innerHTML += ' <br>Click ship to load goods';
+                        startEnd = 'end';
+                        gameBoard.drawActiveTiles();
+                    } else if (pieceMovement.movementArray.start.pieces.stock == 0) {
+                        commentary.innerHTML += ' <br>No goods to be loaded';
+                    }
+                } else if (pieceMovement.shipAvailable(pieceMovement.movementArray.start.pieces.goods) == 'incompatible') {
+                    commentary.innerHTML += ' <br>Docked ship already carrying different goods';
                 }
 
             // Piece movement
-            } else if (pieceMovement.movementArray[startEnd].pieces.team  == gameManagement.turn && pieceMovement.movementArray[startEnd].pieces.used == 'unused') {
+            } else if (pieceMovement.movementArray[startEnd].pieces.team == gameManagement.turn && pieceMovement.movementArray[startEnd].pieces.used == 'unused') {
                 if (pieceMovement.movementArray[startEnd].pieces.type == 'cargo ship') {
-                    commentary.innerHTML += ' <br>(click any red tile to move)';
+                    commentary.innerHTML += ' <br>Click any red tile to move';
                     // If "Start" piece is validated startEnd gate is opened and potential tiles are activated
-                    startEnd  = 'end';
+                    startEnd = 'end';
                     pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, maxMove, true);
                     // Redraw gameboard to show activated tiles
                     gameBoard.drawActiveTiles();
+                }
+            }
+
+            // Unloading of a ship
+            if (pieceMovement.movementArray.start.pieces.team == gameManagement.turn && pieceMovement.movementArray.start.pieces.type == 'cargo ship' && pieceMovement.movementArray.start.pieces.stock > 0) {
+                let depotSearch = pieceMovement.depotAvailable(pieceMovement.movementArray.start.pieces.goods);
+                if (depotSearch.includes(pieceMovement.movementArray.start.pieces.goods) || depotSearch.includes('fort compatible')) {
+                    if (pieceMovement.movementArray.start.pieces.used == 'unused') {
+                        commentary.innerHTML += ' or unload goods';
+                    } else {
+                        commentary.innerHTML += ' <br>Click red tile to unload goods';
+                    }
+                    startEnd = 'end';
+                    // Redraw gameboard to show activated tiles
+                    gameBoard.drawActiveTiles();
+                } else if (depotSearch.includes('fort incompatible') && pieceMovement.movementArray.start.pieces.used == 'used') {
+                    commentary.innerHTML += ' <br>Fort can only hold one goods type';
                 }
             }
         }
@@ -297,18 +329,44 @@ boardMarkNode.addEventListener('click', function(event) {
     } else if (startEnd == 'end') {
         // Removing commentary
         commentary.style.bottom = '-10%';
-        if (pieceMovement.movementArray[startEnd].activeStatus == 'active') {
+        if (pieceMovement.movementArray.end.activeStatus == 'active') {
             // Claiming of unclaimed resources
-            if (pieceMovement.movementArray[startEnd].pieces.category == 'Resources' && pieceMovement.movementArray[startEnd].pieces.type != 'desert' && pieceMovement.movementArray[startEnd].pieces.team == 'Unclaimed') {
+            if (pieceMovement.movementArray.end.pieces.category == 'Transport' && pieceMovement.movementArray.start.pieces.type != 'desert' && pieceMovement.movementArray.start.pieces.team == 'Unclaimed') {
                 pieceMovement.deactivateTiles(1);
                 gameBoard.drawActiveTiles();
                 // Calculate placement on board of resource tile to be altered
-                let IDPiece = 'tile' + Number(pieceMovement.movementArray.end.row*1000 + pieceMovement.movementArray.end.col);
+                let IDPiece = 'tile' + Number(pieceMovement.movementArray.start.row*1000 + pieceMovement.movementArray.start.col);
                 document.getElementById(IDPiece).remove();
-                gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces.team = gameManagement.turn;
-                boardMarkNode.appendChild(gameBoard.createActionTile(pieceMovement.movementArray.end.row, pieceMovement.movementArray.end.col, gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces.type, gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces.team,
-                  'tile' + Number((pieceMovement.movementArray.end.row)*1000 + (pieceMovement.movementArray.end.col)), boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * pieceMovement.movementArray.end.row, boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * pieceMovement.movementArray.end.col, 1, gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces.direction));
+                gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.team = gameManagement.turn;
+                boardMarkNode.appendChild(gameBoard.createActionTile(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.type, gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.team,
+                  'tile' + Number((pieceMovement.movementArray.start.row)*1000 + (pieceMovement.movementArray.start.col)), boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * pieceMovement.movementArray.start.row, boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * pieceMovement.movementArray.start.col, 1, gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.direction));
                 startEnd = 'start';
+
+            // Loading of goods
+            } else if ((pieceMovement.movementArray.start.pieces.category == 'Resources' || pieceMovement.movementArray.start.pieces.category == 'Settlements') && pieceMovement.movementArray.end.pieces.type == 'cargo ship') {
+                pieceMovement.deactivateTiles(1);
+                gameBoard.drawActiveTiles();
+                loadingStock = gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.stock;
+                loadingGoods = gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.goods;
+                gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.stock = 0;
+                if (gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.category == 'Settlements') {
+                    gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.goods = 'none';
+                }
+                gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces.stock += loadingStock;
+                gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces.goods = loadingGoods;
+
+            // Unloading of goods
+            } else if (pieceMovement.movementArray.start.pieces.type == 'cargo ship' && (pieceMovement.movementArray.end.pieces.type == 'fort' || pieceMovement.movementArray.end.pieces.category == 'Resources')) {
+                pieceMovement.deactivateTiles(maxMove);
+                gameBoard.drawActiveTiles();
+                loadingStock = gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.stock;
+                loadingGoods = gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.goods;
+                gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.stock = 0;
+                gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.goods = 'none';
+                gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces.stock += loadingStock;
+                gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces.goods = loadingGoods;
+
+
             // Piece movement
             } else if (pieceMovement.movementArray.start.pieces.type == 'cargo ship') {
                 pieceMovement.deactivateTiles(maxMove);
