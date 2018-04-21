@@ -33,6 +33,7 @@ https://miniature-tiger.github.io/archipelago/
 Resources
 * Add Resource tiles (forest, ironworks, flax, gold etc) - in progress: forest and ironworks added
 * Discovery of resource tiles - COMPLETE
+* Claiming of resource tiles - COMPLETE
 * Dashboard of player pieces - COMPLETE
 
 Goods
