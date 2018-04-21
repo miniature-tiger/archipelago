@@ -59,97 +59,99 @@ let stockDashboard = {
             stockDashboardNode.removeChild(stockDashboardNode.firstChild);
         }
 
-        // Variable to hold current category being added to the dashboard
-        let stockCategory = '';
+        if (gameManagement.turn != 'Pirate') {
+            // Variable to hold current category being added to the dashboard
+            let stockCategory = '';
 
-        let rotateIcon = 0;
-        let xPosition = 0;
+            let rotateIcon = 0;
+            let xPosition = 0;
 
-        // Loops through all the piece types
-        for (var k = 0; k < this.pieceTypes.length; k++) {
-            //Sets counter to zero
-            let counter = 0;
-            // Icon setting base on piece type
-            if (this.pieceTypes[k].type == 'cargo ship') {
-                rotateIcon = 90;
-                xPosition = -8;
-            } else {
-                rotateIcon = 0;
-                xPosition = 0;
-            }
-            // Check if a new category is to be created
-            if (this.pieceTypes[k].category != stockCategory) {
-                stockCategory = this.pieceTypes[k].category;
+            // Loops through all the piece types
+            for (var k = 0; k < this.pieceTypes.length; k++) {
+                //Sets counter to zero
+                let counter = 0;
+                // Icon setting base on piece type
+                if (this.pieceTypes[k].type == 'cargo ship') {
+                    rotateIcon = 90;
+                    xPosition = -8;
+                } else {
+                    rotateIcon = 0;
+                    xPosition = 0;
+                }
+                // Check if a new category is to be created
+                if (this.pieceTypes[k].category != stockCategory) {
+                    stockCategory = this.pieceTypes[k].category;
 
-                // Div to hold category is created and category title added
-                var divCat = document.createElement('div');
-                divCat.setAttribute('class', 'item_holder');
-                stockDashboardNode.appendChild(divCat);
-                var divCatTitle = document.createTextNode(stockCategory);
-                divCat.appendChild(divCatTitle);
-            }
+                    // Div to hold category is created and category title added
+                    var divCat = document.createElement('div');
+                    divCat.setAttribute('class', 'item_holder');
+                    stockDashboardNode.appendChild(divCat);
+                    var divCatTitle = document.createTextNode(stockCategory);
+                    divCat.appendChild(divCatTitle);
+                }
 
-            // Loop through boardArray
-            for (var i = 0; i < gameBoard.boardArray.length; i++) {
-                for (var j = 0; j < gameBoard.boardArray[i].length; j++) {
-                    if(gameBoard.boardArray[i][j].pieces.team == gameManagement.turn) {
-                        if(gameBoard.boardArray[i][j].pieces.type == stockDashboard.pieceTypes[k].type) {
-                            // Div to hold piece type is created and icon added
-                            let divType = document.createElement('div');
-                            divType.setAttribute('class', 'inner_item_holder');
-                            divCat.appendChild(divType);
-                            // Icon added
-                            let divTypeIcon = gameBoard.createActionTile(0, 0, this.pieceTypes[k].type, gameManagement.turn, 'dash_' + this.pieceTypes[k].type, 2, xPosition, 1.5, rotateIcon);
-                            divType.appendChild(divTypeIcon);
+                // Loop through boardArray
+                for (var i = 0; i < gameBoard.boardArray.length; i++) {
+                    for (var j = 0; j < gameBoard.boardArray[i].length; j++) {
+                        if(gameBoard.boardArray[i][j].pieces.team == gameManagement.turn) {
+                            if(gameBoard.boardArray[i][j].pieces.type == stockDashboard.pieceTypes[k].type) {
+                                // Div to hold piece type is created and icon added
+                                let divType = document.createElement('div');
+                                divType.setAttribute('class', 'inner_item_holder');
+                                divCat.appendChild(divType);
+                                // Icon added
+                                let divTypeIcon = gameBoard.createActionTile(0, 0, this.pieceTypes[k].type, gameManagement.turn, 'dash_' + this.pieceTypes[k].type, 2, xPosition, 1.5, rotateIcon);
+                                divType.appendChild(divTypeIcon);
 
-                            let divForText = document.createElement('div');
-                            divForText.setAttribute('class', 'dashboard_text');
-                            divType.appendChild(divForText);
+                                let divForText = document.createElement('div');
+                                divForText.setAttribute('class', 'dashboard_text');
+                                divType.appendChild(divForText);
 
-                            //let divTypeTitle = document.createTextNode(' ' + this.pieceTypes[i].type + ': ' + this.pieceTotals[0].pieces[this.pieceTypes[i].type]);
-                            let divTypeTitle = document.createTextNode('');
-                            divForText.appendChild(divTypeTitle);
+                                //let divTypeTitle = document.createTextNode(' ' + this.pieceTypes[i].type + ': ' + this.pieceTotals[0].pieces[this.pieceTypes[i].type]);
+                                let divTypeTitle = document.createTextNode('');
+                                divForText.appendChild(divTypeTitle);
 
-                            let divForStock = document.createElement('div');
-                            divForStock.setAttribute('class', 'stock_item_holder');
-                            divCat.appendChild(divForStock);
+                                let divForStock = document.createElement('div');
+                                divForStock.setAttribute('class', 'stock_item_holder');
+                                divCat.appendChild(divForStock);
 
-                            if (this.pieceTypes[k].category != 'Resources' && gameBoard.boardArray[i][j].pieces.stock == 0) {
-                                let divStockTitle = document.createTextNode('no cargo');
-                                divForStock.appendChild(divStockTitle);
-                            } else {
-                                let divStockTitle = document.createTextNode(gameBoard.boardArray[i][j].pieces.goods + ': ' + gameBoard.boardArray[i][j].pieces.stock);
-                                divForStock.appendChild(divStockTitle);
+                                if (this.pieceTypes[k].category != 'Resources' && gameBoard.boardArray[i][j].pieces.stock == 0) {
+                                    let divStockTitle = document.createTextNode('no cargo');
+                                    divForStock.appendChild(divStockTitle);
+                                } else {
+                                    let divStockTitle = document.createTextNode(gameBoard.boardArray[i][j].pieces.goods + ': ' + gameBoard.boardArray[i][j].pieces.stock);
+                                    divForStock.appendChild(divStockTitle);
+                                }
+                                counter += 1;
                             }
-                            counter += 1;
                         }
                     }
                 }
-            }
-            if (counter == 0) {
-                // Div to hold piece type is created and icon added
-                let divType = document.createElement('div');
-                divType.setAttribute('class', 'inner_item_holder');
-                divCat.appendChild(divType);
-                // Icon added
-                let divTypeIcon = gameBoard.createActionTile(0, 0, this.pieceTypes[k].type, "Unclaimed", 'dash_' + this.pieceTypes[k].type, 2, xPosition, 1.5, rotateIcon);
-                divType.appendChild(divTypeIcon);
+                if (counter == 0) {
+                    // Div to hold piece type is created and icon added
+                    let divType = document.createElement('div');
+                    divType.setAttribute('class', 'inner_item_holder');
+                    divCat.appendChild(divType);
+                    // Icon added
+                    let divTypeIcon = gameBoard.createActionTile(0, 0, this.pieceTypes[k].type, "Unclaimed", 'dash_' + this.pieceTypes[k].type, 2, xPosition, 1.5, rotateIcon);
+                    divType.appendChild(divTypeIcon);
 
-                let divForText = document.createElement('div');
-                divForText.setAttribute('class', 'dashboard_text');
-                divType.appendChild(divForText);
+                    let divForText = document.createElement('div');
+                    divForText.setAttribute('class', 'dashboard_text');
+                    divType.appendChild(divForText);
 
-                //let divTypeTitle = document.createTextNode(' ' + this.pieceTypes[i].type + ': ' + this.pieceTotals[0].pieces[this.pieceTypes[i].type]);
-                let divTypeTitle = document.createTextNode('');
-                divForText.appendChild(divTypeTitle);
+                    //let divTypeTitle = document.createTextNode(' ' + this.pieceTypes[i].type + ': ' + this.pieceTotals[0].pieces[this.pieceTypes[i].type]);
+                    let divTypeTitle = document.createTextNode('');
+                    divForText.appendChild(divTypeTitle);
 
-                let divForStock = document.createElement('div');
-                divForStock.setAttribute('class', 'stock_item_holder');
-                divCat.appendChild(divForStock);
+                    let divForStock = document.createElement('div');
+                    divForStock.setAttribute('class', 'stock_item_holder');
+                    divCat.appendChild(divForStock);
 
-                //let arrayPosition = this.pieceTypes.findIndex(fI => fI.type == gameManagement.turn);
-                let divStockTitle = document.createTextNode('no ' + this.pieceTypes[k].goods);
-                divForStock.appendChild(divStockTitle);
+                    //let arrayPosition = this.pieceTypes.findIndex(fI => fI.type == gameManagement.turn);
+                    let divStockTitle = document.createTextNode('no ' + this.pieceTypes[k].goods);
+                    divForStock.appendChild(divStockTitle);
+                }
             }
         }
     },

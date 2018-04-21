@@ -223,12 +223,11 @@ let pieceMovement = {
 
         if (fromTo == 'start') {
             this.movementArray[fromTo].activeStatus = 'inactive';
-        } else if (this.movementArray[fromTo].pieces.category == 'Transport') {
+        } else if (this.movementArray.start.pieces.category == 'Transport' && !this.movementArray.end.pieces.populatedSquare) {
             this.movementArray[fromTo].activeStatus = this.findPath[this.movementArray[fromTo].row][this.movementArray[fromTo].col].activeStatus;
         } else {
             this.movementArray[fromTo].activeStatus = gameBoard.boardArray[this.movementArray[fromTo].row][this.movementArray[fromTo].col].activeStatus;
         }
-        console.log(this.movementArray);
     },
 
     // Method for ship movement and transition
@@ -271,8 +270,8 @@ let pieceMovement = {
         }
 
         // Applying moves to game board array
-        gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces = {populatedSquare: true, type: this.movementArray.start.pieces.type, direction: rotateDirection, used: 'used', team: this.movementArray.start.pieces.team, goods: this.movementArray.start.pieces.goods, stock: this.movementArray.start.pieces.stock};
-        gameBoard.boardArray[pieceMovement.movementArray['start'].row][pieceMovement.movementArray['start'].col].pieces = {populatedSquare: false, type: 'none', direction: '', used: 'unused', team: 'none', goods: 'none', stock: 0};
+        gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces = {populatedSquare: true, category: this.movementArray.start.pieces.category, type: this.movementArray.start.pieces.type, direction: rotateDirection, used: 'used', team: this.movementArray.start.pieces.team, goods: this.movementArray.start.pieces.goods, stock: this.movementArray.start.pieces.stock};
+        gameBoard.boardArray[pieceMovement.movementArray['start'].row][pieceMovement.movementArray['start'].col].pieces = {populatedSquare: false, category: '', type: 'no piece', direction: '', used: 'unused', team: '', goods: 'none', stock: 0};
 
         //Updating piece information
         chosenPiece.setAttribute('id', 'tile' + Number(pieceMovement.movementArray.end.row*1000 + pieceMovement.movementArray.end.col));
@@ -340,9 +339,9 @@ let pieceMovement = {
 
     // Method to check a ship is nearby to allow resource to be settled
     // ----------------------------------------------------------------
-    shipAvailable: function() {
+    shipAvailable: function(searchType) {
         let searchDistance = 1;
-        let result = false;
+        let result = 'no ship';
         for (var i = -searchDistance; i < searchDistance + 1; i++) {
             if(this.movementArray.start.row+i >=0 && this.movementArray.start.row+i <row) {
                 for (var j = -searchDistance; j < searchDistance + 1; j++) {
@@ -351,7 +350,44 @@ let pieceMovement = {
                         if(i == 0 || j == 0) {
                             // Checks if tile is ship or correct team
                             if(gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.type == 'cargo ship' && gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.team == gameManagement.turn) {
-                                result = true;
+                                if (searchType == 'crew') {
+                                    result = 'crew';
+                                    gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].activeStatus = 'active';
+                                } else if (gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.goods == 'none' || gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.goods == searchType) {
+                                    result = 'compatible';
+                                    gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].activeStatus = 'active';
+                                } else {
+                                    result = 'incompatible';
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+    },
+
+    // Method to check if an unloading point is available
+    // --------------------------------------------------
+    depotAvailable: function(searchType) {
+        let searchDistance = 1;
+        let result = [];
+        for (var i = -searchDistance; i < searchDistance + 1; i++) {
+            if(this.movementArray.start.row+i >=0 && this.movementArray.start.row+i <row) {
+                for (var j = -searchDistance; j < searchDistance + 1; j++) {
+                    if(this.movementArray.start.col+j >=0 && this.movementArray.start.col+j <col) {
+                        // Reduces seacrh to exclude diagonals
+                        if((i == 0 || j == 0) && i != j) {
+                            // Checks if tile is ship or correct team
+                            if (gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.type == 'fort' && (gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.goods == searchType || gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.goods == 'none')) {
+                                result.push('fort compatible');
+                                gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].activeStatus = 'active';
+                            } else if (gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.type == 'fort' && gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.goods != searchType) {
+                                result.push('fort incompatible');
+                            } else if (gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.team == gameManagement.turn && gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.goods == searchType) {
+                                result.push(searchType);
+                                gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].activeStatus = 'active';
                             }
                         }
                     }
