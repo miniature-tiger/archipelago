@@ -125,6 +125,9 @@ let gameBoard = {
         // Creation of quarry
         this.boardArray[boardCenter][boardCenter-1].pieces = {populatedSquare: true, category: 'Resources', type: 'quarry', direction: '0', used: 'unused', team: 'Kingdom', goods: 'stone', stock: 0};
 
+        // Creation of plantation
+        this.boardArray[boardCenter][boardCenter+1].pieces = {populatedSquare: true, category: 'Resources', type: 'plantation', direction: '0', used: 'unused', team: 'Kingdom', goods: 'coffee', stock: 0};
+
     },
 
     // Method to allocate start tiles to teams
@@ -249,24 +252,22 @@ let gameBoard = {
         actionTile.setAttribute('id', localID);
         //actionTile.setAttribute('transform', 'scale(2)');
 
+        actionTile.setAttribute('class', localType);
+
         if (localType == 'cargo ship') {
-            actionTile.setAttribute('class', 'cargo');
             this.createCargoTile(actionTile, locali, localj, localTeam);
         } else if (localType == 'fort') {
-            actionTile.setAttribute('class', 'fort');
             this.createFortTile(actionTile, locali, localj, localTeam);
         } else if (localType == 'forest') {
-            actionTile.setAttribute('class', 'forest');
             this.createForestTile(actionTile, locali, localj, localTeam);
         } else if (localType == 'ironworks') {
-            actionTile.setAttribute('class', 'ironworks');
             this.createIronworksTile(actionTile, locali, localj, localTeam);
         } else if (localType == 'quarry') {
-            actionTile.setAttribute('class', 'quarry');
             this.createQuarryTile(actionTile, locali, localj, localTeam);
         } else if (localType == 'desert') {
-            actionTile.setAttribute('class', 'desert');
             this.createDesertTile(actionTile, locali, localj, localTeam);
+        } else if (localType == 'plantation') {
+            this.createPlantationTile(actionTile, locali, localj, localTeam);
         }
 
         // tile is returned to drawBoard
@@ -536,6 +537,78 @@ let gameBoard = {
         return actionTile;
     },
 
+    // Method to create plantation tile
+    // --------------------------------
+    createPlantationTile: function(actionTile, locali, localj, localTeam) {
+        // lower berry
+        let berry1 = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+        berry1.setAttribute('class', localTeam + ' team_stroke');
+        berry1.setAttribute('cx', '11.2');
+        berry1.setAttribute('cy', '17.8');
+        berry1.setAttribute('rx', '2.2');
+        berry1.setAttribute('ry', '2.7');
+        berry1.setAttribute('stroke','rgb(138, 87, 50)');
+        berry1.setAttribute('fill', 'rgb(235, 215, 195)');
+
+        // right hand berry
+        let berry3 = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+        berry3.setAttribute('class', localTeam + ' team_stroke');
+        berry3.setAttribute('cx', '17.6');
+        berry3.setAttribute('cy', '10.2');
+        berry3.setAttribute('rx', '2.7');
+        berry3.setAttribute('ry', '2.2');
+        berry3.setAttribute('stroke','rgb(138, 87, 50)');
+        berry3.setAttribute('fill', 'rgb(235, 215, 195)');
+
+        // diagonal berry
+        let berry2 = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+        berry2.setAttribute('class', localTeam + ' team_fill team_stroke');
+        berry2.setAttribute('cx', '0');
+        berry2.setAttribute('cy', '0');
+        berry2.setAttribute('rx', '2.7');
+        berry2.setAttribute('ry', '2.2');
+        berry2.setAttribute('stroke','rgb(138, 87, 50)');
+        berry2.setAttribute('fill', 'rgb(213, 191, 163)');
+        berry2.setAttribute('transform', 'translate(17.4, 17) rotate(55)');
+
+        // twig
+        let coffeeTwig = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        coffeeTwig.setAttribute('class', localTeam + ' team_stroke');
+        coffeeTwig.setAttribute('d', 'M 4.2 7 C 5.1 7.4 7.7 8 11.2 10.4 C 12.6 11.4 13.8 12.6 15.5 14.6');
+        coffeeTwig.setAttribute('stroke','rgb(138, 87, 50)');
+        coffeeTwig.setAttribute('fill', 'none');
+        coffeeTwig.setAttribute('stroke-linecap', 'round');
+
+        // lower coffee leaf
+        let coffeeLeaf1 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        coffeeLeaf1.setAttribute('d', 'M 5.5 19.2 C 6.5 17.8 7.2 16.0 7.5 15.0 C 7.7 14.2 7.5 13.5 7 12.7 C 6.6 11.6 5.6 10.5 4.8 9.6 C 3.0 12.9 2.7 14.5 3.9 16.6 C 4.2 17.1 5.0 18.5 5.5 19.2 ');
+        coffeeLeaf1.setAttribute('class', localTeam + ' team_fill team_stroke');
+        coffeeLeaf1.setAttribute('stroke','rgb(138, 87, 50)');
+        coffeeLeaf1.setAttribute('fill', 'rgb(213, 191, 163)');
+        coffeeLeaf1.setAttribute('stroke-linecap', 'round');
+        coffeeLeaf1.setAttribute('stroke-linejoin', 'round');
+        coffeeLeaf1.style.strokeWidth = '1px';
+
+        // upper coffee leaf
+        let coffeeLeaf2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        coffeeLeaf2.setAttribute('d', 'M 17.5 4.5 C 15.74 3.83 13.97 3.29 12.91 3.13 C 11.02 2.85 9.2 4.69 7.72 6.28 C 11.3 7.81 12.85 8.01 14.83 6.61 C 15.34 6.25 16.66 5.35 17.5 4.5 ');
+        coffeeLeaf2.setAttribute('class', localTeam + ' team_fill team_stroke');
+        coffeeLeaf2.setAttribute('stroke','rgb(138, 87, 50)');
+        coffeeLeaf2.setAttribute('fill', 'rgb(213, 191, 163)');
+        coffeeLeaf2.setAttribute('stroke-linecap', 'round');
+        coffeeLeaf2.setAttribute('stroke-linejoin', 'round');
+        coffeeLeaf2.style.strokeWidth = '1px';
+
+        // Building the tile
+        actionTile.appendChild(berry1);
+        actionTile.appendChild(berry2);
+        actionTile.appendChild(berry3);
+        actionTile.appendChild(coffeeTwig);
+        actionTile.appendChild(coffeeLeaf1);
+        actionTile.appendChild(coffeeLeaf2);
+
+        return actionTile;
+    },
 
 
     // Method allows "non-specific" action tile to be created without reference to the boardArray
