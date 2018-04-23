@@ -7,30 +7,31 @@ let resourceManagement = {
     // -------------------------------------------------------------------------------------
     resourceDeck: [],
 
+
+
     // Method to populate resource deck at start of game
     // -------------------------------------------------
     populateResourceDeck: function() {
         // finds total number of unoccupied land tiles on board at start
         let unoccupiedIslands = this.countIslands();
         // sets number of each type of resource in deck and remainder are empty land
-        let numberIronworks = 12;
-        let numberForest = 12;
-        let numberQuarry = 12;
-        let numberDesert = unoccupiedIslands - numberIronworks - numberForest - numberQuarry;
+        let unDesertCount = 0;
 
-        // populates deck based on above numbers
-        for (var i = 0; i < numberForest; i++) {
-            this.resourceDeck.push({type: 'forest', goods: 'wood'});
+        for (var i = 0; i < stockDashboard.pieceTypes.length; i++) {
+            if (stockDashboard.pieceTypes[i].category == 'Resources') {
+                for (var j = 0; j < stockDashboard.pieceTypes[i].deckNumber; j++) {
+                    this.resourceDeck.push({type: stockDashboard.pieceTypes[i].type, goods: stockDashboard.pieceTypes[i].goods});
+                    unDesertCount += 1;
+                }
+            }
         }
-        for (var j = 0; j < numberForest; j++) {
-            this.resourceDeck.push({type: 'ironworks', goods: 'iron'});
-        }
-        for (var k = 0; k < numberQuarry; k++) {
-            this.resourceDeck.push({type: 'quarry', goods: 'stone'});
-        }
-        for (var l = 0; l < numberDesert; l++) {
+
+        let numberDesert = unoccupiedIslands - unDesertCount;
+
+        for (var j = 0; j < numberDesert; j++) {
             this.resourceDeck.push({type: 'desert', goods: 'none'});
         }
+
     },
 
     // Method to find total number of unoccupied land tiles on board at start

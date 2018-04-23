@@ -110,6 +110,13 @@
     z-index: 10;
 }
 
+/* Plantation */
+.plantation {
+    position: absolute;
+    background-color: transparent;
+    z-index: 10;
+}
+
 /* Fort */
 .fort {
     position: absolute;

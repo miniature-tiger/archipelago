@@ -10,12 +10,13 @@ let stockDashboard = {
     // Array to hold list of all piece types
     // -------------------------------------
     // Pieces must be added in the order: Settlements, Transport, Resources
-    pieceTypes: [ {type: 'fort', category: 'Settlements', maxNo: 1000, goods: 'none', production: 0},
-                  //{type: 'hut', category: 'Settlements', maxNo: 1000},
-                  {type: 'cargo ship', category: 'Transport', maxNo: 1000, goods: 'none', production: 0},
-                  {type: 'forest', category: 'Resources', maxNo: 3, goods: 'wood', production: 3},
-                  {type: 'ironworks', category: 'Resources', maxNo: 3, goods: 'iron', production: 1},
-                  {type: 'quarry', category: 'Resources', maxNo: 3, goods: 'stone', production: 2}],
+    pieceTypes: [ {type: 'fort', category: 'Settlements', maxNo: 1000, goods: 'none', production: 0, deckNumber: 0},
+                  {type: 'cargo ship', category: 'Transport', maxNo: 1000, goods: 'none', production: 0, deckNumber: 0},
+                  {type: 'forest', category: 'Resources', maxNo: 3, goods: 'wood', production: 3, deckNumber: 8},
+                  {type: 'ironworks', category: 'Resources', maxNo: 3, goods: 'iron', production: 1, deckNumber: 8},
+                  {type: 'quarry', category: 'Resources', maxNo: 3, goods: 'stone', production: 2, deckNumber: 8},
+                  {type: 'plantation', category: 'Resources', maxNo: 3, goods: 'coffee', production: 3, deckNumber: 8}
+                ],
 
 
     // Method to count items in boardArray for leader board
