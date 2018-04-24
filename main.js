@@ -275,11 +275,17 @@ boardMarkNode.addEventListener('click', function(event) {
         if (pieceMovement.movementArray[startEnd].pieces.populatedSquare) {
             // Claiming of unclaimed resources
             if (pieceMovement.movementArray[startEnd].pieces.category == 'Resources' && pieceMovement.movementArray[startEnd].pieces.type != 'desert' && pieceMovement.movementArray[startEnd].pieces.team == 'Unclaimed') {
-                if (pieceMovement.shipAvailable('crew') == 'crew') {
-                    // TO ADD - Check that ship has not previously landed crew somewhere
-                    commentary.innerHTML += ' <br>Click ship to land team and claim resource';
-                    startEnd = 'end';
-                    gameBoard.drawActiveTiles();
+                // Check that this resource type i snot already held by player
+                let pieceTotalsTeamPosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == gameManagement.turn);
+                if(stockDashboard.pieceTotals[pieceTotalsTeamPosition].pieces[pieceMovement.movementArray.start.pieces.type] == 0) {
+                    if (pieceMovement.shipAvailable('crew') == 'crew') {
+                        // TO ADD - Check that ship has not previously landed crew somewhere
+                        commentary.innerHTML += ' <br>Click ship to land team and claim resource';
+                        startEnd = 'end';
+                        gameBoard.drawActiveTiles();
+                    }
+                } else {
+                    commentary.innerHTML += ' <br>You have already claimed your ' + pieceMovement.movementArray[startEnd].pieces.type;
                 }
             // Loading of a ship
           } else if (((pieceMovement.movementArray.start.pieces.category == 'Resources' && pieceMovement.movementArray.start.pieces.type != 'desert') || pieceMovement.movementArray.start.pieces.category == 'Settlements') && pieceMovement.movementArray[startEnd].pieces.team == gameManagement.turn) {

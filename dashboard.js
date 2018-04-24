@@ -43,9 +43,9 @@ let stockDashboard = {
                     }
                 }
                 stockDashboard.pieceTotals[h].pieces[stockDashboard.pieceTypes[k].type] = counter;
-                //console.log(stockDashboard.pieceTotals[h].pieces[stockDashboard.pieceTypes[k].type]);
             }
         }
+          //console.log(stockDashboard.pieceTotals);
     },
 
     // Method to populate stock dashboard on left-hand panel

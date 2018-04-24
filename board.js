@@ -145,14 +145,24 @@ let gameBoard = {
                               {i: row-1, j: boardCenter+1, team: 'Green Team'},
                               {i: boardCenter+1, j: 0, team: 'Blue Team'}]
 
-
+        // function picks a tile form the resource deck and checks polayer does not already have this Resource allocated
         function completeAllocatedTile(locali, localj, localTeam) {
-            let deckCard = resourceManagement.pickFromResourceDeck();
+            stockDashboard.stockTake();
+            //keep for debugging -  console.log(stockDashboard.pieceTotals);
+
+            let pieceTotalsTeamPosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == localTeam);
+            do {
+                var deckCard = resourceManagement.pickFromResourceDeck();
+                //keep for debugging - console.log(deckCard.type);
+            }
+            while (stockDashboard.pieceTotals[pieceTotalsTeamPosition].pieces[deckCard.type] > 0)
+
             gameBoard.boardArray[locali][localj].pieces = {populatedSquare: true, category: 'Resources', type: deckCard.type, direction: '0', used: 'unused', team: localTeam, goods: deckCard.goods, stock: 0};
         }
 
         for (var k = 0; k < allocateArray.length; k++) {
-           completeAllocatedTile(allocateArray[k].i, allocateArray[k].j, allocateArray[k].team)
+            //keep for debugging - console.log(k, allocateArray[k].team);
+            completeAllocatedTile(allocateArray[k].i, allocateArray[k].j, allocateArray[k].team)
         }
 
     },
