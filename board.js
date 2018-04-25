@@ -95,10 +95,19 @@ let gameBoard = {
 
         // Creation of Kingdom forts
         this.boardArray[boardCenter][boardCenter].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', team: 'Kingdom', goods: 'none', stock: 0};
-        this.boardArray[row-9][8].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', team: 'Kingdom', goods: 'none', stock: 0};
         this.boardArray[8][8].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', team: 'Kingdom', goods: 'none', stock: 0};
+        tradeContracts.contractsArray[0].row = 8;
+        tradeContracts.contractsArray[0].col = 8;
         this.boardArray[8][col-9].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', team: 'Kingdom', goods: 'none', stock: 0};
+        tradeContracts.contractsArray[1].row = 8;
+        tradeContracts.contractsArray[1].col = col-9;
+        this.boardArray[row-9][8].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', team: 'Kingdom', goods: 'none', stock: 0};
+        tradeContracts.contractsArray[3].row = row-9;
+        tradeContracts.contractsArray[3].col = 8;
         this.boardArray[row-9][col-9].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', team: 'Kingdom', goods: 'none', stock: 0};
+        tradeContracts.contractsArray[2].row = row-9;
+        tradeContracts.contractsArray[2].col = col-9;
+
 
         // Creation of ships
         this.boardArray[boardCenter-1][col-2].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-90', used: 'unused', team: 'Orange Team', goods: 'none', stock: 0};
