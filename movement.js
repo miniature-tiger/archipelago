@@ -379,8 +379,16 @@ let pieceMovement = {
                     if(this.movementArray.start.col+j >=0 && this.movementArray.start.col+j <col) {
                         // Reduces seacrh to exclude diagonals
                         if((i == 0 || j == 0) && i != j) {
-                            // Checks if tile is ship or correct team
-                            if (gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.type == 'fort' && (gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.goods == searchType || gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.goods == 'none')) {
+                            // Checks if tile meets criteria
+                            console.log('here', gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.type, gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.team);
+                            if (gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.type == 'fort' && gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.team == 'Kingdom') {
+                                console.log('kingdom, fort');
+                                if(tradeContracts.checkDelivery(this.movementArray.start.row+i, this.movementArray.start.col+j, searchType, gameBoard.boardArray[this.movementArray.start.row][this.movementArray.start.col].pieces.stock) == true) {
+                                    console.log('delivery');
+                                    result.push('fort delivery');
+                                    gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].activeStatus = 'active';
+                                }
+                            } else if (gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.type == 'fort' && gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.team == gameManagement.turn && (gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.goods == searchType || gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.goods == 'none')) {
                                 result.push('fort compatible');
                                 gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].activeStatus = 'active';
                             } else if (gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.type == 'fort' && gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.goods != searchType) {
@@ -394,6 +402,7 @@ let pieceMovement = {
                 }
             }
         }
+        console.log(result);
         return result;
     },
 

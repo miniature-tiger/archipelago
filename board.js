@@ -137,6 +137,12 @@ let gameBoard = {
         // Creation of plantation
         this.boardArray[boardCenter][boardCenter+1].pieces = {populatedSquare: true, category: 'Resources', type: 'plantation', direction: '0', used: 'unused', team: 'Kingdom', goods: 'coffee', stock: 0};
 
+        /* // TEST AREA
+        this.boardArray[(row-3)][boardCenter].terrain = 'land';
+        this.boardArray[(row-3)][boardCenter].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', team: 'Kingdom', goods: 'none', stock: 0};
+        tradeContracts.contractsArray[2].row = row-3;
+        tradeContracts.contractsArray[2].col = boardCenter;
+        */
     },
 
     // Method to allocate start tiles to teams
