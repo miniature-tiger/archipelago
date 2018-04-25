@@ -1,4 +1,4 @@
-// Game board object - methods to initialise board and array to store current state of board
+// Dashboard object - methods to initialise dashboards
 let stockDashboard = {
 
 
@@ -17,6 +17,8 @@ let stockDashboard = {
                   {type: 'quarry', category: 'Resources', maxNo: 3, goods: 'stone', production: 2, deckNumber: 8},
                   {type: 'plantation', category: 'Resources', maxNo: 3, goods: 'coffee', production: 3, deckNumber: 8}
                 ],
+
+
 
 
     // Method to count items in boardArray for leader board
@@ -134,7 +136,7 @@ let stockDashboard = {
                     divType.setAttribute('class', 'inner_item_holder');
                     divCat.appendChild(divType);
                     // Icon added
-                    let divTypeIcon = gameBoard.createActionTile(0, 0, this.pieceTypes[k].type, "Unclaimed", 'dash_' + this.pieceTypes[k].type, 2, xPosition, 1.5, rotateIcon);
+                    let divTypeIcon = gameBoard.createActionTile(0, 0, this.pieceTypes[k].type, 'Unclaimed', 'dash_' + this.pieceTypes[k].type, 2, xPosition, 1.5, rotateIcon);
                     divType.appendChild(divTypeIcon);
 
                     let divForText = document.createElement('div');

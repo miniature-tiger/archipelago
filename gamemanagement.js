@@ -6,7 +6,8 @@ let gameManagement = {
     // List of teams
     // -------------
     // Future update: set up based on user inputs for number of players and player names
-    teamArray: ['Green Team', 'Blue Team', 'Red Team', 'Orange Team', 'Pirate'],
+    teamArray: ['Green Team', 'Blue Team', 'Red Team', 'Orange Team'],
+    //teamArray: ['Green Team', 'Blue Team', 'Red Team', 'Orange Team', 'Pirate'],
 
     // Current turn
     // ------------

@@ -3,15 +3,21 @@
 
 let resourceManagement = {
 
+    // Array of resource piece types filtered from stockDashboard.pieceTypes
+    // ---------------------------------------------------------------------
+    resourcePieces: [],
+
     // Array of resource cards from which undiscovered land tiles are drawn on landDiscovery
     // -------------------------------------------------------------------------------------
     resourceDeck: [],
 
-
-
-    // Method to populate resource deck at start of game
-    // -------------------------------------------------
+    // Method to populate resource pieces array and resource deck array at start of game
+    // ---------------------------------------------------------------------------------
     populateResourceDeck: function() {
+        // Also populate resourcePieces
+        this.resourcePieces = stockDashboard.pieceTypes.filter(piece => piece.category == 'Resources');
+        console.log(this.resourcePieces);
+
         // finds total number of unoccupied land tiles on board at start
         let unoccupiedIslands = this.countIslands();
         // sets number of each type of resource in deck and remainder are empty land

@@ -36,7 +36,6 @@ for (var c = 0; c < headFootCollection.length; c++) {
     headFootCollection[c].style.left = surroundSize + 'px';
 }
 
-
 // boardMarkNode is board holder in document
 let boardMarkNode = document.querySelector('div.boardmark');
 
@@ -138,6 +137,8 @@ stockDashboard.populateGoodsTotals();
 stockDashboard.newTurnGoods();
 stockDashboard.stockTake();
 stockDashboard.drawStock();
+tradeContracts.populateContracts();
+tradeContracts.drawContracts();
 
 // Set up of goods dashboard
 // -------------------------
@@ -172,17 +173,19 @@ endTurn.addEventListener('click', function() {
 
     needle.style.transform = 'rotate(' + needleDirection + 'deg)';
 
-    // Automated movement for pirates
-    if(gameManagement.turn == 'Pirate') {
-        pirates.automatePirates();
-    }
-
-
     // Comment bar reset
     commentary.style.bottom = '-10%';
     // End turn button colour is changed
     endTurn.setAttribute('class', 'end_turn ' + gameManagement.turn + ' team_fill');
 
+    // Automated movement for pirates
+    if (gameManagement.turn == 'Pirate') {
+        pirates.automatePirates();
+    } else {
+        // Chance of new trade contract
+        // TO ADD - turn counter - only have contracts issued after a certain number of turns
+        tradeContracts.newContract();
+    }
 
     // Manage goods
     stockDashboard.newTurnGoods();
@@ -190,6 +193,9 @@ endTurn.addEventListener('click', function() {
     // Update the stock dashboard
     stockDashboard.stockTake();
     stockDashboard.drawStock();
+
+    // Update the contracts dashboard
+    tradeContracts.drawContracts();
 
     // Update the goods dashboard
     stockDashboard.goodsStockTake();
