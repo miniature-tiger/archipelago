@@ -39,7 +39,6 @@ for (var c = 0; c < headFootCollection.length; c++) {
 // boardMarkNode is board holder in document
 let boardMarkNode = document.querySelector('div.boardmark');
 
-
 // Canvas element createed for board
 let board = document.createElement('canvas');
 board.setAttribute('id', 'board');
@@ -49,7 +48,6 @@ let canvasBoard = board.getContext('2d');
 canvasBoard.canvas.width = col * (gridSize + tileBorder * 2) + boardSurround * 2;
 canvasBoard.canvas.height = row * (gridSize + tileBorder * 2) + boardSurround * 2;
 
-
 // Canavs 'activeBoard' is created and size is set dynamically
 let activeBoard = document.createElement('canvas');
 boardMarkNode.appendChild(activeBoard);
@@ -58,6 +56,10 @@ canvasActive.canvas.width = row * (gridSize + tileBorder * 2) + boardSurround * 
 canvasActive.canvas.height = col * (gridSize + tileBorder * 2) + boardSurround * 2;
 // ID is set with CSS styles of higher z-index and transparent background to function as overlay
 activeBoard.setAttribute('id', 'activeBoard');
+
+// SVG layer for trade routes set up
+let tradeRouteLayer = gameBoard.createTradeRouteLayer();
+boardMarkNode.appendChild(tradeRouteLayer);
 
 // Function to set up board and resource deck and allocate resources
 function boardSetUp(row, col, gridSize, boardShape) {
@@ -238,7 +240,7 @@ window.addEventListener('click', function(element) {
 // Maximum number of iterations for movement and thus maximum number of tiles that can be moved
 // --- movement is also influenced by the movement cost
 // --- once more transport is created this will all need to be built into an array if it desired that different ships move at different speeds
-let maxMove = 3;
+let maxMove = 5;
 
 // Variables for clicked tiles with startEnd indicating the start or end of the move
 let startEnd = 'start';
@@ -388,6 +390,7 @@ boardMarkNode.addEventListener('click', function(event) {
                 gameBoard.drawActiveTiles();
                 tradeContracts.fulfilDelivery();
                 tradeContracts.drawContracts();
+                tradeContracts.discoverPath(pieceMovement.movementArray.end.row, pieceMovement.movementArray.end.col, pieceMovement.movementArray.start.pieces.goods);
 
             // Unloading to own team fort or resource tile
             } else if (pieceMovement.movementArray.start.pieces.type == 'cargo ship' && pieceMovement.movementArray.end.pieces.team == gameManagement.turn && (pieceMovement.movementArray.end.pieces.type == 'fort' || pieceMovement.movementArray.end.pieces.category == 'Resources')) {

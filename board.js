@@ -137,12 +137,12 @@ let gameBoard = {
         // Creation of plantation
         this.boardArray[boardCenter][boardCenter+1].pieces = {populatedSquare: true, category: 'Resources', type: 'plantation', direction: '0', used: 'unused', team: 'Kingdom', goods: 'coffee', stock: 0};
 
-        /* // TEST AREA
-        this.boardArray[(row-3)][boardCenter].terrain = 'land';
-        this.boardArray[(row-3)][boardCenter].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', team: 'Kingdom', goods: 'none', stock: 0};
-        tradeContracts.contractsArray[2].row = row-3;
-        tradeContracts.contractsArray[2].col = boardCenter;
-        */
+         // TEST AREA
+    /*  this.boardArray[(row-4)][boardCenter].terrain = 'land';
+        this.boardArray[(row-4)][boardCenter].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', team: 'Kingdom', goods: 'none', stock: 0};
+        tradeContracts.contractsArray[2].row = row-4;
+        tradeContracts.contractsArray[2].col = boardCenter; */
+
     },
 
     // Method to allocate start tiles to teams
@@ -698,7 +698,6 @@ let gameBoard = {
             for (var j = 0; j < col; j++) {
                 Xcenter = (gridSize + tileBorder * 2) * j + (gridSize/2 + boardSurround + tileBorder);
 
-                // Currently just cargo ships - other tiles to be update to svg
                 if (this.boardArray[i][j].pieces.populatedSquare == true) {
                     // Create action tile svg and add to the board
                     boardMarkNode.appendChild(this.createActionTile(i, j, this.boardArray[i][j].pieces.type, this.boardArray[i][j].pieces.team,'tile' + Number(i*1000 + j), boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * i, boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * j, 1, this.boardArray[i][j].pieces.direction));
@@ -935,6 +934,63 @@ let gameBoard = {
         boardMarkNode.appendChild(compassLayer);
         boardMarkNode.appendChild(compassNeedleBox);
 
+
+    },
+
+    // Method to add trade route layer to board
+    // -----------------------------------------
+    createTradeRouteLayer: function() {
+        let layer = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        layer.setAttribute('width', col * (gridSize + tileBorder * 2) + boardSurround * 2);
+        layer.setAttribute('height', row * (gridSize + tileBorder * 2) + boardSurround * 2);
+        layer.setAttribute('viewBox', '0, 0, ' + (col * (gridSize + tileBorder * 2) + boardSurround * 2) +  ', ' + (row * (gridSize + tileBorder * 2) + boardSurround * 2));
+        layer.setAttribute('class', 'tradeRoute');
+        return(layer);
+    },
+
+    // Method to draw a trade route on the board
+    // -----------------------------------------
+    // Local path is an array of objects of the form {fromRow: 15, fromCol: 4}
+    tradeRoute: function(localPath, localTeam) {
+
+        let route = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        route.setAttribute('class', localTeam + ' team_route');
+
+        let buildRoute = 'M ' + (boardSurround + tileBorder + gridSize/2 + (gridSize + tileBorder * 2) * localPath[0].fromCol) + ' ' + (boardSurround + tileBorder + gridSize/2 + (gridSize + tileBorder * 2) * localPath[0].fromRow);
+        //let buildRoute = 'M ' + (boardSurround + tileBorder + gridSize/2 + (gridSize + tileBorder * 2) * localPath[0].fromCol + gameManagement.teamArray.indexOf(gameManagement.turn)*2-4) + ' ' + (boardSurround + tileBorder + gridSize/2 + (gridSize + tileBorder * 2) * localPath[0].fromRow + gameManagement.teamArray.indexOf(gameManagement.turn)*2-4);
+
+        for (var i = 0; i < localPath.length; i++) {
+            buildRoute += ' L ' + (boardSurround + tileBorder + gridSize/2 + (gridSize + tileBorder * 2) * localPath[i].fromCol) + ' ' + (boardSurround + tileBorder + gridSize/2 + (gridSize + tileBorder * 2) * localPath[i].fromRow);
+            //buildRoute += ' L ' + (boardSurround + tileBorder + gridSize/2 + (gridSize + tileBorder * 2) * localPath[i].fromCol + gameManagement.teamArray.indexOf(gameManagement.turn)*2-4) + ' ' + (boardSurround + tileBorder + gridSize/2 + (gridSize + tileBorder * 2) * localPath[i].fromRow + gameManagement.teamArray.indexOf(gameManagement.turn)*2-4);
+        }
+
+        route.setAttribute('d', buildRoute);
+        route.setAttribute('fill', 'none');
+        route.setAttribute('stroke-linecap', 'round');
+        route.setAttribute('stroke-linejoin', 'round');
+        route.setAttribute('stroke-opacity', '0.5');
+        route.style.strokeWidth = '3px';
+        tradeRouteLayer.appendChild(route);
+
+        let startCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        startCircle.setAttribute('class', localTeam + ' team_fill team_route');
+        startCircle.setAttribute('cx', (boardSurround + tileBorder + gridSize/2 + (gridSize + tileBorder * 2) * localPath[0].fromCol));
+        startCircle.setAttribute('cy', (boardSurround + tileBorder + gridSize/2 + (gridSize + tileBorder * 2) * localPath[0].fromRow));
+        startCircle.setAttribute('r', '3');
+        startCircle.style.strokeWidth = '1px';
+        startCircle.style.strokeLinecap = 'round';
+        startCircle.setAttribute('fill', 'none');
+        tradeRouteLayer.appendChild(startCircle);
+
+        let endCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        endCircle.setAttribute('class', localTeam + ' team_fill team_route');
+        endCircle.setAttribute('cx', (boardSurround + tileBorder + gridSize/2 + (gridSize + tileBorder * 2) * localPath[localPath.length-1].fromCol));
+        endCircle.setAttribute('cy', (boardSurround + tileBorder + gridSize/2 + (gridSize + tileBorder * 2) * localPath[localPath.length-1].fromRow));
+        endCircle.setAttribute('r', '3');
+        endCircle.style.strokeWidth = '1px';
+        endCircle.style.strokeLinecap = 'round';
+        //endCircle.setAttribute('fill', 'none');
+        tradeRouteLayer.appendChild(endCircle);
 
     },
 
