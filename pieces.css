@@ -370,6 +370,10 @@
     stroke: #00394d;
 }
 
+.Blue.team_route {
+    stroke: #0099cc;
+}
+
 
 .Orange.team_fill  {
     background-color: #bd5d0f;
@@ -378,6 +382,10 @@
 
 .Orange.team_stroke {
     stroke: #472306;
+}
+
+.Orange.team_route {
+    stroke: #bd5d0f;
 }
 
 .Red.team_fill {
@@ -389,6 +397,10 @@
     stroke: #3e0f1a;
 }
 
+.Red.team_route {
+    stroke: #a52746;
+}
+
 .Green.team_fill {
     background-color: #34987d;
     fill: #34987d;
@@ -396,6 +408,10 @@
 
 .Green.team_stroke {
     stroke: #14392f;
+}
+
+.Green.team_route {
+    stroke: #34987d;
 }
 
 .Kingdom.team_stroke {

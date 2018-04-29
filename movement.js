@@ -252,6 +252,10 @@ let pieceMovement = {
 
         // Obtaining path of piece that leads to end tile of move from findPath array
         let localPath = this.findPath[this.movementArray.end.row][this.movementArray.end.col].path;
+        console.log(localPath);
+        // tem p
+        //gameBoard.tradeRoute(localPath, gameManagement.turn);
+
         // Length gives number of steps in path
         let numberOfTiles = localPath.length - 1;
 
@@ -302,6 +306,7 @@ let pieceMovement = {
             chosenPiece.style.top = parseFloat(chosenPiece.style.top) + (topDirection * (gridSize + tileBorder*2)) + 'px';
             chosenPiece.style.transform = 'rotate(' + rotateDirection + 'deg)';
         }, n * 1000);
+
     },
 
     // Method to allow discovery of new land tiles
