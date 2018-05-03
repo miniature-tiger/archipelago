@@ -117,6 +117,12 @@
     z-index: 10;
 }
 
+.goodsGroup {
+    position: absolute;
+    background-color: transparent;
+    z-index: 10;
+}
+
 /* Fort */
 .fort {
     position: absolute;
