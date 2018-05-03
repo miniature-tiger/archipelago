@@ -207,7 +207,7 @@ endTurn.addEventListener('click', function() {
 
 // Settings pop-up box
 // --------------------
-var settingsIcon = document.querySelector('.settingsmark');
+/*var settingsIcon = document.querySelector('.settingsmark');
 var settingsPopup = document.querySelector('.settings_popup');
 var settingsClose = document.querySelector('.settings_close');
 
@@ -224,7 +224,7 @@ window.addEventListener('click', function(element) {
     if (element.target == settingsPopup) {
         settingsPopup.style.display = "none";
     }
-});
+});*/
 
 
 
@@ -273,13 +273,19 @@ boardMarkNode.addEventListener('click', function(event) {
     // "Start" piece validation on first click
     if (startEnd == 'start') {
         // Commentary on tile clicked on
-        commentary.innerHTML = pieceMovement.movementArray[startEnd].pieces.team + ' ' + pieceMovement.movementArray[startEnd].pieces.type;
+        commentary.innerHTML = '';
+        commentary.appendChild(gameBoard.createActionTile(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, pieceMovement.movementArray.start.pieces.type, pieceMovement.movementArray.start.pieces.team, 'startPiece', 10, (screenWidth - 2*surroundSize) * 0.3 - (gridSize + 2*tileBorder)/2, 1.5, 0));
+        for (var i = 0; i < pieceMovement.movementArray.start.pieces.stock; i++) {
+            console.log(gameBoard.createIcon('stock' + i, 1.5, pieceMovement.movementArray.start.pieces.goods, (screenWidth - 2*surroundSize) * 0.6 + ((i+2) * (gridSize + tileBorder) / 1.5), 10));
+            commentary.appendChild(gameBoard.createIcon('stock' + i, 1.5, pieceMovement.movementArray.start.pieces.goods, (screenWidth - 2*surroundSize) * 0.7 - tileBorder/2 + (((i % 10) - 0.5) * (gridSize + tileBorder) / 1.5), 10 + Math.floor(i/10) * ((gridSize + tileBorder) / 1.5)));
+        }
+
+        commentary.innerHTML += pieceMovement.movementArray[startEnd].pieces.team + ' ' + pieceMovement.movementArray[startEnd].pieces.type;
         if (pieceMovement.movementArray[startEnd].pieces.stock > 0) {
               commentary.innerHTML += ' - ' + pieceMovement.movementArray[startEnd].pieces.goods + ": " + pieceMovement.movementArray[startEnd].pieces.stock;
         }
         commentary.style.bottom = 0;
-        commentary.appendChild(gameBoard.createActionTile(pieceMovement.movementArray[startEnd].row, pieceMovement.movementArray[startEnd].col, gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.type, gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.team, 'startPiece', 10, screenWidth * 0.25, 1.5, 0));
-        commentary.appendChild(gameBoard.createActionTile(pieceMovement.movementArray[startEnd].row, pieceMovement.movementArray[startEnd].col, gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.type, gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.team, 'startPiece', 10, screenWidth * 0.6, 1.5, 0));
+
         if (pieceMovement.movementArray[startEnd].pieces.populatedSquare) {
 
             // Claiming of unclaimed resources
