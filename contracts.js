@@ -24,7 +24,6 @@ let tradeContracts = {
                 teamContracts[resourceManagement.resourcePieces[j].goods] = {created: false, struck: 'unopen', initial: 0, renewal: 0};
             }
             this.contractsArray[i].contracts = teamContracts;
-            console.log(this.contractsArray[i]);
         }
     },
 
@@ -59,8 +58,10 @@ let tradeContracts = {
 
 
                 // Comment that a contract is generated
+                clearCommentary();
                 commentary.style.bottom = 0;
-                commentary.innerHTML = 'Contract issued by ' + contractIsland.name + ' island for ' + resourceType +'. <br> Initial delivery amount: ' + initialAmount + ' + Weekly trade amount: ' + renewalAmount;
+                firstLineComment.innerText = 'Contract issued by ' + contractIsland.name + ' island for ' + resourceType + '.';
+                secondLineComment.innerText = 'Initial delivery amount: ' + initialAmount + ' + Weekly trade amount: ' + renewalAmount;
             }
 
         } else {

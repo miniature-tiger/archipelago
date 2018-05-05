@@ -683,11 +683,10 @@ let gameBoard = {
 
         //Coffee bean
         let coffeeBean = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        coffeeBean.setAttribute('class', 'coffeeBean');
         coffeeBean.setAttribute('d','M 17.5 6 A 11.5 9 1 0 1 10.5 20 Q 10.5 14.5    14 13.25    T 17.5 6 ' +
                                     'M 15 5   A 11.5 9 0 0 0 8 19   Q 8 13  11.5 11.75  T 15 5');
         coffeeBean.setAttribute('stroke','rgb(89, 53, 20)');
-        coffeeBean.setAttribute('fill', 'rgb(89, 53, 20)');
+        //coffeeBean.setAttribute('fill', 'rgb(89, 53, 20)');
         coffeeBean.setAttribute('stroke-linecap', 'round');
         coffeeBean.setAttribute('stroke-linejoin', 'round');
         coffeeBean.style.strokeWidth = '1px';
@@ -709,7 +708,7 @@ let gameBoard = {
         stoneSquare.setAttribute('ry', '2');
         stoneSquare.setAttribute('stroke','rgb(89, 53, 20)');
         stoneSquare.setAttribute('fill', 'white');
-        stoneSquare.style.strokeWidth = '2px';
+        stoneSquare.style.strokeWidth = '1px';
         stoneSquare.setAttribute('stroke-linecap', 'round');
         stoneSquare.setAttribute('stroke-linejoin', 'round');
 
