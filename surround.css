@@ -54,7 +54,7 @@ html {
     position: fixed;
 
 
-    z-index: 20;
+    z-index: 10;
 }
 
 .under_text {
@@ -207,7 +207,7 @@ html {
     color: rgb(137, 113, 82);
     background-color: transparent;
     text-align: center;
-
+    z-index: 20;
 }
 
 /* Style for text under icons */

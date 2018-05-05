@@ -13,7 +13,7 @@
 // Tile size (gridSize) is set here
 let row = 31, col = 31, boardShape='octagon';
 let screenWidth = window.screen.width;
-let screenHeight = window.screen.innerHeight;
+let screenHeight = window.screen.height;
 
 let surroundSize = Math.floor(0.065 * screenWidth);
 
@@ -249,15 +249,104 @@ let chosenHolding = {start: '', end: ''};
 
 // commentary box - Future work: develop into illustrated commentary by side of board (with flags and pieces)
 let commentary = document.querySelector('.commentary');
+let firstLineComment = document.querySelector('#firstLine');
+let secondLineComment = document.querySelector('#secondLine');
+
+// Amount of stock to be loaded / unloaded
+let loadingStock = 0;
+
+// Resets commentary
+function clearCommentary() {
+
+    for (var i = commentary.children.length - 1; i > -1; i--) {
+        if (commentary.children[i].id == 'firstLine' || commentary.children[i].id == 'secondLine') {
+            commentary.children[i].innerText = '';
+        } else if (commentary.children[i].nodeName == 'BR') {
+            // no action
+        } else {
+            commentary.children[i].remove();
+        }
+    }
+}
+
+// Function for goods quantity selection
+// ------------------------------------
+
+function clickGoods(e) {
+    let xClickCommentary = e.clientX - commentary.offsetLeft;
+    let element = e.target;
+
+    // Finds icon selected based on id at icon parent level
+    if(element != commentary) {
+        while (element.id == '') {
+            element = element.parentNode;
+        }
+
+        let iconFound = false;
+        // Loops through all goods icons shown
+        for (var k = 0; k < pieceMovement.movementArray.start.pieces.stock; k++) {
+            stockID = '#stock' + k;
+            let currentIcon = document.querySelector(stockID);
+            // Until chosen icon is reached goods are changed colour using CSS classes
+            if (iconFound == false) {
+                for (var h = 0; h < currentIcon.children.length; h++) {
+                    let nextChild = currentIcon.children[h];
+                    nextChild.setAttribute('class', currentIcon.className.baseVal + ' ' + gameManagement.turn + ' team_stroke team_fill');
+                }
+                // Actions when icon is reached
+                if (element.id == 'stock' + k) {
+                    iconFound = true;
+                    loadingStock = k + 1;
+                    if (pieceMovement.movementArray.start.pieces.category == 'Transport') {
+                        secondLineComment.innerText = 'Click settlement or resource tile to unload - ' + pieceMovement.movementArray.start.pieces.goods + ': ' + (k + 1);
+                    } else if (pieceMovement.movementArray.start.pieces.category == 'Resources') {
+                        secondLineComment.innerText = 'Click ship to load - ' + pieceMovement.movementArray.start.pieces.goods + ': ' + (k + 1);
+                    }
+                }
+
+                // CSS classes are removed to reset colours if necessary
+            } else {
+                for (var h = 0; h < currentIcon.children.length; h++) {
+                    let nextChild = currentIcon.children[h];
+                    if (nextChild.classList.contains(gameManagement.turn)) {
+                        nextChild.classList.remove(gameManagement.turn);
+                    }
+                    if (nextChild.classList.contains('team_stroke')) {
+                        nextChild.classList.remove('team_stroke');
+                    }
+                    if (nextChild.classList.contains('team_fill')) {
+                        nextChild.classList.remove('team_fill');
+                    }
+                }
+            }
+        }
+    }
+
+    // Alternative approach based on positioning - keep code
+    /* if (xClickCommentary > (screenWidth - 2*surroundSize) * 0.7 - tileBorder/2 - (0.5 * (gridSize + tileBorder) / 1.5) && xClickCommentary < (screenWidth - 2*surroundSize) * 0.7 - tileBorder/2 + ((10 - 0.5) * (gridSize + tileBorder) / 1.5) ) {
+        //if (yClickCommentary > 10 && yClickCommentary < 10 + (Math.floor((pieceMovement.movementArray.start.pieces.stock-1)/10)+1) * ((gridSize + tileBorder) / 1.5)) {
+            //let xClickGoods = Math.floor(((screenWidth - 2*surroundSize) * 0.7 - tileBorder/2 - (0.5 * (gridSize + tileBorder) / 1.5), xClickCommentary - ((screenWidth - 2*surroundSize) * 0.7 - tileBorder/2 - (0.5 * (gridSize + tileBorder) / 1.5))) / ((gridSize + tileBorder) / 1.5)) + 1;
+            //let yClickGoods = Math.floor((yClickCommentary - 10) / ((gridSize + tileBorder) / 1.5)) + 1;
+            let icons = document.querySelector('.iconColourChange');
+            icons.setAttribute('class', 'iconColourChange ' + gameManagement.turn +  ' team_stroke team_fill');
+            //(screenWidth - 2*surroundSize) * 0.7 - tileBorder/2 + (((i % 10) - 0.5) * (gridSize + tileBorder) / 1.5)
+      //  }
+    } */
+};
+
+
 
 // handler for capturing clicks on board tiles
 // As the logic of this section is expanded it will be moved across into the piece movement object
 
-
+// Event handler for board
+// -----------------------
 
 // boardMarkNode is board holder in document
 let boardMarkLeft = boardMarkNode.offsetLeft;
 let boardMarkTop = boardMarkNode.offsetTop;
+
+//console.log('here', boardMarkLeft, boardMarkTop);
 
 boardMarkNode.addEventListener('click', function(event) {
     let xClick = event.pageX - boardMarkLeft;
@@ -269,22 +358,28 @@ boardMarkNode.addEventListener('click', function(event) {
     // Obtain details of most recent tile clicked on - separated between start and end points
     pieceMovement.captureMove(startEnd, yClickTile, xClickTile);
 
-
     // "Start" piece validation on first click
     if (startEnd == 'start') {
+        console.log(pieceMovement.movementArray.start);
         // Commentary on tile clicked on
-        commentary.innerHTML = '';
+        clearCommentary();
         commentary.appendChild(gameBoard.createActionTile(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, pieceMovement.movementArray.start.pieces.type, pieceMovement.movementArray.start.pieces.team, 'startPiece', 10, (screenWidth - 2*surroundSize) * 0.3 - (gridSize + 2*tileBorder)/2, 1.5, 0));
         for (var i = 0; i < pieceMovement.movementArray.start.pieces.stock; i++) {
-            console.log(gameBoard.createIcon('stock' + i, 1.5, pieceMovement.movementArray.start.pieces.goods, (screenWidth - 2*surroundSize) * 0.6 + ((i+2) * (gridSize + tileBorder) / 1.5), 10));
+            //console.log(gameBoard.createIcon('stock' + i, 1.5, pieceMovement.movementArray.start.pieces.goods, (screenWidth - 2*surroundSize) * 0.6 + ((i+2) * (gridSize + tileBorder) / 1.5), 10));
             commentary.appendChild(gameBoard.createIcon('stock' + i, 1.5, pieceMovement.movementArray.start.pieces.goods, (screenWidth - 2*surroundSize) * 0.7 - tileBorder/2 + (((i % 10) - 0.5) * (gridSize + tileBorder) / 1.5), 10 + Math.floor(i/10) * ((gridSize + tileBorder) / 1.5)));
         }
 
-        commentary.innerHTML += pieceMovement.movementArray[startEnd].pieces.team + ' ' + pieceMovement.movementArray[startEnd].pieces.type;
+        firstLineComment.innerText = pieceMovement.movementArray[startEnd].pieces.team + ' ' + pieceMovement.movementArray[startEnd].pieces.type;
         if (pieceMovement.movementArray[startEnd].pieces.stock > 0) {
-              commentary.innerHTML += ' - ' + pieceMovement.movementArray[startEnd].pieces.goods + ": " + pieceMovement.movementArray[startEnd].pieces.stock;
+              firstLineComment.insertAdjacentText('beforeend', ' - ' + pieceMovement.movementArray[startEnd].pieces.goods + ": " + pieceMovement.movementArray[startEnd].pieces.stock);
         }
         commentary.style.bottom = 0;
+
+        // commentary event handler for goods
+        if(pieceMovement.movementArray.start.pieces.team == gameManagement.turn && pieceMovement.movementArray.start.pieces.stock > 0) {
+            secondLineComment.innerText = 'Select quantity of goods to load';
+            commentary.addEventListener('click', clickGoods);
+        }
 
         if (pieceMovement.movementArray[startEnd].pieces.populatedSquare) {
 
@@ -295,32 +390,31 @@ boardMarkNode.addEventListener('click', function(event) {
                 if(stockDashboard.pieceTotals[pieceTotalsTeamPosition].pieces[pieceMovement.movementArray.start.pieces.type] == 0) {
                     if (pieceMovement.shipAvailable('crew') == 'crew') {
                         // TO ADD - Check that ship has not previously landed crew somewhere
-                        commentary.innerHTML += ' <br>Click ship to land team and claim resource';
+                        secondLineComment.innerText = 'Click ship to land team and claim resource';
                         startEnd = 'end';
                         gameBoard.drawActiveTiles();
                     }
                 } else {
-                    commentary.innerHTML += ' <br>You have already claimed your ' + pieceMovement.movementArray[startEnd].pieces.type;
+                    secondLineComment.innerText = 'You have already claimed your ' + pieceMovement.movementArray[startEnd].pieces.type;
                 }
 
             // Loading of a ship
           } else if (((pieceMovement.movementArray.start.pieces.category == 'Resources' && pieceMovement.movementArray.start.pieces.type != 'desert') || pieceMovement.movementArray.start.pieces.category == 'Settlements') && pieceMovement.movementArray[startEnd].pieces.team == gameManagement.turn) {
                 if (pieceMovement.shipAvailable(pieceMovement.movementArray.start.pieces.goods) == 'compatible') {
                     if (pieceMovement.movementArray.start.pieces.stock > 0) {
-                        commentary.innerHTML += ' <br>Click ship to load goods';
                         startEnd = 'end';
                         gameBoard.drawActiveTiles();
                     } else if (pieceMovement.movementArray.start.pieces.stock == 0) {
-                        commentary.innerHTML += ' <br>No goods to be loaded';
+                        secondLineComment.innerText = 'No goods to be loaded';
                     }
                 } else if (pieceMovement.shipAvailable(pieceMovement.movementArray.start.pieces.goods) == 'incompatible') {
-                    commentary.innerHTML += ' <br>Docked ship already carrying different goods';
+                    secondLineComment.innerText = 'Docked ship already carrying different goods';
                 }
 
             // Piece movement
             } else if (pieceMovement.movementArray[startEnd].pieces.team == gameManagement.turn && pieceMovement.movementArray[startEnd].pieces.used == 'unused') {
                 if (pieceMovement.movementArray[startEnd].pieces.type == 'cargo ship') {
-                    commentary.innerHTML += ' <br>Click any red tile to move';
+                    secondLineComment.innerText = 'Click any red tile to move';
                     // If "Start" piece is validated startEnd gate is opened and potential tiles are activated
                     startEnd = 'end';
                     pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, maxMove, true);
@@ -336,9 +430,9 @@ boardMarkNode.addEventListener('click', function(event) {
                 let depotSearch = pieceMovement.depotAvailable(pieceMovement.movementArray.start.pieces.goods);
                 if (depotSearch.includes('fort delivery')) {
                     if (pieceMovement.movementArray.start.pieces.used == 'unused') {
-                        commentary.innerHTML += ' or deliver goods';
+                        secondLineComment.insertAdjacentText('beforeend',' or deliver goods');
                     } else {
-                        commentary.innerHTML += ' <br>Click red tile to deliver goods';
+                        secondLineComment.innerText = 'Click red tile to deliver goods';
                     }
                     startEnd = 'end';
                     // Redraw gameboard to show activated tiles
@@ -347,21 +441,22 @@ boardMarkNode.addEventListener('click', function(event) {
                 // Unloading to own team fort or resource tile
                 } else if (depotSearch.includes(pieceMovement.movementArray.start.pieces.goods) || depotSearch.includes('fort compatible')) {
                     if (pieceMovement.movementArray.start.pieces.used == 'unused') {
-                        commentary.innerHTML += ' or unload goods';
+                        secondLineComment.insertAdjacentText('beforeend',' or select quantity of goods to unload');
                     } else {
-                        commentary.innerHTML += ' <br>Click red tile to unload goods';
+                        secondLineComment.innerText = 'Select quantity of goods to unload';
                     }
                     startEnd = 'end';
                     // Redraw gameboard to show activated tiles
                     gameBoard.drawActiveTiles();
                 } else if (depotSearch.includes('fort incompatible') && pieceMovement.movementArray.start.pieces.used == 'used') {
-                    commentary.innerHTML += ' <br>Fort can only hold one goods type';
+                    secondLineComment.innerText = 'Fort can only hold one goods type';
                 }
             }
         }
     // Once "start" piece has been selected second click needs to be to an active "end" square
     // Piece move is then made
     } else if (startEnd == 'end') {
+        console.log(pieceMovement.movementArray.end);
         // Removing commentary
         commentary.style.bottom = '-10%';
         if (pieceMovement.movementArray.end.activeStatus == 'active') {
@@ -381,34 +476,42 @@ boardMarkNode.addEventListener('click', function(event) {
             } else if ((pieceMovement.movementArray.start.pieces.category == 'Resources' || pieceMovement.movementArray.start.pieces.category == 'Settlements') && pieceMovement.movementArray.end.pieces.type == 'cargo ship') {
                 pieceMovement.deactivateTiles(1);
                 gameBoard.drawActiveTiles();
-                loadingStock = gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.stock;
+                //loadingStock = gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.stock;
                 loadingGoods = gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.goods;
-                gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.stock = 0;
+                gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.stock -= loadingStock;
                 if (gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.category == 'Settlements') {
-                    gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.goods = 'none';
+                    if (gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.stock == 0) {
+                        gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.goods = 'none';
+                    }
                 }
                 gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces.stock += loadingStock;
                 gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces.goods = loadingGoods;
+                loadingStock = 0;
 
             // Delivery of goods for contract
             } else if (pieceMovement.movementArray.start.pieces.type == 'cargo ship' && pieceMovement.movementArray.end.pieces.team == 'Kingdom' && pieceMovement.movementArray.end.pieces.type == 'fort') {
                 pieceMovement.deactivateTiles(1);
                 gameBoard.drawActiveTiles();
+
+                console.log(pieceMovement.movementArray.start);
+                console.log('passed', pieceMovement.movementArray.end.row, pieceMovement.movementArray.end.col, pieceMovement.movementArray.start.pieces.goods);
+                tradeContracts.discoverPath(pieceMovement.movementArray.end.row, pieceMovement.movementArray.end.col, pieceMovement.movementArray.start.pieces.goods);
                 tradeContracts.fulfilDelivery();
                 tradeContracts.drawContracts();
-                tradeContracts.discoverPath(pieceMovement.movementArray.end.row, pieceMovement.movementArray.end.col, pieceMovement.movementArray.start.pieces.goods);
 
             // Unloading to own team fort or resource tile
-            } else if (pieceMovement.movementArray.start.pieces.type == 'cargo ship' && pieceMovement.movementArray.end.pieces.team == gameManagement.turn && (pieceMovement.movementArray.end.pieces.type == 'fort' || pieceMovement.movementArray.end.pieces.category == 'Resources')) {
+          } else if (pieceMovement.movementArray.start.pieces.type == 'cargo ship' && pieceMovement.movementArray.end.pieces.team == gameManagement.turn && (pieceMovement.movementArray.end.pieces.type == 'fort' || pieceMovement.movementArray.end.pieces.category == 'Resources')) {
                 pieceMovement.deactivateTiles(maxMove);
                 gameBoard.drawActiveTiles();
-                loadingStock = gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.stock;
+                //loadingStock = gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.stock;
                 loadingGoods = gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.goods;
-                gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.stock = 0;
-                gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.goods = 'none';
+                gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.stock -= loadingStock;
+                if (gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.stock == 0) {
+                    gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.goods = 'none';
+                }
                 gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces.stock += loadingStock;
                 gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces.goods = loadingGoods;
-
+                loadingStock = 0;
 
             // Piece movement
             } else if (pieceMovement.movementArray.start.pieces.type == 'cargo ship') {
@@ -426,6 +529,10 @@ boardMarkNode.addEventListener('click', function(event) {
             // Resetting movement array once second click has been made (if invalid)
             pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
             startEnd = 'start';
+
+            // Removing commentary goods event handler
+            commentary.removeEventListener('click', clickGoods);
+            clearCommentary();
         }
 
         // Update the stock dashboard

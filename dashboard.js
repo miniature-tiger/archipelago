@@ -193,13 +193,16 @@ let stockDashboard = {
         }
     },
 
+    // Method to add new goods each turn
+    // ---------------------------------
     newTurnGoods : function() {
         for (var i = 0; i < gameBoard.boardArray.length; i++) {
             for (var j = 0; j < gameBoard.boardArray[i].length; j++) {
                 if(gameBoard.boardArray[i][j].pieces.team == gameManagement.turn) {
                     if(gameBoard.boardArray[i][j].pieces.category == 'Resources') {
                         let arrayPosition = stockDashboard.pieceTypes.findIndex(k => k.goods == gameBoard.boardArray[i][j].pieces.goods);
-                        gameBoard.boardArray[i][j].pieces.stock += this.pieceTypes[arrayPosition].production;
+                        // Maximum goods set to 20
+                        gameBoard.boardArray[i][j].pieces.stock = Math.min(gameBoard.boardArray[i][j].pieces.stock + this.pieceTypes[arrayPosition].production, 20);
                     }
                 }
             }
