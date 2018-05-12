@@ -13,7 +13,7 @@
 // Tile size (gridSize) is set here
 let row = 31, col = 31, boardShape='octagon';
 let screenWidth = window.screen.width;
-let screenHeight = window.screen.height;
+let innerHeight = window.innerHeight;
 
 let surroundSize = Math.floor(0.065 * screenWidth);
 
@@ -92,8 +92,14 @@ boardSetUp(row, col, gridSize, boardShape);
 // These buttons are unlikely to be part of the final gameBoard
 // But it is useful to allow the board to be varied dynamically while game play is being developed
 
+// Game speed (0.6, 1, 1.5)
+
+let gameSpeedRef = gameManagement.optionsArray[0].options.findIndex(item => item.active == true);
+let gameSpeed = gameManagement.optionsArray[0].options[gameSpeedRef].constant;
+
+
 // board size button handler
-var elSize = document.querySelector('.boardSizeSelect');
+/*var elSize = document.querySelector('.boardSizeSelect');
 elSize.addEventListener('click', function(element) {
     if(element.target.classList.contains('boardSizeSelect_31')) {
         row = 31;
@@ -116,7 +122,7 @@ elShape.addEventListener('click', function(element) {
         boardShape = 'square';
         boardSetUp(row, col, gridSize, boardShape);
     }
-});
+});*/
 
 
 // ------------------------------------------------------------------------------------
@@ -125,11 +131,12 @@ elShape.addEventListener('click', function(element) {
 
 // Dynamic size of icons
 // ---------------------
-let iconHolder = document.querySelectorAll('.icon_holder');
+/*let iconHolder = document.querySelectorAll('.icon_holder');
 for (var iconHolder_i = 0; iconHolder_i < iconHolder.length; iconHolder_i++) {
-    iconHolder[iconHolder_i].style.width = 1.5 * gridSize + 'px';
-    iconHolder[iconHolder_i].style.height = 2 * gridSize + 'px';
-}
+
+    iconHolder[iconHolder_i].style.width = (0.7*surroundSize) + 'px';
+    iconHolder[iconHolder_i].style.height = surroundSize + 'px';
+}*/
 
 
 
@@ -207,28 +214,35 @@ endTurn.addEventListener('click', function() {
 
 // Settings pop-up box
 // --------------------
-/*var settingsIcon = document.querySelector('.settingsmark');
+var settingsIcon = document.querySelector('.settingsmark');
 var settingsPopup = document.querySelector('.settings_popup');
-var settingsClose = document.querySelector('.settings_close');
 
-settingsIcon.addEventListener('click', function(element) {
+// Icon in bottom left corner
+gameManagement.createSettingsCog(false, 0.7*surroundSize/100, -0.2*surroundSize, 0.15*surroundSize, settingsIcon, 'icon_holder');
+// Settings pop up box
+gameManagement.createSettingsCog(true, screenWidth*(12/2000), 0, (screenWidth*4/20), settingsPopup, 'popup_cog');
+var popupCog = document.querySelector('.popup_cog');
+popupCog.appendChild(gameManagement.panelCircle(screenWidth*(12/2000)));
+gameManagement.createSettingsPanel(screenWidth*(12/2000), 0, (screenWidth*4/20), settingsPopup, 'popup_panel');
+var settingsPanel = document.querySelector('.popup_panel');
+gameManagement.createSettingsIcons(true, screenWidth*(12/2000), 0, (screenWidth*4/20), popupCog, 'popup_cog');
+
+// Event handler for setting pop up launch
+settingsIcon.addEventListener('click', function() {
+    settingsPanel.appendChild(gameManagement.panelText(screenWidth*(12/2000), 23, 'Select an icon.', 'Or click x to close settings.'));
     settingsPopup.style.display = "block";
+    popupCog.style.display = "block";
+    // Event handler for settings pop up once launched
+    window.addEventListener('click', function(e) {
+        console.log('window event listener');
+        if (e.target == settingsPopup) {
+            gameManagement.clearPanel();
+            settingsPopup.style.display = "none";
+        } else {
+            gameManagement.manageSettings(e, screenWidth*(12/2000));
+        }
+    });
 });
-
-settingsClose.addEventListener('click', function(element) {
-    settingsPopup.style.display = "none";
-});
-
-// When the user clicks anywhere outside of the modal, close it
-window.addEventListener('click', function(element) {
-    if (element.target == settingsPopup) {
-        settingsPopup.style.display = "none";
-    }
-});*/
-
-
-
-
 
 // ------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------
@@ -518,7 +532,7 @@ boardMarkNode.addEventListener('click', function(event) {
                 pieceMovement.deactivateTiles(maxMove);
                 // Redraw active tile layer after deactivation to remove activated tiles
                 gameBoard.drawActiveTiles();
-                pieceMovement.shipTransition();
+                pieceMovement.shipTransition(gameSpeed);
 
             }
         } else {

@@ -233,8 +233,7 @@ let pieceMovement = {
     // Method for ship movement and transition
     // ---------------------------------------
 
-    shipTransition: function() {
-
+    shipTransition: function(gameSpeed) {
         // Variables for transition movements
         let topDirection = 0;
         let leftDirection = 0;
@@ -270,7 +269,7 @@ let pieceMovement = {
             rotateDirection = this.movementDirection[(localPath[i+1].fromCol - localPath[i].fromCol)+1][(localPath[i+1].fromRow - localPath[i].fromRow)+1];
 
             // Applying the transformation for step i of the move path
-            this.turnAndMove(i, chosenPiece, topDirection, leftDirection, rotateDirection);
+            this.turnAndMove(i, chosenPiece, topDirection, leftDirection, rotateDirection, gameSpeed);
         }
 
         // Applying moves to game board array
@@ -284,7 +283,7 @@ let pieceMovement = {
         setTimeout(function() {
             chosenPiece.style.transition = '';
             pieceMovement.landDiscovery();
-        }, numberOfTiles * 1000);
+        }, numberOfTiles * 500 * gameSpeed);
 
 
     },
@@ -292,12 +291,12 @@ let pieceMovement = {
 
     // Method for piece to turn in direction of move and then move
     // -----------------------------------------------------------
-    turnAndMove: function(n, chosenPiece, topDirection, leftDirection, rotateDirection) {
+    turnAndMove: function(n, chosenPiece, topDirection, leftDirection, rotateDirection, gameSpeed) {
         // n is number of transition in chain
         // Transitions to be applied (added here to allow different transitions to be applied dynamically in future)
         //console.log(chosenPiece);
         //console.log(chosenPiece.style.transition);
-        chosenPiece.style.transition = 'transform 0.2s 0s ease-in-out, left 0.7s 0.2s ease-in-out, top 0.7s 0.2s ease-in-out';
+        chosenPiece.style.transition = 'transform ' + (0.1 * gameSpeed) + 's 0s ease-in-out, left ' + (0.35 * gameSpeed) + 's ' + (0.1 * gameSpeed) + 's ease-in-out, top ' + (0.35 * gameSpeed) + 's ' + (0.1 * gameSpeed) + 's ease-in-out';
 
         // Delayed application of transformations to give board game style move effect
         setTimeout(function() {
@@ -305,7 +304,7 @@ let pieceMovement = {
             chosenPiece.style.left = parseFloat(chosenPiece.style.left) + (leftDirection * (gridSize + tileBorder*2)) + 'px';
             chosenPiece.style.top = parseFloat(chosenPiece.style.top) + (topDirection * (gridSize + tileBorder*2)) + 'px';
             chosenPiece.style.transform = 'rotate(' + rotateDirection + 'deg)';
-        }, n * 1000);
+        }, n * 500 * gameSpeed);
 
     },
 
