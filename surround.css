@@ -236,14 +236,13 @@ html {
 
 /* End of turn icon */
 .end_turn {
-    display: inline-block;
-    position: relative;
+
+    position: fixed;
     top: -1px;
     margin-top: 0%;
     margin-left: 0%;
-    vertical-align: top;
-    height: 60%;
-    width: 80%;
+    
+
     border-radius: 50%;
     background-color: rgb(231, 190, 151);
     border: 1px solid black;
@@ -329,7 +328,7 @@ html {
 }
 
 .popup_panel {
-    
+
     position: fixed;
 
 }

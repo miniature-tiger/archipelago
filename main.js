@@ -169,8 +169,10 @@ needle.style.transform = 'rotate(' + needleDirection + 'deg)';
 
 // Next turn functionality
 // -----------------------
-var endTurn = document.querySelector('.end_turn');
-endTurn.setAttribute('class', 'end_turn ' + gameManagement.turn + ' team_fill');
+var endTurn = document.querySelector('.endturnmark');
+endTurn.setAttribute('class', gameManagement.turn + ' team_fill team_stroke');
+gameManagement.createTurnCircle(false, 0.7*surroundSize/100, -0.2*surroundSize, 0.15*surroundSize, endTurn, 'icon_holder');
+
 endTurn.addEventListener('click', function() {
     // Used pieces are resert to unused
     pieceMovement.usedPiecesReset();
@@ -185,7 +187,7 @@ endTurn.addEventListener('click', function() {
     // Comment bar reset
     commentary.style.bottom = '-10%';
     // End turn button colour is changed
-    endTurn.setAttribute('class', 'end_turn ' + gameManagement.turn + ' team_fill');
+    endTurn.setAttribute('class', gameManagement.turn + ' team_fill team_stroke');
 
     // Automated movement for pirates
     if (gameManagement.turn == 'Pirate') {
