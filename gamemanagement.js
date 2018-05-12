@@ -304,4 +304,30 @@ let gameManagement = {
         iconResult.style.strokeLinecap = 'round';
         return iconResult;
     },
+
+
+    // End turn icon circle
+    // --------------------
+
+    createTurnCircle: function(addOptions, localScale, localTop, localLeft, localNode, localClass) {
+        let viewportSize = 100 * localScale;
+        let endTurnButton = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        endTurnButton.setAttribute('class', localClass);
+        endTurnButton.setAttribute('width', 100 * localScale);
+        endTurnButton.setAttribute('height', 100 * localScale);
+        endTurnButton.style.top = localTop + 'px';
+        endTurnButton.style.left = localLeft + 'px';
+        endTurnButton.setAttribute('viewBox', '0, 0, ' + viewportSize + ' ' + viewportSize);
+
+        let turnCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        turnCircle.setAttribute('cx', 50 * localScale);
+        turnCircle.setAttribute('cy', 50 * localScale);
+        turnCircle.setAttribute('r', 32 * localScale);
+        turnCircle.style.strokeWidth = '1px';
+        turnCircle.style.strokeLinecap = 'round';
+
+        endTurnButton.appendChild(turnCircle);
+
+        localNode.appendChild(endTurnButton);
+    }
 }
