@@ -19,6 +19,7 @@ html {
     padding: 0%;
     height: 8%;
     background-color: rgba(138, 87, 50, 0.1);
+    vertical-align: bottom;
 }
 
  /* style for the header */
@@ -195,27 +196,30 @@ html {
 }
 
 
+.cog {
+    position: absolute;
+    background-color: transparent;
+    z-index: 10;
+}
+
 /* Footer icon holders */
 .icon_holder {
-    margin-right: 2%;
-    position: relative;
-    display: inline-block;
-    text-align: center;
-    vertical-align: top;
-    top: 10%;
-    height: 0;
+    position: absolute;
+    display: block;
+    /*text-align: center;
+    vertical-align: top;*/
+
     color: rgb(137, 113, 82);
     background-color: transparent;
-    text-align: center;
+
     z-index: 20;
 }
 
 /* Style for text under icons */
 .icon_text {
-    position: relative;
+    position: absolute;
     display: block;
-    text-align: center;
-    top: 8%;
+    bottom: 0%;
     height: 35%;
     width: 100%;
     padding: 0%;
@@ -225,6 +229,7 @@ html {
     overflow: hidden;
     white-space: nowrap;
     font-size: 45%;
+    vertical-align: bottom;
 
 
 }
@@ -312,9 +317,21 @@ html {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background-color: rgba(0,0,0,0.25);
+    background-color: rgba(0,0,0,0.4);
     font-size: 0.8em;
-    z-index: 1;
+    z-index: 20;
+}
+
+.popup_cog {
+    display: none;
+    position: fixed;
+
+}
+
+.popup_panel {
+    
+    position: fixed;
+
 }
 
 /* Settings panel style */
