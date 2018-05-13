@@ -16,7 +16,6 @@ let resourceManagement = {
     populateResourceDeck: function() {
         // Also populate resourcePieces
         this.resourcePieces = stockDashboard.pieceTypes.filter(piece => piece.category == 'Resources');
-        console.log(this.resourcePieces);
 
         // finds total number of unoccupied land tiles on board at start
         let unoccupiedIslands = this.countIslands();

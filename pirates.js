@@ -36,12 +36,12 @@ let pirates = {
                     pirates.pirateShips[i].end.row = pirates.minCostTiles[0].row;
                     pirates.pirateShips[i].end.col = pirates.minCostTiles[0].col;
                 }
-                // Keep - useful for debugging - console.log(pieceMovement.movementArray);
+                console.log('movement array', pieceMovement.movementArray);
 
                 // End position for pirate ship confirmed with movement array then move activated and dashboard recalculated
                 pieceMovement.movementArray.end = pirates.pirateShips[i].end;
                 pieceMovement.deactivateTiles(maxMove);
-                pieceMovement.shipTransition();
+                pieceMovement.shipTransition(gameSpeed);
 
                 // Disengaged until graphics updated
                 //stockDashboard.stockTake();
@@ -55,7 +55,7 @@ let pirates = {
             // Loops through with delay
             if(i < pirates.pirateShips.length) {
 
-                setTimeout(moves, 1000 * pirates.minCostTiles[0].distance);
+                setTimeout(moves, 500 * pirates.minCostTiles[0].distance * gameSpeed);
 
             } else {
                 // Resets pirate ship array once all moves made
@@ -116,10 +116,10 @@ let pirates = {
                         maxDistance = pieceMovement.findPath[i][j].distance;
                         this.maxDistanceTiles = [];
                         this.maxDistanceTiles.push({row: + i, col: + j, distance: + pieceMovement.findPath[i][j].distance, moveCost: + pieceMovement.findPath[i][j].moveCost});
-                        //console.log(this.maxDistanceTiles);
+                        console.log('greater than', this.maxDistanceTiles);
                     } else if (pieceMovement.findPath[i][j].distance == maxDistance) {
                         this.maxDistanceTiles.push({row: + i, col: + j, distance: + pieceMovement.findPath[i][j].distance, moveCost: + pieceMovement.findPath[i][j].moveCost});
-                        // Keep - useful for debugging - console.log(this.maxDistanceTiles);
+                        console.log('equal to', this.maxDistanceTiles);
                     }
                 }
             }
@@ -131,16 +131,17 @@ let pirates = {
     // ------------------------------------------------------------------
     minPathCost: function() {
         this.minCostTiles = [];
-        let minCost = 4;
+        console.log('this.minCostTiles', this.minCostTiles);
+        let minCost = 100;
         for (var k = 0; k < this.maxDistanceTiles.length; k++) {
             if (this.maxDistanceTiles[k].moveCost < minCost) {
                 minCost = this.maxDistanceTiles[k].moveCost;
                 this.minCostTiles = [];
                 this.minCostTiles.push(this.maxDistanceTiles[k]);
-                //console.log(this.minCostTiles);
+                console.log('min cost less than', this.minCostTiles);
             } else if (this.maxDistanceTiles[k].moveCost == minCost) {
                 this.minCostTiles.push(this.maxDistanceTiles[k]);
-                // Keep - useful for debugging - console.log(this.minCostTiles);
+                console.log('min cost equal to', this.minCostTiles);
             }
         }
     },
