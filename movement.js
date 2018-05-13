@@ -241,7 +241,7 @@ let pieceMovement = {
 
         // Calculate placement on board of start tile for move
         IDPieceStart = 'tile' + Number(this.movementArray.start.row*1000 + this.movementArray.start.col);
-        // console.log(IDPieceStart);
+        console.log(IDPieceStart);
         let chosenPiece = document.getElementById(IDPieceStart);
 
         // Allowing ship to overflow edges of its tile on transition
@@ -252,8 +252,6 @@ let pieceMovement = {
         // Obtaining path of piece that leads to end tile of move from findPath array
         let localPath = this.findPath[this.movementArray.end.row][this.movementArray.end.col].path;
         console.log(localPath);
-        // tem p
-        //gameBoard.tradeRoute(localPath, gameManagement.turn);
 
         // Length gives number of steps in path
         let numberOfTiles = localPath.length - 1;
@@ -294,8 +292,6 @@ let pieceMovement = {
     turnAndMove: function(n, chosenPiece, topDirection, leftDirection, rotateDirection, gameSpeed) {
         // n is number of transition in chain
         // Transitions to be applied (added here to allow different transitions to be applied dynamically in future)
-        //console.log(chosenPiece);
-        //console.log(chosenPiece.style.transition);
         chosenPiece.style.transition = 'transform ' + (0.1 * gameSpeed) + 's 0s ease-in-out, left ' + (0.35 * gameSpeed) + 's ' + (0.1 * gameSpeed) + 's ease-in-out, top ' + (0.35 * gameSpeed) + 's ' + (0.1 * gameSpeed) + 's ease-in-out';
 
         // Delayed application of transformations to give board game style move effect
