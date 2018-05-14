@@ -26,19 +26,21 @@ let pieceMovement = {
         this.initialisefindPath(localStartRow, localStartCol, localMaxMove);
 
         // Sets clicked piece status to active as starting point of chain reaction of setting active status
-        if (displayActive) {
-            gameBoard.boardArray[localStartRow][localStartCol].activeStatus = 'active';
-        }
-        this.findPath[localStartRow][localStartCol].activeStatus = 'active';
+        //if (displayActive) {
+        //    gameBoard.boardArray[localStartRow][localStartCol].activeStatus = 'active';
+        //}
+        this.findPath[localStartRow][localStartCol].pathStatus = true;
 
         // Loops through localMaxMove loops
-        // Each loop searches for potentially reachable tiles to activated within one tile reach of a previously activated tile
-        // First search (k=0) takes each active tile within 1x1 grid around piece (i.e. just the piece itself) then uses
+        // Each loop searches for tiles within one tile reach of a previously activated tile
+        // When the cost is less than localMaxMove the tile is activated
+        // Tile paths are searched even beyond the active boundary for "telescope" purposes for pirate ships
+        // First search (k=0) takes each "found" tile within 1x1 grid around piece (i.e. just the piece itself) then uses
         // activeTiles to search in 3x3 grid around this tile
-        // Second search (k=1) takes each active tile within a 3x3 grid of the piece (i.e. within one tile move reach of the piece) then uses
+        // Second search (k=1) takes each "found" tile within a 3x3 grid of the piece (i.e. within one tile move reach of the piece) then uses
         // activeTiles to search in 3x3 grid around each of these active tiles
-        // Third search (k=2) takes each active tile within a 5x5 grid of the piece (i.e. within two tile move reach of the piece) then uses
-        // activeTiles to search in 3x3 grid around each of these active tiles (making a maximum potential 3 tile distance  from the piece for active tiles)
+        // Third search (k=2) takes each "found" tile within a 5x5 grid of the piece (i.e. within two tile move reach of the piece) then uses
+        // activeTiles to search in 3x3 grid around each of these "found" tiles (making a maximum potential localMaxMove tile distance from the piece for active and found tiles)
         for (var k = 0; k < localMaxMove; k++) {
             // Loops through i rows and j columns to form the 3x3 etc grids
             for (var i = -k; i < k+1; i++) {
@@ -48,7 +50,7 @@ let pieceMovement = {
                         // Restrict by map size for columns so not searching off edge of board
                         if(localStartCol+j >=0 && localStartCol+j <col) {
                             // Checks if tile is active. If so runs activeTiles to search for potential tiles to activate around it
-                            if (this.findPath[localStartRow+i][localStartCol+j].activeStatus == 'active') {
+                            if (this.findPath[localStartRow+i][localStartCol+j].pathStatus == true && this.findPath[localStartRow+i][localStartCol+j].target != 'cargo ship') {
                                 //Keep useful for debugging - console.log('run: ' + k);
                                 //Keep useful for debugging - console.log('starting from: row: ' + (localStartRow+i) + ' col: ' + (localStartCol+j) + ' prior cost: ' + this.findPath[localStartRow+i][localStartCol+j].moveCost);
                                 this.activeTiles(localStartRow+i, localStartCol+j, this.findPath[localStartRow+i][localStartCol+j].moveCost, localMaxMove, displayActive, k);
@@ -59,11 +61,11 @@ let pieceMovement = {
             }
         }
         // At end of search sets piece square back to inactive as you cannot move a piece to its own square
-        this.findPath[localStartRow][localStartCol].activeStatus = 'inactive';
-        if (displayActive) {
-            gameBoard.boardArray[localStartRow][localStartCol].activeStatus = 'inactive';
-        }
-         //console.log(this.findPath.slice(0));
+        //this.findPath[localStartRow][localStartCol].activeStatus = 'inactive';
+        //if (displayActive) {
+        //    gameBoard.boardArray[localStartRow][localStartCol].activeStatus = 'inactive';
+        //}
+        console.log(this.findPath.slice(0));
     },
 
     initialisefindPath: function(localStartRow, localStartCol, localMaxMove) {
@@ -74,16 +76,16 @@ let pieceMovement = {
         for (var i = 0; i < col; i++) {
             let localMoveRow = [];
             for (var j = 0; j < row; j++) {
-                localMoveRow[j] = {activeStatus: 'inactive', moveCost: 0, distance: 0,target: '', team: '', path: [{fromRow: +localStartRow , fromCol: +localStartCol}]};
+                localMoveRow[j] = {pathStatus: false, activeStatus: 'inactive', moveCost: 0, distance: 0,target: '', team: '', path: [{fromRow: +localStartRow , fromCol: +localStartCol}]};
             }
             this.findPath[i] = localMoveRow;
         }
     },
 
     activeTiles: function(localStartRow, localStartCol, localCumulMoveCost, localMaxMove, displayActive, k) {
-        // activeTiles searches a 3x3 grid around the passed (activated) tile reference to find more potential tiles to activate
-        // Restrictions on activation are: board size, land and occupied pieces, total available move cost to reach tile
-        // Total available move cost is currently set to MaxMove (i.e you can move a total of 3 tile or equivalent adjusted by wind) - this may be changed in future
+        // activeTiles searches a 3x3 grid around the passed ("found") tile reference to find more potential tiles
+        // Restrictions on "found" tiles and activation are: board size, land and occupied pieces, total available move cost to reach tile
+        // Total available move cost is currently set to MaxMove (i.e you can move a total of x tiles or equivalent adjusted by wind) - this may be changed in future
         // If a second path arrives at an already activated tile with a cheaper cost this path replaces the existing findPath
         // The path and costs are built up in the findPath array
 
@@ -98,39 +100,52 @@ let pieceMovement = {
                 for (var j = -1; j <= 1; j++) {
                     // Restrict by map size for columns
                     if(localStartCol+j >=0 && localStartCol+j <col) {
-
                         // Restrict for land squares ( ---- and objects ---- )
                         // if (gameBoard.boardArray[localStartRow+i][localStartCol+j].terrain == 'sea' && gameBoard.boardArray[localStartRow+i][localStartCol+j].pieces.populatedSquare == false) {
                         if (gameBoard.boardArray[localStartRow+i][localStartCol+j].terrain == 'sea') {
                             // Aggregate cost of reaching tile in tileCumulMoveCost - add the exiting cost to the cost for reaching the new tile from moveCost
-                            // Keep useful for debugging - console.log('row: ' + (localStartRow+i) + ' col: ' + (localStartCol+j) + ' prior cost: ' + localCumulMoveCost + ' new cost: ' + this.moveCost(localStartRow, localStartCol ,localStartRow+i, localStartCol+j, needleDirection))
+                            //console.log('row: ' + (localStartRow+i) + ' col: ' + (localStartCol+j) + ' prior cost: ' + localCumulMoveCost + ' new cost: ' + this.moveCost(localStartRow, localStartCol ,localStartRow+i, localStartCol+j, needleDirection))
                             tileCumulMoveCost = localCumulMoveCost + this.moveCost(localStartRow, localStartCol ,localStartRow+i, localStartCol+j, needleDirection);
-
                             // Restrict activation by Maximum Cost of reaching a tile (allows wind direction to be factored in to move)
-                            if (tileCumulMoveCost <= localMaxMove) {
-                                // Logic for already active tiles - is the new path cheaper in moveCost?
-                                if (this.findPath[localStartRow+i][localStartCol+j].activeStatus == 'active') {
+                            //if (tileCumulMoveCost <= localMaxMove) {
+                                // Separate newly found tiles from previously found tiles
+                                if (this.findPath[localStartRow+i][localStartCol+j].pathStatus == true) {
+                                    // Logic for already active tiles - is the new path cheaper in moveCost?
                                     if (tileCumulMoveCost < this.findPath[localStartRow+i][localStartCol+j].moveCost) {
+                                        // Necessary as a few tiles will be "found" for the first time whilst being over the localMaxMove level for activation
+                                        if (tileCumulMoveCost < localMaxMove) {
+                                            this.findPath[localStartRow+i][localStartCol+j].activeStatus = 'active';
+                                            if (displayActive) {
+                                                gameBoard.boardArray[localStartRow+i][localStartCol+j].activeStatus = 'active';
+                                            }
+                                        }
                                         // Keep useful for debugging - console.log('already active logic is used:');
-                                        // Keep useful for debugging - console.log('change to active tile - pre:', localStartRow+i, localStartCol+j, this.findPath[localStartRow+i][localStartCol+j], localStartRow, localStartCol, this.findPath[localStartRow][localStartCol]);
+                                        //console.log('change to active tile - pre:' + localStartRow+i + '-' + localStartCol+j, this.findPath[localStartRow+i][localStartCol+j], localStartRow, localStartCol, this.findPath[localStartRow][localStartCol]);
                                         // Update the cost, add the inherited path from the previous moved-to tile, push the path for the new tile
                                         this.findPath[localStartRow+i][localStartCol+j].moveCost = tileCumulMoveCost;
                                         this.findPath[localStartRow+i][localStartCol+j].path = this.findPath[localStartRow][localStartCol].path.slice(0);
                                         this.findPath[localStartRow+i][localStartCol+j].path.push({fromRow: +(localStartRow+i) , fromCol: +(localStartCol+j)});
                                         this.findPath[localStartRow+i][localStartCol+j].distance = this.findPath[localStartRow+i][localStartCol+j].path.length-1;
-                                        // Keep useful for debugging - console.log('change to active tile - post:', localStartRow+i, localStartCol+j, this.findPath[localStartRow+i][localStartCol+j], localStartRow, localStartCol, this.findPath[localStartRow][localStartCol]);
+                                        //console.log('change to active tile - post:', localStartRow+i, localStartCol+j, this.findPath[localStartRow+i][localStartCol+j], localStartRow, localStartCol, this.findPath[localStartRow][localStartCol]);
                                     }
-                                // Logic for inactive tiles that have met all criteria - activate them!
-                                } else if (this.findPath[localStartRow+i][localStartCol+j].activeStatus != 'active') {
-                                    // Keep useful for debugging - console.log('new pre-activation:', localStartRow+i, localStartCol+j, this.findPath[localStartRow+i][localStartCol+j], localStartRow, localStartCol, this.findPath[localStartRow][localStartCol]);
-                                    this.findPath[localStartRow+i][localStartCol+j].activeStatus = 'active';
-                                    if (displayActive) {
-                                          gameBoard.boardArray[localStartRow+i][localStartCol+j].activeStatus = 'active';
+                                // Logic for unfound tiles that have met all criteria - make pathStatus as true!
+                                } else if (this.findPath[localStartRow+i][localStartCol+j].pathStatus == false) {
+                                    //console.log('new pre-activation:', localStartRow+i, localStartCol+j, this.findPath[localStartRow+i][localStartCol+j], localStartRow, localStartCol, this.findPath[localStartRow][localStartCol]);
+                                    this.findPath[localStartRow+i][localStartCol+j].pathStatus = true;
+                                    // Activate tiles is constraints are met
+                                    if (tileCumulMoveCost < localMaxMove) {
+                                        this.findPath[localStartRow+i][localStartCol+j].activeStatus = 'active';
+                                        if (displayActive) {
+                                            gameBoard.boardArray[localStartRow+i][localStartCol+j].activeStatus = 'active';
+                                        }
                                     }
                                     // Sets cargo ship tile to inactive to prevent moving there
                                     if (gameBoard.boardArray[localStartRow+i][localStartCol+j].pieces.type == 'cargo ship') {
-                                        this.findPath[localStartRow+i][localStartCol+j].activeStatus = 'inactive';
-                                        gameBoard.boardArray[localStartRow+i][localStartCol+j].activeStatus = 'inactive';
+                                        if(gameManagement.turn != 'Pirate') {
+                                            //this.findPath[localStartRow+i][localStartCol+j].pathStatus = false;
+                                            this.findPath[localStartRow+i][localStartCol+j].activeStatus = 'inactive';
+                                            gameBoard.boardArray[localStartRow+i][localStartCol+j].activeStatus = 'inactive';
+                                        }
                                         this.findPath[localStartRow+i][localStartCol+j].target = 'cargo ship';
                                         this.findPath[localStartRow+i][localStartCol+j].team = gameBoard.boardArray[localStartRow+i][localStartCol+j].pieces.team.slice(0);
                                         //console.log(this.findPath[localStartRow+i][localStartCol+j]);
@@ -141,11 +156,10 @@ let pieceMovement = {
                                     this.findPath[localStartRow+i][localStartCol+j].path = this.findPath[localStartRow][localStartCol].path.slice(0);
                                     this.findPath[localStartRow+i][localStartCol+j].path.push({fromRow: +(localStartRow+i) , fromCol: +(localStartCol+j)});
                                     this.findPath[localStartRow+i][localStartCol+j].distance = this.findPath[localStartRow+i][localStartCol+j].path.length-1;
-                                    //Keep useful for debugging - console.log('new post-activation:', localStartRow+i, localStartCol+j, this.findPath[localStartRow+i][localStartCol+j], localStartRow, localStartCol, this.findPath[localStartRow][localStartCol]);
+                                    //console.log('new post-activation:', localStartRow+i, localStartCol+j, this.findPath[localStartRow+i][localStartCol+j], localStartRow, localStartCol, this.findPath[localStartRow][localStartCol]);
                                     //Keep useful for debugging - console.log('row: ' + (localStartRow+i) + ' col: ' + (localStartCol+j) + ' set to: ' + this.findPath[localStartRow+i][localStartCol+j].activeStatus + ' with cost: ' + this.findPath[localStartRow+i][localStartCol+j].moveCost + ' and distance: ' + this.findPath[localStartRow+i][localStartCol+j].distance);
                                 }
-
-                            }
+                            //}
                         }
                     }
                 }
