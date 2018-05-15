@@ -64,7 +64,7 @@ Scoring:
 Pirates
 * Add pirate ships - COMPLETE
 * Automate pirate ship movements (basic movement with wind and search for cargo ships) - COMPLETE
-* Telescope range of 4 tiles for stronger search for ships
+* Search - telescope range of 5 tiles for stronger search for ships - COMPLETE
 * Consider separate cargo and war ships for teams
 
 Forts
@@ -72,9 +72,9 @@ Forts
 * Create safe harbour from pirate ships
 
 Conflicts
-* Develop conflict method between ships
-* Stealing of cargo
-* Limping back to port
+* Attack - Develop conflict method between ships - COMPLETE
+* Stealing of cargo - COMPLETE
+* Limping back to harbour
 
 # Phase 4 - Game Management and Settings 
 Settings
@@ -86,7 +86,10 @@ Settings
 # Phase 5 - Central trading centre  
 * Develop central market allowing players without resources to trade and fulfill contracts
 
-# Phase 6 - Rules, roll-out, documentation, testing etc
+# Phase 6 - One player version development
+* Artificial Intelligence levels for computer players
+
+# Phase 7 - Rules, roll-out, documentation, testing etc
 * TBDeveloped
 
 ----------------------------------------------
