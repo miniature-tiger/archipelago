@@ -42,6 +42,7 @@ let pieceMovement = {
         // Third search (k=2) takes each "found" tile within a 5x5 grid of the piece (i.e. within two tile move reach of the piece) then uses
         // activeTiles to search in 3x3 grid around each of these "found" tiles (making a maximum potential localMaxMove tile distance from the piece for active and found tiles)
         for (var k = 0; k < localMaxMove; k++) {
+            //console.log('k loop', k);
             // Loops through i rows and j columns to form the 3x3 etc grids
             for (var i = -k; i < k+1; i++) {
                 // Restrict by map size for rows so not searching off edge of board
@@ -49,8 +50,8 @@ let pieceMovement = {
                     for (var j = -k; j < k+1; j++) {
                         // Restrict by map size for columns so not searching off edge of board
                         if(localStartCol+j >=0 && localStartCol+j <col) {
-                            // Checks if tile is active. If so runs activeTiles to search for potential tiles to activate around it
-                            if (this.findPath[localStartRow+i][localStartCol+j].pathStatus == true && this.findPath[localStartRow+i][localStartCol+j].target != 'cargo ship') {
+                            // Checks if tile is found. If so runs activeTiles to search for potential tiles to activate around it
+                            if ((this.findPath[localStartRow+i][localStartCol+j].pathStatus == true) && (this.findPath[localStartRow+i][localStartCol+j].target != 'cargo ship')) {
                                 //Keep useful for debugging - console.log('run: ' + k);
                                 //Keep useful for debugging - console.log('starting from: row: ' + (localStartRow+i) + ' col: ' + (localStartCol+j) + ' prior cost: ' + this.findPath[localStartRow+i][localStartCol+j].moveCost);
                                 this.activeTiles(localStartRow+i, localStartCol+j, this.findPath[localStartRow+i][localStartCol+j].moveCost, localMaxMove, displayActive, k);
@@ -65,7 +66,7 @@ let pieceMovement = {
         //if (displayActive) {
         //    gameBoard.boardArray[localStartRow][localStartCol].activeStatus = 'inactive';
         //}
-        console.log(this.findPath.slice(0));
+        //console.log('completed find path slice', this.findPath.slice(0));
     },
 
     initialisefindPath: function(localStartRow, localStartCol, localMaxMove) {
@@ -120,35 +121,24 @@ let pieceMovement = {
                                             }
                                         }
                                         // Keep useful for debugging - console.log('already active logic is used:');
-                                        //console.log('change to active tile - pre:' + localStartRow+i + '-' + localStartCol+j, this.findPath[localStartRow+i][localStartCol+j], localStartRow, localStartCol, this.findPath[localStartRow][localStartCol]);
+                                        //console.log('change to active tile - pre:', localStartRow+i, localStartCol+j, this.findPath[localStartRow+i][localStartCol+j], 'from ' + localStartRow + '-' + localStartCol, this.findPath[localStartRow][localStartCol]);
                                         // Update the cost, add the inherited path from the previous moved-to tile, push the path for the new tile
                                         this.findPath[localStartRow+i][localStartCol+j].moveCost = tileCumulMoveCost;
                                         this.findPath[localStartRow+i][localStartCol+j].path = this.findPath[localStartRow][localStartCol].path.slice(0);
                                         this.findPath[localStartRow+i][localStartCol+j].path.push({fromRow: +(localStartRow+i) , fromCol: +(localStartCol+j)});
                                         this.findPath[localStartRow+i][localStartCol+j].distance = this.findPath[localStartRow+i][localStartCol+j].path.length-1;
-                                        //console.log('change to active tile - post:', localStartRow+i, localStartCol+j, this.findPath[localStartRow+i][localStartCol+j], localStartRow, localStartCol, this.findPath[localStartRow][localStartCol]);
+                                        //console.log('change to active tile - post:', localStartRow+i, localStartCol+j, this.findPath[localStartRow+i][localStartCol+j], 'from ' + localStartRow + '-' + localStartCol, this.findPath[localStartRow][localStartCol]);
                                     }
                                 // Logic for unfound tiles that have met all criteria - make pathStatus as true!
                                 } else if (this.findPath[localStartRow+i][localStartCol+j].pathStatus == false) {
-                                    //console.log('new pre-activation:', localStartRow+i, localStartCol+j, this.findPath[localStartRow+i][localStartCol+j], localStartRow, localStartCol, this.findPath[localStartRow][localStartCol]);
+                                    //console.log('new pre-activation:', localStartRow+i, localStartCol+j, this.findPath[localStartRow+i][localStartCol+j], 'from ' + localStartRow + '-' + localStartCol, this.findPath[localStartRow][localStartCol]);
                                     this.findPath[localStartRow+i][localStartCol+j].pathStatus = true;
-                                    // Activate tiles is constraints are met
+                                    // Activate tiles if constraints are met
                                     if (tileCumulMoveCost < localMaxMove) {
                                         this.findPath[localStartRow+i][localStartCol+j].activeStatus = 'active';
                                         if (displayActive) {
                                             gameBoard.boardArray[localStartRow+i][localStartCol+j].activeStatus = 'active';
                                         }
-                                    }
-                                    // Sets cargo ship tile to inactive to prevent moving there
-                                    if (gameBoard.boardArray[localStartRow+i][localStartCol+j].pieces.type == 'cargo ship') {
-                                        if(gameManagement.turn != 'Pirate') {
-                                            //this.findPath[localStartRow+i][localStartCol+j].pathStatus = false;
-                                            this.findPath[localStartRow+i][localStartCol+j].activeStatus = 'inactive';
-                                            gameBoard.boardArray[localStartRow+i][localStartCol+j].activeStatus = 'inactive';
-                                        }
-                                        this.findPath[localStartRow+i][localStartCol+j].target = 'cargo ship';
-                                        this.findPath[localStartRow+i][localStartCol+j].team = gameBoard.boardArray[localStartRow+i][localStartCol+j].pieces.team.slice(0);
-                                        //console.log(this.findPath[localStartRow+i][localStartCol+j]);
                                     }
                                     // Update the cost, add the inherited path from the previous moved-to tile, push the path for the new tile
                                     this.findPath[localStartRow+i][localStartCol+j].moveCost = tileCumulMoveCost;
@@ -156,9 +146,35 @@ let pieceMovement = {
                                     this.findPath[localStartRow+i][localStartCol+j].path = this.findPath[localStartRow][localStartCol].path.slice(0);
                                     this.findPath[localStartRow+i][localStartCol+j].path.push({fromRow: +(localStartRow+i) , fromCol: +(localStartCol+j)});
                                     this.findPath[localStartRow+i][localStartCol+j].distance = this.findPath[localStartRow+i][localStartCol+j].path.length-1;
-                                    //console.log('new post-activation:', localStartRow+i, localStartCol+j, this.findPath[localStartRow+i][localStartCol+j], localStartRow, localStartCol, this.findPath[localStartRow][localStartCol]);
+                                    //console.log('new post-activation:', localStartRow+i, localStartCol+j, this.findPath[localStartRow+i][localStartCol+j], 'from ' + localStartRow + '-' + localStartCol, this.findPath[localStartRow][localStartCol]);
                                     //Keep useful for debugging - console.log('row: ' + (localStartRow+i) + ' col: ' + (localStartCol+j) + ' set to: ' + this.findPath[localStartRow+i][localStartCol+j].activeStatus + ' with cost: ' + this.findPath[localStartRow+i][localStartCol+j].moveCost + ' and distance: ' + this.findPath[localStartRow+i][localStartCol+j].distance);
                                 }
+
+                                // Sets cargo ship tile to inactive to prevent moving there
+                                if (gameBoard.boardArray[localStartRow+i][localStartCol+j].pieces.type == 'cargo ship') {
+                                    this.findPath[localStartRow+i][localStartCol+j].target = 'cargo ship';
+                                    this.findPath[localStartRow+i][localStartCol+j].team = gameBoard.boardArray[localStartRow+i][localStartCol+j].pieces.team.slice(0);
+                                    //this.findPath[localStartRow+i][localStartCol+j].pathStatus = false;
+                                    if (gameManagement.turn != 'Pirate') {
+                                        //this.findPath[localStartRow+i][localStartCol+j].pathStatus = false;
+                                        this.findPath[localStartRow+i][localStartCol+j].activeStatus = 'inactive';
+                                        gameBoard.boardArray[localStartRow+i][localStartCol+j].activeStatus = 'inactive';
+                                    // Prevents pirate ships being activated on pirate ship moves
+                                    } else if (this.findPath[localStartRow+i][localStartCol+j].team == 'Pirate') {
+                                        this.findPath[localStartRow+i][localStartCol+j].activeStatus = 'inactive';
+                                        gameBoard.boardArray[localStartRow+i][localStartCol+j].activeStatus = 'inactive';
+                                    } else if (gameBoard.boardArray[localStartRow+i][localStartCol+j].pieces.damageStatus == 'damaged') {
+                                        this.findPath[localStartRow+i][localStartCol+j].activeStatus = 'inactive';
+                                        gameBoard.boardArray[localStartRow+i][localStartCol+j].activeStatus = 'inactive';
+                                    } else if (gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.damageStatus == 'damaged') {
+                                        this.findPath[localStartRow+i][localStartCol+j].activeStatus = 'inactive';
+                                        gameBoard.boardArray[localStartRow+i][localStartCol+j].activeStatus = 'inactive';
+                                    }
+
+                                    //console.log(this.findPath[localStartRow+i][localStartCol+j]);
+                                }
+
+
                             //}
                         }
                     }
@@ -246,7 +262,6 @@ let pieceMovement = {
 
     // Method for ship movement and transition
     // ---------------------------------------
-
     shipTransition: function(gameSpeed) {
         // Variables for transition movements
         let topDirection = 0;
@@ -255,7 +270,7 @@ let pieceMovement = {
 
         // Calculate placement on board of start tile for move
         IDPieceStart = 'tile' + Number(this.movementArray.start.row*1000 + this.movementArray.start.col);
-        console.log(IDPieceStart);
+        //console.log(IDPieceStart);
         let chosenPiece = document.getElementById(IDPieceStart);
 
         // Allowing ship to overflow edges of its tile on transition
@@ -265,7 +280,7 @@ let pieceMovement = {
 
         // Obtaining path of piece that leads to end tile of move from findPath array
         let localPath = this.findPath[this.movementArray.end.row][this.movementArray.end.col].path;
-        console.log(localPath);
+        //console.log(localPath);
 
         // Length gives number of steps in path
         let numberOfTiles = localPath.length - 1;
@@ -285,8 +300,8 @@ let pieceMovement = {
         }
 
         // Applying moves to game board array
-        gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces = {populatedSquare: true, category: this.movementArray.start.pieces.category, type: this.movementArray.start.pieces.type, direction: rotateDirection, used: 'used', team: this.movementArray.start.pieces.team, goods: this.movementArray.start.pieces.goods, stock: this.movementArray.start.pieces.stock};
-        gameBoard.boardArray[pieceMovement.movementArray['start'].row][pieceMovement.movementArray['start'].col].pieces = {populatedSquare: false, category: '', type: 'no piece', direction: '', used: 'unused', team: '', goods: 'none', stock: 0};
+        gameBoard.boardArray[pieceMovement.movementArray['start'].row][pieceMovement.movementArray['start'].col].pieces = {populatedSquare: false, category: '', type: 'no piece', direction: '', used: 'unused', damageStatus: 'good', team: '', goods: 'none', stock: 0};
+        gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces = {populatedSquare: true, category: this.movementArray.start.pieces.category, type: this.movementArray.start.pieces.type, direction: rotateDirection, used: 'used', damageStatus: this.movementArray.start.pieces.damageStatus, team: this.movementArray.start.pieces.team, goods: this.movementArray.start.pieces.goods, stock: this.movementArray.start.pieces.stock};
 
         //Updating piece information
         chosenPiece.setAttribute('id', 'tile' + Number(pieceMovement.movementArray.end.row*1000 + pieceMovement.movementArray.end.col));
@@ -295,8 +310,10 @@ let pieceMovement = {
         setTimeout(function() {
             chosenPiece.style.transition = '';
             pieceMovement.landDiscovery();
+            if(gameManagement.turn == 'Pirate') {
+                pieceMovement.shipConflict();
+            }
         }, numberOfTiles * 500 * gameSpeed);
-
 
     },
 
@@ -334,7 +351,7 @@ let pieceMovement = {
                             if(gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].terrain == 'land' && !gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].pieces.populatedSquare) {
                                 // If so - picks a reource card type using resourceManagement.pickFromResourceDeck() and updates boardArray to this tile tile with unoccupied team
                                 deckCard = resourceManagement.pickFromResourceDeck();
-                                gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].pieces = {populatedSquare: true, category: 'Resources', type: deckCard.type, direction: '0', used: 'unused', team: 'Unclaimed', goods: deckCard.goods, stock: 0};
+                                gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].pieces = {populatedSquare: true, category: 'Resources', type: deckCard.type, direction: '0', used: 'unused', damageStatus: 'good', team: 'Unclaimed', goods: deckCard.goods, stock: 0};
                                 // and then creates an SVG resource tile for the land space
                                 boardMarkNode.appendChild(gameBoard.createActionTile(this.movementArray.end.row+i, this.movementArray.end.col+j, gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].pieces.type, gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].pieces.team,
                                   'tile' + Number((this.movementArray.end.row+i)*1000 + (this.movementArray.end.col+j)), boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * (this.movementArray.end.row+i), boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * (this.movementArray.end.col+j), 1, gameBoard.boardArray[this.movementArray.end.row+i][(this.movementArray.end.col+j)].pieces.direction));
@@ -417,6 +434,74 @@ let pieceMovement = {
             }
         }
         return result;
+    },
+
+    // Method to organise the battles between ships
+    // --------------------------------------------
+    shipConflict: function() {
+        if (pirates.conflictArray.conflict == true) {
+            //console.log(pirates.conflictArray);
+            // Obtains ID and element of pirates
+            IDPirate = 'tile' + Number(pirates.conflictArray.pirate.row*1000 + pirates.conflictArray.pirate.col);
+            let piratePiece = document.getElementById(IDPirate);
+            // Obtains ID and element of ship
+            IDShip = 'tile' + Number(pirates.conflictArray.ship.row*1000 + pirates.conflictArray.ship.col);
+            let shipPiece = document.getElementById(IDShip);
+
+            // Get direction from pirate ship to cargo ship
+            conflictTopDirection = (pirates.conflictArray.ship.row - pirates.conflictArray.pirate.row);
+            conflictLeftDirection = (pirates.conflictArray.ship.col - pirates.conflictArray.pirate.col);
+            // Turn ships to face each other
+            conflictDirection = this.movementDirection[(pirates.conflictArray.ship.col - pirates.conflictArray.pirate.col) + 1][(pirates.conflictArray.ship.row - pirates.conflictArray.pirate.row) + 1] - 90;
+
+            // Simulate cannon fire animation
+            let reductionDirection = 0.25;
+            let repeat = 4;
+            let fireEffect = 1;
+
+            // Function animates sea battle, calculates winner, and transfers stolen goods if necessary
+            function cannonFire() {
+                if (repeat > 0) {
+                    shipPiece.style.transition = 'transform ' + (0.4 * gameSpeed) + 's 0s ease-in-out, left ' + (0.7 * gameSpeed * fireEffect) + 's ' + (0.0 * gameSpeed * fireEffect) + 's ease-in-out, top ' + (0.7 * gameSpeed * fireEffect) + 's ' + (0.0 * gameSpeed * fireEffect) + 's ease-in-out';
+                    piratePiece.style.transition = 'transform ' + (0.4 * gameSpeed) + 's 0s ease-in-out, left ' + (0.7 * gameSpeed * fireEffect) + 's ' + (0.0 * gameSpeed * fireEffect) + 's ease-in-out, top ' + (0.7 * gameSpeed * fireEffect) + 's ' + (0.0 * gameSpeed * fireEffect) + 's ease-in-out';
+                    shipPiece.style.transform = 'rotate(' + conflictDirection + 'deg)';
+                    piratePiece.style.transform = 'rotate(' + conflictDirection + 'deg)';
+                    shipPiece.style.left = parseFloat(shipPiece.style.left) - (conflictLeftDirection * reductionDirection * (gridSize + tileBorder*2)) + 'px';
+                    shipPiece.style.top = parseFloat(shipPiece.style.top) - (conflictTopDirection * reductionDirection * (gridSize + tileBorder*2)) + 'px';
+                    piratePiece.style.left = parseFloat(piratePiece.style.left) + (conflictLeftDirection * reductionDirection * (gridSize + tileBorder*2)) + 'px';
+                    piratePiece.style.top = parseFloat(piratePiece.style.top) + (conflictTopDirection * reductionDirection * (gridSize + tileBorder*2)) + 'px';
+                    if (reductionDirection == 0.25) {
+                        reductionDirection = -0.12;
+                    } else if (reductionDirection == 0.12) {
+                        reductionDirection = -0.25;
+                    } else {
+                        reductionDirection *= -1;
+                    }
+                    if (fireEffect == 1) {
+                        fireEffect = 0.1;
+                    } else {
+                        fireEffect = 1;
+                    }
+                    repeat -= 1;
+                    setTimeout(cannonFire, gameSpeed * 1000);
+                } else {
+                    // Calculates winner of sea battle  - 50% chance of each ship winning battle
+                    if (Math.random()>0.5) {
+                        // Pirate ship wins battle and team ship is damaged
+                        gameBoard.damageShip(shipPiece, gameBoard.boardArray[pirates.conflictArray.ship.row][pirates.conflictArray.ship.col].pieces.team);
+                        gameBoard.boardArray[pirates.conflictArray.ship.row][pirates.conflictArray.ship.col].pieces.damageStatus = 'damaged';
+                        // Any cargo lost (assumed taken by pirate ship - although it won't be registered as carried by pirate ship as this would prevent further attacks)
+                        gameBoard.boardArray[pirates.conflictArray.ship.row][pirates.conflictArray.ship.col].pieces.goods = 'none';
+                        gameBoard.boardArray[pirates.conflictArray.ship.row][pirates.conflictArray.ship.col].pieces.stock = 0;
+                    } else {
+                        // Team ship wins battle and pirate ship is damaged
+                        gameBoard.damageShip(piratePiece, 'Pirate');
+                        gameBoard.boardArray[pirates.conflictArray.pirate.row][pirates.conflictArray.pirate.col].pieces.damageStatus = 'damaged';
+                    }
+                }
+            }
+            cannonFire();
+        }
     },
 
 // LAST BRACKET OF OBJECT
