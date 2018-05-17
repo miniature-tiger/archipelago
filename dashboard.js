@@ -12,10 +12,10 @@ let stockDashboard = {
     // Pieces must be added in the order: Settlements, Transport, Resources
     pieceTypes: [ {type: 'fort', category: 'Settlements', maxNo: 1000, goods: 'none', production: 0, deckNumber: 0},
                   {type: 'cargo ship', category: 'Transport', maxNo: 1000, goods: 'none', production: 0, deckNumber: 0},
-                  {type: 'forest', category: 'Resources', maxNo: 3, goods: 'wood', production: 3, deckNumber: 8},
-                  {type: 'ironworks', category: 'Resources', maxNo: 3, goods: 'iron', production: 1, deckNumber: 8},
-                  {type: 'quarry', category: 'Resources', maxNo: 3, goods: 'stone', production: 2, deckNumber: 8},
-                  {type: 'plantation', category: 'Resources', maxNo: 3, goods: 'coffee', production: 3, deckNumber: 8}
+                  {type: 'forest', category: 'Resources', maxNo: 3, goods: 'wood', production: 3, deckNumber: 4},
+                  {type: 'ironworks', category: 'Resources', maxNo: 3, goods: 'iron', production: 1, deckNumber: 4},
+                  {type: 'quarry', category: 'Resources', maxNo: 3, goods: 'stone', production: 2, deckNumber: 4},
+                  {type: 'plantation', category: 'Resources', maxNo: 3, goods: 'coffee', production: 3, deckNumber: 4}
                 ],
 
 
