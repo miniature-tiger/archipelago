@@ -68,7 +68,7 @@ function boardSetUp(row, col, gridSize, boardShape) {
 
     // Set up of resources
     resourceManagement.populateResourceDeck();
-    gameBoard.allocateStartTiles();
+    //gameBoard.allocateStartTiles();
 
     // Drawing of board
     gameBoard.drawBoard(row, col, gridSize);
