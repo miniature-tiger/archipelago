@@ -104,11 +104,12 @@ let pieceMovement = {
                         // Restrict for land squares ( ---- and objects ---- )
                         // if (gameBoard.boardArray[localStartRow+i][localStartCol+j].terrain == 'sea' && gameBoard.boardArray[localStartRow+i][localStartCol+j].pieces.populatedSquare == false) {
                         if (gameBoard.boardArray[localStartRow+i][localStartCol+j].terrain == 'sea') {
-                            // Aggregate cost of reaching tile in tileCumulMoveCost - add the exiting cost to the cost for reaching the new tile from moveCost
-                            //console.log('row: ' + (localStartRow+i) + ' col: ' + (localStartCol+j) + ' prior cost: ' + localCumulMoveCost + ' new cost: ' + this.moveCost(localStartRow, localStartCol ,localStartRow+i, localStartCol+j, needleDirection))
-                            tileCumulMoveCost = localCumulMoveCost + this.moveCost(localStartRow, localStartCol ,localStartRow+i, localStartCol+j, needleDirection);
-                            // Restrict activation by Maximum Cost of reaching a tile (allows wind direction to be factored in to move)
-                            //if (tileCumulMoveCost <= localMaxMove) {
+                            if (!((gameBoard.boardArray[localStartRow+i][localStartCol+j].subTerrain == 'harbour') && (gameManagement.turn == 'Pirate')) ) {
+                                // Aggregate cost of reaching tile in tileCumulMoveCost - add the exiting cost to the cost for reaching the new tile from moveCost
+                                //console.log('row: ' + (localStartRow+i) + ' col: ' + (localStartCol+j) + ' prior cost: ' + localCumulMoveCost + ' new cost: ' + this.moveCost(localStartRow, localStartCol ,localStartRow+i, localStartCol+j, needleDirection))
+                                tileCumulMoveCost = localCumulMoveCost + this.moveCost(localStartRow, localStartCol ,localStartRow+i, localStartCol+j, needleDirection);
+                                // Restrict activation by Maximum Cost of reaching a tile (allows wind direction to be factored in to move)
+                                //if (tileCumulMoveCost <= localMaxMove) {
                                 // Separate newly found tiles from previously found tiles
                                 if (this.findPath[localStartRow+i][localStartCol+j].pathStatus == true) {
                                     // Logic for already active tiles - is the new path cheaper in moveCost?
@@ -173,9 +174,8 @@ let pieceMovement = {
 
                                     //console.log(this.findPath[localStartRow+i][localStartCol+j]);
                                 }
-
-
                             //}
+                            }
                         }
                     }
                 }

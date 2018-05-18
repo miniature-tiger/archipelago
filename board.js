@@ -19,10 +19,10 @@ let gameBoard = {
             for (var x = 0; x < row; x++) {
                 // A few random land tiles
                 if(Math.random() > 0.995) {
-                    rowArray.push({xpos: + x, ypos: + y, terrain: 'land', activeStatus: 'inactive', pieces: {populatedSquare: false, category: '', type: 'no piece', direction: '', used: 'unused', damageStatus: 'good', team: '', goods: 'none', stock: 0}});
+                    rowArray.push({xpos: + x, ypos: + y, terrain: 'land', subTerrain: 'none', activeStatus: 'inactive', pieces: {populatedSquare: false, category: '', type: 'no piece', direction: '', used: 'unused', damageStatus: 'good', team: '', goods: 'none', stock: 0}});
                 // But mainly sea tiles
                 } else {
-                    rowArray.push({xpos: + x, ypos: + y, terrain: 'sea', activeStatus: 'inactive', pieces: {populatedSquare: false, category: '', type: 'no piece', direction: '', used: 'unused', damageStatus: 'good', team: '', goods: 'none', stock: 0}});
+                    rowArray.push({xpos: + x, ypos: + y, terrain: 'sea', subTerrain: 'none', activeStatus: 'inactive', pieces: {populatedSquare: false, category: '', type: 'no piece', direction: '', used: 'unused', damageStatus: 'good', team: '', goods: 'none', stock: 0}});
                 }
             }
         this.boardArray.push(rowArray);
@@ -929,7 +929,9 @@ let gameBoard = {
         for (var h = 0; h < octagonArray.length; h++) {
             this.drawTiles (octagonArray[h].type, canvasBoard, octagonArray[h].gap, octagonArray[h].width, octagonArray[h].colour, octagonArray[h].background)
         }
+        this.drawSafeHarbours();
         this.drawCompass();
+
     },
 
     // New method to create the board pieces based on the boardArray using SVG
@@ -966,7 +968,10 @@ let gameBoard = {
                     // Tiles - 'invis' gives shape to octagonal board
                     this.drawOctagon(boardLayer, ocatagonGap);
                 } else if (octagonType=='active' && this.boardArray[i][j].activeStatus == 'active') {
-                    // Activation of tiles - will be moved to a separate canvas overlay in future
+                    // Activation of tiles - on a separate canvas overlay
+                    this.drawOctagon(boardLayer, ocatagonGap);
+                } else if (octagonType=='harbour' && this.boardArray[i][j].subTerrain == 'harbour') {
+                    // Draws safe harbours - on a separate canvas overlay
                     this.drawOctagon(boardLayer, ocatagonGap);
                 } else if (octagonType=='land' && this.boardArray[i][j].terrain == 'land') {
                     // Islands
@@ -986,7 +991,6 @@ let gameBoard = {
 
     // Method to set up canvas overlay layer for piece activation
     // ----------------------------------------------------------
-
     drawActiveTiles: function () {
         // Clears the canvas for redraw
         canvasActive.clearRect(0, 0, canvasActive.canvas.width, canvasActive.canvas.height);
@@ -994,6 +998,15 @@ let gameBoard = {
         // drawTiles is used to colour tiles on active layer
         gameBoard.drawTiles ('active', canvasActive, 0, 1, 'rgb(255, 153, 153)', 'transparent');
 
+        // safe harbours are also drawn on canvasActive later - can be changed later if necessary
+        this.drawSafeHarbours();
+    },
+
+    // Method to add safe harbours to the map
+    // --------------------------------------
+    drawSafeHarbours: function () {
+        // safe harbours are also drawn on canvasActive later - can be changed later if necessary
+        gameBoard.drawTiles ('harbour', canvasActive, 0, 1, 'transparent', 'rgb(233, 211, 183)');
     },
 
     // Method to draw octagons for creation of board
