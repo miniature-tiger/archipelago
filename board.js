@@ -202,7 +202,8 @@ let gameBoard = {
         this.boardArray[row-4][boardCenter - 1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
         this.boardArray[row-5][boardCenter + 1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
         this.boardArray[row-5][boardCenter].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
-        this.boardArray[row-5][boardCenter -1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0}; */
+        this.boardArray[row-5][boardCenter -1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
+        //*/
 
     },
 
@@ -410,9 +411,21 @@ let gameBoard = {
         cargoSail.setAttribute('fill', 'white');
         cargoSail.style.strokeWidth = '1px';
 
+        // Cargo ship sail SVG design
+        let cargoMast = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        cargoMast.setAttribute('class', localTeam + ' team_stroke');
+        cargoMast.setAttribute('cx', '12.5');
+        cargoMast.setAttribute('cy', '17');
+        cargoMast.setAttribute('r', '1');
+        cargoMast.style.strokeWidth = '1px';
+        cargoMast.style.strokeLinecap = 'round';
+
         // Building the tile
         actionTile.appendChild(cargoDeck);
+        actionTile.appendChild(cargoMast);
         actionTile.appendChild(cargoSail);
+
+        //actionTile.appendChild(shipScaffold);
 
         return actionTile;
     },
@@ -420,6 +433,7 @@ let gameBoard = {
     // Method to damage cargo ship after conflict
     // ------------------------------------------
     damageShip: function(actionTile, localTeam) {
+        actionTile.children[2].remove();
         actionTile.children[1].remove();
 
         let shipOars = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -431,6 +445,52 @@ let gameBoard = {
         //shipOars.setAttribute('stroke', 'white');
 
         actionTile.appendChild(shipOars);
+    },
+
+    // Method to repair cargo ship docked in harbour
+    // ---------------------------------------------
+    repairShip: function(actionTile, localTeam, localStatus) {
+        console.log(actionTile.children);
+
+        // Puts up scaffolding
+        if (localStatus == 'repair0') {
+            actionTile.children[1].remove();
+            let shipScaffold = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            shipScaffold.setAttribute('d', 'M 4 4 L 4 23 M 21 4 L 21 23 M 4 8 L 6.5 8 M 21 8 L 18.5 8 M 4 19 L 6 19 M 21 19 L 19 19');
+            shipScaffold.setAttribute('class', localTeam + ' team_stroke');
+            shipScaffold.style.strokeLinejoin = 'round';
+            shipScaffold.style.strokeLinecap = 'round';
+            shipScaffold.style.strokeWidth = '1px';
+            actionTile.appendChild(shipScaffold);
+        }
+
+        // Repairs mast
+        if (localStatus == 'repair1') {
+            let cargoMast = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            cargoMast.setAttribute('class', localTeam + ' team_stroke');
+            cargoMast.setAttribute('cx', '12.5');
+            cargoMast.setAttribute('cy', '17');
+            cargoMast.setAttribute('r', '1');
+            cargoMast.style.strokeWidth = '1px';
+            cargoMast.style.strokeLinecap = 'round';
+            actionTile.appendChild(cargoMast);
+        }
+
+        // Repairs sail
+        if (localStatus == 'repair2') {
+            // Cargo ship sail SVG design
+            let cargoSail = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            cargoSail.setAttribute('d', 'M 2 16 L 22 16 C 20.5 13.5 16.5 12 12 12 C 7.5 12 3.5 13.5 2 16 Z');
+            cargoSail.setAttribute('class', localTeam + ' team_stroke');
+            cargoSail.setAttribute('fill', 'white');
+            cargoSail.style.strokeWidth = '1px';
+            actionTile.appendChild(cargoSail);
+        }
+
+        // Removes scaffolding
+        if (localStatus == 'good') {
+            actionTile.children[1].remove();
+        }
     },
 
     // Method to create fort tile

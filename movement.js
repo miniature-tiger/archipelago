@@ -20,7 +20,7 @@ let pieceMovement = {
     //    movement costs for each direction integrated with compass needle direction
     // Future update:
     //    code for different pieces
-    activateTiles: function(localStartRow, localStartCol, localMaxMove, displayActive) {
+    activateTiles: function(localStartRow, localStartCol, localMaxMove, displayActive, localDamagedStatus) {
         // Initialises findPath array which holds board size array of
         // active/inactive status, movement cost to reach that tile, path to that tile
         this.initialisefindPath(localStartRow, localStartCol, localMaxMove);
@@ -54,7 +54,7 @@ let pieceMovement = {
                             if ((this.findPath[localStartRow+i][localStartCol+j].pathStatus == true) && (this.findPath[localStartRow+i][localStartCol+j].target != 'cargo ship')) {
                                 //Keep useful for debugging - console.log('run: ' + k);
                                 //Keep useful for debugging - console.log('starting from: row: ' + (localStartRow+i) + ' col: ' + (localStartCol+j) + ' prior cost: ' + this.findPath[localStartRow+i][localStartCol+j].moveCost);
-                                this.activeTiles(localStartRow+i, localStartCol+j, this.findPath[localStartRow+i][localStartCol+j].moveCost, localMaxMove, displayActive, k);
+                                this.activeTiles(localStartRow+i, localStartCol+j, this.findPath[localStartRow+i][localStartCol+j].moveCost, localMaxMove, displayActive, k, localDamagedStatus);
                             }
                         }
                     }
@@ -83,7 +83,7 @@ let pieceMovement = {
         }
     },
 
-    activeTiles: function(localStartRow, localStartCol, localCumulMoveCost, localMaxMove, displayActive, k) {
+    activeTiles: function(localStartRow, localStartCol, localCumulMoveCost, localMaxMove, displayActive, k, localDamagedStatus) {
         // activeTiles searches a 3x3 grid around the passed ("found") tile reference to find more potential tiles
         // Restrictions on "found" tiles and activation are: board size, land and occupied pieces, total available move cost to reach tile
         // Total available move cost is currently set to MaxMove (i.e you can move a total of x tiles or equivalent adjusted by wind) - this may be changed in future
@@ -107,7 +107,11 @@ let pieceMovement = {
                             if (!((gameBoard.boardArray[localStartRow+i][localStartCol+j].subTerrain == 'harbour') && (gameManagement.turn == 'Pirate')) ) {
                                 // Aggregate cost of reaching tile in tileCumulMoveCost - add the exiting cost to the cost for reaching the new tile from moveCost
                                 //console.log('row: ' + (localStartRow+i) + ' col: ' + (localStartCol+j) + ' prior cost: ' + localCumulMoveCost + ' new cost: ' + this.moveCost(localStartRow, localStartCol ,localStartRow+i, localStartCol+j, needleDirection))
-                                tileCumulMoveCost = localCumulMoveCost + this.moveCost(localStartRow, localStartCol ,localStartRow+i, localStartCol+j, needleDirection);
+                                if (localDamagedStatus == 'damaged') {
+                                    tileCumulMoveCost = localCumulMoveCost + 1;
+                                } else {
+                                    tileCumulMoveCost = localCumulMoveCost + this.moveCost(localStartRow, localStartCol ,localStartRow+i, localStartCol+j, needleDirection);
+                                }
                                 // Restrict activation by Maximum Cost of reaching a tile (allows wind direction to be factored in to move)
                                 //if (tileCumulMoveCost <= localMaxMove) {
                                 // Separate newly found tiles from previously found tiles
@@ -239,6 +243,10 @@ let pieceMovement = {
     // Method for capturing moves
     // --------------------------
     captureMove: function(fromTo, yClickTile, xClickTile) {
+        if (fromTo == 'start') {
+            this.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
+        }
+
         // Calculate row and column of square from id and record in movement array
         //console.log('capturemove', xClickTile);
         this.movementArray[fromTo].col = xClickTile;
@@ -309,10 +317,16 @@ let pieceMovement = {
         // Reset of transitions delayed in proportion to number of moves
         setTimeout(function() {
             chosenPiece.style.transition = '';
-            pieceMovement.landDiscovery();
-            if(gameManagement.turn == 'Pirate') {
+            if (gameManagement.turn != 'Pirate') {
+                pieceMovement.landDiscovery();
+                pieceMovement.harbourRepairArrival(chosenPiece);
+            } else if (gameManagement.turn == 'Pirate') {
                 pieceMovement.shipConflict();
             }
+
+            // Resetting movement array once second click has been made (if move valid)
+            pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
+            startEnd = 'start';
         }, numberOfTiles * 500 * gameSpeed);
 
     },
@@ -338,7 +352,6 @@ let pieceMovement = {
     // Method to allow discovery of new land tiles
     // -------------------------------------------
     landDiscovery: function() {
-
         // At end of each move check a 1x1 grid to see if the ship is next to land that is unpopulated
         let searchDistance = 1;
         for (var i = -searchDistance; i < searchDistance + 1; i++) {
@@ -362,9 +375,6 @@ let pieceMovement = {
             }
         }
 
-        // Resetting movement array once second click has been made (if move valid)
-        pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
-        startEnd = 'start';
         //console.log('valid cargo - start');
     },
 
@@ -501,6 +511,59 @@ let pieceMovement = {
                 }
             }
             cannonFire();
+        }
+    },
+
+    // Method to repair ship in safe harbour
+    // -------------------------------------
+    harbourRepairArrival: function(shipPiece) {
+        let repairDirection = 0;
+        // Finds moves that end in harbour repair
+        if(this.movementArray.start.pieces.damageStatus == 'damaged' && gameBoard.boardArray[this.movementArray.end.row][this.movementArray.end.col].subTerrain == 'harbour') {
+            shipPiece.style.transition = 'transform ' + (0.4 * gameSpeed) + 's 0s ease-in-out';
+            for (var k = -1; k <= 1; k++) {
+                for (var l = -1; l <= 1; l++) {
+                    // Turns ship to face fort for repair
+                    if ((this.movementArray.end.row+k >= 0) && (this.movementArray.end.row+k < row)) {
+                        if ((this.movementArray.end.col+l >= 0) && (this.movementArray.end.col+l < col)) {
+                            if(gameBoard.boardArray[this.movementArray.end.row+k][this.movementArray.end.col+l].pieces.type == 'fort') {
+                                repairDirection = this.movementDirection[l + 1][k + 1];
+                            }
+                        }
+                    }
+                }
+            }
+            shipPiece.style.transform = 'rotate(' + repairDirection + 'deg)';
+            // Updates boardArray fro new status
+            gameBoard.boardArray[this.movementArray.end.row][this.movementArray.end.col].pieces.damageStatus = 'repair0';
+            gameBoard.repairShip(shipPiece, gameBoard.boardArray[this.movementArray.end.row][this.movementArray.end.col].pieces.team, 'repair0');
+        }
+    },
+
+    // Method to check for ships to repair at start of turn
+    // ----------------------------------------------------
+    harbourRepair: function() {
+        // Finds ships in harbour undergoing repair
+        for (var i = 0; i < gameBoard.boardArray.length; i++) {
+            for (var j = 0; j < gameBoard.boardArray[i].length; j++) {
+                if((gameBoard.boardArray[i][j].pieces.category == 'Transport') && (gameBoard.boardArray[i][j].pieces.team == gameManagement.turn)) {
+                    // Calculates placement on board of tile to obtain piece SVG
+                    IDPieceStart = 'tile' + (i*1000 + j);
+                    let shipPiece = document.getElementById(IDPieceStart);
+
+                    // Calls repairShip to carry out the different repairs
+                    if (gameBoard.boardArray[i][j].pieces.damageStatus == 'repair0') {
+                        gameBoard.boardArray[i][j].pieces.damageStatus = 'repair1'
+                        gameBoard.repairShip(shipPiece, gameManagement.turn, 'repair1');
+                    } else if(gameBoard.boardArray[i][j].pieces.damageStatus == 'repair1') {
+                        gameBoard.boardArray[i][j].pieces.damageStatus = 'repair2';
+                        gameBoard.repairShip(shipPiece, gameManagement.turn, 'repair2');
+                    } else if(gameBoard.boardArray[i][j].pieces.damageStatus == 'repair2') {
+                        gameBoard.boardArray[i][j].pieces.damageStatus = 'good';
+                        gameBoard.repairShip(shipPiece, gameManagement.turn, 'good');
+                    }
+                }
+            }
         }
     },
 

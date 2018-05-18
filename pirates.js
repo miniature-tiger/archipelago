@@ -13,13 +13,21 @@ let pirates = {
         // Loop through each pirate ship with delay to allow transormations to occur
         let i = 0;
         function moves() {
+                // Resets movement array
+                pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
+
                 pathDistance = 0;
                 //console.log(' -------------------- pirate ship: ' + i);
                 // Starting tile for pirate ship move taken from array of pirate ships
                 pieceMovement.movementArray.start = pirates.pirateShips[i].start;
                 // Tiles activated which also finds path for moves and target information on reachable area
                 // true / false allow red boundaries to be highlighted or not
-                pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, maxMove, false);
+                if (pieceMovement.movementArray.start.pieces.damageStatus == 'damaged') {
+                    pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, 2.1, false, 'damaged');
+                } else {
+                    pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, maxMove, false, 'good');
+                }
+
                 //console.log('findPath', pieceMovement.findPath);
                 // Redraw active tile layer after activation to show activated tiles
                 gameBoard.drawActiveTiles();
@@ -72,8 +80,6 @@ let pirates = {
                 stockDashboard.stockTake();
                 stockDashboard.drawStock();
 
-                // Resets movement array
-                pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
                 // Moves on to next ship
                 i+=1;
 
