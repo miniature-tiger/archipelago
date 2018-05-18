@@ -12,7 +12,7 @@
 // Intial values for the board size and shape
 // Tile size (gridSize) is set here
 let row = 31, col = 31, boardShape='octagon';
-let screenWidth = window.screen.width;
+let screenWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
 
 let surroundSize = Math.floor(0.065 * screenWidth);
