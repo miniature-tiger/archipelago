@@ -48,7 +48,7 @@ let canvasBoard = board.getContext('2d');
 canvasBoard.canvas.width = col * (gridSize + tileBorder * 2) + boardSurround * 2;
 canvasBoard.canvas.height = row * (gridSize + tileBorder * 2) + boardSurround * 2;
 
-// Canavs 'activeBoard' is created and size is set dynamically
+// Canvas 'activeBoard' (for active tiles that can be moved to) is created and size is set dynamically
 let activeBoard = document.createElement('canvas');
 boardMarkNode.appendChild(activeBoard);
 let canvasActive = activeBoard.getContext('2d');
@@ -65,6 +65,7 @@ boardMarkNode.appendChild(tradeRouteLayer);
 function boardSetUp(row, col, gridSize, boardShape) {
     gameBoard.populateBoardArray(row, col, boardShape);
     gameBoard.overlayBoardArray(row, col, boardShape);
+    pirates.safeHarbour();
 
     // Set up of resources
     resourceManagement.populateResourceDeck();

@@ -138,7 +138,7 @@ let pirates = {
         this.targetTelescope = [];
         for (var i = 0; i < col; i++) {
             for (var j = 0; j < row; j++) {
-                if ((pieceMovement.findPath[i][j].target == 'cargo ship') && (gameBoard.boardArray[i][j].pieces.team != 'Pirate') && (gameBoard.boardArray[i][j].pieces.damageStatus != 'damaged')) {
+                if ((pieceMovement.findPath[i][j].target == 'cargo ship') && (gameBoard.boardArray[i][j].pieces.team != 'Pirate') && (gameBoard.boardArray[i][j].pieces.damageStatus != 'damaged') && (gameBoard.boardArray[i][j].subTerrain != 'harbour')) {
                     this.targetTelescope.push({row: + i, col: + j, distance: + pieceMovement.findPath[i][j].distance, moveCost: + pieceMovement.findPath[i][j].moveCost});
                 }
             }
@@ -201,8 +201,25 @@ let pirates = {
         return resultArray;
     },
 
-
-
+    safeHarbour: function() {
+        for (var i = 0; i < row; i++) {
+            for (var j = 0; j < col; j++) {
+                if (gameBoard.boardArray[i][j].pieces.type == 'fort') {
+                    for (var k = -1; k <= 1; k++) {
+                        for (var l = -1; l <= 1; l++) {
+                            if ((i+k >= 0) && (i+k < row)) {
+                                if ((j+l >= 0) && (j+l < col)) {
+                                    if (gameBoard.boardArray[i+k][j+l].terrain == 'sea') {
+                                        gameBoard.boardArray[i+k][j+l].subTerrain = 'harbour';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
 
     // LAST BRACKET OF OBJECT
 }
