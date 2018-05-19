@@ -156,6 +156,7 @@ tradeContracts.drawContracts();
 
 stockDashboard.goodsStockTake();
 
+  console.log(gameBoard.boardArray);
 
 
 // Set up of compass
@@ -215,6 +216,7 @@ endTurn.addEventListener('click', function() {
     // Update the goods dashboard
     stockDashboard.goodsStockTake();
 
+    console.log(gameBoard.boardArray);
 
 });
 
@@ -437,9 +439,9 @@ boardMarkNode.addEventListener('click', function(event) {
                     // If "Start" piece is validated startEnd gate is opened and potential tiles are activated
                     startEnd = 'end';
                     if (pieceMovement.movementArray.start.pieces.damageStatus == 'damaged') {
-                        pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, 2.1, true, 'damaged');
+                        pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, 2.1, 2, true, 'damaged');
                     } else if (pieceMovement.movementArray.start.pieces.damageStatus == 'good') {
-                        pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, maxMove, true, 'good');
+                        pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, maxMove, maxMove, true, 'good');
                     }
                     // Redraw gameboard to show activated tiles
                     gameBoard.drawActiveTiles();

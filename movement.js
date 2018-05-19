@@ -20,10 +20,10 @@ let pieceMovement = {
     //    movement costs for each direction integrated with compass needle direction
     // Future update:
     //    code for different pieces
-    activateTiles: function(localStartRow, localStartCol, localMaxMove, displayActive, localDamagedStatus) {
+    activateTiles: function(localStartRow, localStartCol, localMaxMove, searchRadius, displayActive, localDamagedStatus) {
         // Initialises findPath array which holds board size array of
         // active/inactive status, movement cost to reach that tile, path to that tile
-        this.initialisefindPath(localStartRow, localStartCol, localMaxMove);
+        this.initialisefindPath(localStartRow, localStartCol);
 
         // Sets clicked piece status to active as starting point of chain reaction of setting active status
         //if (displayActive) {
@@ -41,7 +41,7 @@ let pieceMovement = {
         // activeTiles to search in 3x3 grid around each of these active tiles
         // Third search (k=2) takes each "found" tile within a 5x5 grid of the piece (i.e. within two tile move reach of the piece) then uses
         // activeTiles to search in 3x3 grid around each of these "found" tiles (making a maximum potential localMaxMove tile distance from the piece for active and found tiles)
-        for (var k = 0; k < localMaxMove; k++) {
+        for (var k = 0; k < searchRadius; k++) {
             //console.log('k loop', k);
             // Loops through i rows and j columns to form the 3x3 etc grids
             for (var i = -k; i < k+1; i++) {
@@ -69,7 +69,7 @@ let pieceMovement = {
         //console.log('completed find path slice', this.findPath.slice(0));
     },
 
-    initialisefindPath: function(localStartRow, localStartCol, localMaxMove) {
+    initialisefindPath: function(localStartRow, localStartCol) {
     // Initialises findPath array which holds board size (i rows x j columns) array of:
     // active/inactive status
     // movement cost to reach that tile
@@ -309,7 +309,7 @@ let pieceMovement = {
 
         // Applying moves to game board array
         gameBoard.boardArray[pieceMovement.movementArray['start'].row][pieceMovement.movementArray['start'].col].pieces = {populatedSquare: false, category: '', type: 'no piece', direction: '', used: 'unused', damageStatus: 'good', team: '', goods: 'none', stock: 0};
-        gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces = {populatedSquare: true, category: this.movementArray.start.pieces.category, type: this.movementArray.start.pieces.type, direction: rotateDirection, used: 'used', damageStatus: this.movementArray.start.pieces.damageStatus, team: this.movementArray.start.pieces.team, goods: this.movementArray.start.pieces.goods, stock: this.movementArray.start.pieces.stock};
+        gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces = {populatedSquare: true, category: this.movementArray.start.pieces.category, type: this.movementArray.start.pieces.type, direction: rotateDirection, used: 'used', damageStatus: this.movementArray.start.pieces.damageStatus, team: this.movementArray.start.pieces.team, goods: this.movementArray.start.pieces.goods, stock: this.movementArray.start.pieces.stock, homeRow: this.movementArray.start.pieces.homeRow, homeCol: this.movementArray.start.pieces.homeCol};
 
         //Updating piece information
         chosenPiece.setAttribute('id', 'tile' + Number(pieceMovement.movementArray.end.row*1000 + pieceMovement.movementArray.end.col));
@@ -322,6 +322,7 @@ let pieceMovement = {
                 pieceMovement.harbourRepairArrival(chosenPiece);
             } else if (gameManagement.turn == 'Pirate') {
                 pieceMovement.shipConflict();
+                pieceMovement.harbourRepairArrival(chosenPiece);
             }
 
             // Resetting movement array once second click has been made (if move valid)
@@ -519,7 +520,7 @@ let pieceMovement = {
     harbourRepairArrival: function(shipPiece) {
         let repairDirection = 0;
         // Finds moves that end in harbour repair
-        if(this.movementArray.start.pieces.damageStatus == 'damaged' && gameBoard.boardArray[this.movementArray.end.row][this.movementArray.end.col].subTerrain == 'harbour') {
+        if (this.movementArray.start.pieces.damageStatus == 'damaged' && gameManagement.turn != 'Pirate' && gameBoard.boardArray[this.movementArray.end.row][this.movementArray.end.col].subTerrain == 'harbour') {
             shipPiece.style.transition = 'transform ' + (0.4 * gameSpeed) + 's 0s ease-in-out';
             for (var k = -1; k <= 1; k++) {
                 for (var l = -1; l <= 1; l++) {
@@ -534,7 +535,13 @@ let pieceMovement = {
                 }
             }
             shipPiece.style.transform = 'rotate(' + repairDirection + 'deg)';
-            // Updates boardArray fro new status
+
+            // Updates boardArray for new status
+            gameBoard.boardArray[this.movementArray.end.row][this.movementArray.end.col].pieces.damageStatus = 'repair0';
+            gameBoard.boardArray[this.movementArray.end.row][this.movementArray.end.col].pieces.direction = repairDirection;
+            gameBoard.repairShip(shipPiece, gameBoard.boardArray[this.movementArray.end.row][this.movementArray.end.col].pieces.team, 'repair0');
+        } else if (this.movementArray.start.pieces.damageStatus == 'damaged' && gameManagement.turn == 'Pirate' && gameBoard.boardArray[this.movementArray.end.row][this.movementArray.end.col].subTerrain == 'pirateHarbour') {
+            // Updates boardArray for new status
             gameBoard.boardArray[this.movementArray.end.row][this.movementArray.end.col].pieces.damageStatus = 'repair0';
             gameBoard.repairShip(shipPiece, gameBoard.boardArray[this.movementArray.end.row][this.movementArray.end.col].pieces.team, 'repair0');
         }

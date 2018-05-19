@@ -156,27 +156,31 @@ let gameBoard = {
 
 
         // Creation of ships
-        this.boardArray[boardCenter-1][col-1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-90', used: 'unused', damageStatus: 'good', team: 'Orange Team', goods: 'none', stock: 0};
-        this.boardArray[boardCenter+1][col-1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-90', used: 'unused', damageStatus: 'good', team: 'Orange Team', goods: 'none', stock: 0};
-        this.boardArray[0][boardCenter-1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '180', used: 'unused', damageStatus: 'good', team: 'Red Team', goods: 'none', stock: 0};
-        this.boardArray[0][boardCenter+1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '180', used: 'unused', damageStatus: 'good', team: 'Red Team', goods: 'none', stock: 0};
-        this.boardArray[row-1][boardCenter-1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '0', used: 'unused', damageStatus: 'good', team: 'Green Team', goods: 'none', stock: 0};
-        this.boardArray[row-1][boardCenter+1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '0', used: 'unused', damageStatus: 'good', team: 'Green Team', goods: 'none', stock: 0};
-        this.boardArray[boardCenter-1][0].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '90', used: 'unused', damageStatus: 'good', team: 'Blue Team', goods: 'none', stock: 0};
-        this.boardArray[boardCenter+1][0].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '90', used: 'unused', damageStatus: 'good', team: 'Blue Team', goods: 'none', stock: 0};
+        this.boardArray[boardCenter-1][col-1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-90', used: 'unused', damageStatus: 'good', team: 'Orange Team', goods: 'none', stock: 0, homeRow: boardCenter-1, homeCol: col-1};
+        this.boardArray[boardCenter+1][col-1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-90', used: 'unused', damageStatus: 'good', team: 'Orange Team', goods: 'none', stock: 0, homeRow: boardCenter+1, homeCol: col-1};
+        this.boardArray[0][boardCenter-1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '180', used: 'unused', damageStatus: 'good', team: 'Red Team', goods: 'none', stock: 0, homeRow: 0, homeCol: boardCenter-1};
+        this.boardArray[0][boardCenter+1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '180', used: 'unused', damageStatus: 'good', team: 'Red Team', goods: 'none', stock: 0, homeRow: 0, homeCol: boardCenter+1};
+        this.boardArray[row-1][boardCenter-1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '0', used: 'unused', damageStatus: 'good', team: 'Green Team', goods: 'none', stock: 0, homeRow: row-1, homeCol: boardCenter-1};
+        this.boardArray[row-1][boardCenter+1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '0', used: 'unused', damageStatus: 'good', team: 'Green Team', goods: 'none', stock: 0, homeRow: row-1, homeCol: boardCenter+1};
+        this.boardArray[boardCenter-1][0].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '90', used: 'unused', damageStatus: 'good', team: 'Blue Team', goods: 'none', stock: 0, homeRow: boardCenter-1, homeCol: 0};
+        this.boardArray[boardCenter+1][0].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '90', used: 'unused', damageStatus: 'good', team: 'Blue Team', goods: 'none', stock: 0, homeRow: boardCenter+1, homeCol: 0};
 
-        // Creation of pirate ships
-        this.boardArray[4][6].terrain = 'sea';
-        this.boardArray[4][6].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '135', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
+        // Creation of pirate ships and pirate harbours
+        this.boardArray[4][6] = {xpos: 4, ypos: 6, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '135', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0, homeRow: 4, homeCol: 6}};
+        //this.boardArray[4][6].terrain = 'sea';
+        //this.boardArray[4][6].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '135', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
 
-        this.boardArray[row-7][4].terrain = 'sea';
-        this.boardArray[row-7][4].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
+        this.boardArray[row-7][4] = {xpos: row-7, ypos: 4, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0, homeRow: row-7, homeCol: 4}};
+        //this.boardArray[row-7][4].terrain = 'sea';
+        //this.boardArray[row-7][4].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
 
-        this.boardArray[row-5][col-7].terrain = 'sea';
-        this.boardArray[row-5][col-7].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
+        this.boardArray[row-5][col-7] = {xpos: row-5, ypos: col-7, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0, homeRow: row-5, homeCol: col-7}};
+        //this.boardArray[row-5][col-7].terrain = 'sea';
+        //this.boardArray[row-5][col-7].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
 
-        this.boardArray[6][col-5].terrain = 'sea';
-        this.boardArray[6][col-5].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-135', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
+        this.boardArray[6][col-5] = {xpos: 6, ypos: col-5, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-135', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0, homeRow: 6, homeCol: col-5}};
+        //this.boardArray[6][col-5].terrain = 'sea';
+        //this.boardArray[6][col-5].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-135', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
 
         // Creation of forests
         this.boardArray[boardCenter-1][boardCenter].pieces = {populatedSquare: true, category: 'Resources', type: 'forest', direction: '0', used: 'unused', damageStatus: 'good', team: 'Kingdom', goods: 'wood', stock: 0};
@@ -433,6 +437,7 @@ let gameBoard = {
     // Method to damage cargo ship after conflict
     // ------------------------------------------
     damageShip: function(actionTile, localTeam) {
+        console.log(actionTile.children);
         actionTile.children[2].remove();
         actionTile.children[1].remove();
 
@@ -989,7 +994,7 @@ let gameBoard = {
         for (var h = 0; h < octagonArray.length; h++) {
             this.drawTiles (octagonArray[h].type, canvasBoard, octagonArray[h].gap, octagonArray[h].width, octagonArray[h].colour, octagonArray[h].background)
         }
-        this.drawSafeHarbours();
+        this.drawHarbours();
         this.drawCompass();
 
     },
@@ -1033,6 +1038,10 @@ let gameBoard = {
                 } else if (octagonType=='harbour' && this.boardArray[i][j].subTerrain == 'harbour') {
                     // Draws safe harbours - on a separate canvas overlay
                     this.drawOctagon(boardLayer, ocatagonGap);
+                } else if (octagonType=='pirateHarbour' && this.boardArray[i][j].subTerrain == 'pirateHarbour') {
+                    // Draws safe harbours - on a separate canvas overlay
+                    this.drawOctagon(boardLayer, ocatagonGap);
+
                 } else if (octagonType=='land' && this.boardArray[i][j].terrain == 'land') {
                     // Islands
                     this.drawOctagon(boardLayer, ocatagonGap);
@@ -1059,15 +1068,20 @@ let gameBoard = {
         gameBoard.drawTiles ('active', canvasActive, 0, 1, 'rgb(255, 153, 153)', 'transparent');
 
         // safe harbours are also drawn on canvasActive later - can be changed later if necessary
-        this.drawSafeHarbours();
+        this.drawHarbours();
     },
 
     // Method to add safe harbours to the map
     // --------------------------------------
-    drawSafeHarbours: function () {
+    drawHarbours: function () {
         // safe harbours are also drawn on canvasActive later - can be changed later if necessary
-        gameBoard.drawTiles ('harbour', canvasActive, 0, 1, 'transparent', 'rgb(233, 211, 183)');
+        this.drawTiles ('harbour', canvasActive, 0, 1, 'transparent', 'rgb(233, 211, 183)');
+        this.drawTiles ('pirateHarbour', canvasActive, 0, 1, '#353839', 'rgb(233, 211, 183)');
+        //this.drawTiles ('pirateHarbour', canvasActive, 0, 1, 'darkgrey', 'darkgrey');
+        //this.drawTiles ('pirateHarbour', canvasActive, 0, 1, 'rgb(138, 87, 50)', 'rgb(138, 87, 50)');
+
     },
+
 
     // Method to draw octagons for creation of board
     // ---------------------------------------------
