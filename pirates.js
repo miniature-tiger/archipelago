@@ -27,10 +27,10 @@ let pirates = {
                     console.log('damaged start');
                     let searchRange = Math.max(Math.abs(pirates.pirateShips[i].start.pieces.homeRow - pirates.pirateShips[i].start.row), Math.abs(pirates.pirateShips[i].start.pieces.homeCol - pirates.pirateShips[i].start.col));
                     console.log(searchRange);
-                    pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, 2.1, searchRange, true, 'damaged');
+                    pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, 2.1, searchRange, false, 'damaged');
                 } else if (pieceMovement.movementArray.start.pieces.damageStatus == 'good') {
                     console.log('good start');
-                    pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, maxMove, maxMove, true, 'good');
+                    pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, maxMove, maxMove, false, 'good');
                 }
                 //console.log('findPath', pieceMovement.findPath);
                 // Redraw active tile layer after activation to show activated tiles
