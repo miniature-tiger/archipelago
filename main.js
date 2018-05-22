@@ -1,5 +1,18 @@
 // Main script
 
+// Setting up developer tools
+// --------------------------
+// --------------------------
+
+const launchTime = Date.now();
+let workFlow = 1;
+let gameBoardTrack = 0;
+let transitionMonitor = 1;
+
+
+
+
+
 // ------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------
 // SETTING UP GAME BOARD
@@ -7,6 +20,11 @@
 // High level function to set up the game board
 // Calls the various methods of the game board object
 // -------------------------------------------------
+
+if(workFlow == 1) {
+    console.log('----- Start of Set Up -----');
+    console.log('Setting up the game board: ' + (Date.now() - launchTime));
+}
 
 // Parameters for board set up
 // Intial values for the board size and shape
@@ -141,8 +159,11 @@ for (var iconHolder_i = 0; iconHolder_i < iconHolder.length; iconHolder_i++) {
 
 
 
-// Set up of stock dashboard
-// -------------------------
+// Set up of stock dashboard and contracts dashboard
+// -------------------------------------------------
+
+if(workFlow == 1) {console.log('Set up of stock dashboard and contracts dashboard: ' + (Date.now() - launchTime)); }
+
 stockDashboard.populateGoodsTotals();
 stockDashboard.newTurnGoods();
 stockDashboard.stockTake();
@@ -156,11 +177,13 @@ tradeContracts.drawContracts();
 
 stockDashboard.goodsStockTake();
 
-  console.log(gameBoard.boardArray);
+  //console.log(gameBoard.boardArray);
 
 
 // Set up of compass
 // -----------------
+if(workFlow == 1) {console.log('Set up of compass: ' + (Date.now() - launchTime)); }
+
 // Initial wind direction
 let windDirection = compass.largeWindChange();
 let needleDirection = compass.directionArray[windDirection].needle;
@@ -180,6 +203,10 @@ endTurn.addEventListener('click', function() {
     pieceMovement.usedPiecesReset();
     // Team is changed
     gameManagement.nextTurn();
+
+    if(workFlow == 1) {console.log(' ------ Next turn: ' + gameManagement.turn + ' ---------: ' + (Date.now() - launchTime)); }
+    if(gameBoardTrack == 1) {console.log(gameBoard.boardArray); }
+
     // Wind direction is set for next turn
     windDirection = compass.newWindDirection(windDirection);
     needleDirection = compass.directionArray[windDirection].needle;
@@ -191,37 +218,41 @@ endTurn.addEventListener('click', function() {
     // End turn button colour is changed
     endTurn.setAttribute('class', gameManagement.turn + ' team_fill team_stroke');
 
+    // Repair ships
+    pieceMovement.harbourRepair();
+
     // Automated movement for pirates
     if (gameManagement.turn == 'Pirate') {
         pirates.automatePirates();
     } else {
         // Chance of new trade contract
         // TO ADD - turn counter - only have contracts issued after a certain number of turns
+        if(workFlow == 1) {console.log('Checking for new trade contracts: ' + (Date.now() - launchTime)); }
         tradeContracts.newContract();
+
+        // Manage goods
+        if(workFlow == 1) {console.log('Adding new goods production: ' + (Date.now() - launchTime)); }
+        stockDashboard.newTurnGoods();
+
+        // Update the stock dashboard
+        if(workFlow == 1) {console.log('Updating stock dashboard and contracts dashboard: ' + (Date.now() - launchTime)); }
+        stockDashboard.stockTake();
+        stockDashboard.drawStock();
+
+        // Update the contracts dashboard
+        tradeContracts.drawContracts();
+
+        // Update the goods dashboard
+        stockDashboard.goodsStockTake();
     }
-
-    // Manage goods
-    stockDashboard.newTurnGoods();
-
-    // Repair ships
-    pieceMovement.harbourRepair();
-
-    // Update the stock dashboard
-    stockDashboard.stockTake();
-    stockDashboard.drawStock();
-
-    // Update the contracts dashboard
-    tradeContracts.drawContracts();
-
-    // Update the goods dashboard
-    stockDashboard.goodsStockTake();
-
-    console.log(gameBoard.boardArray);
 
 });
 
 // Settings pop-up box
 // --------------------
+
+if(workFlow == 1) {console.log('Creating settings pop up icon and box: ' + (Date.now() - launchTime)); }
+
 var settingsIcon = document.querySelector('.settingsmark');
 var settingsPopup = document.querySelector('.settings_popup');
 
@@ -259,6 +290,11 @@ settingsIcon.addEventListener('click', function() {
 // Parameters for piece movement set up
 // ------------------------------------
 
+if(workFlow == 1) {
+    console.log('Setting up piece movement parameters and commentary: ' + (Date.now() - launchTime));
+    console.log('----- End of Set Up -----');
+}
+
 // Maximum number of iterations for movement and thus maximum number of tiles that can be moved
 // --- movement is also influenced by the movement cost
 // --- once more transport is created this will all need to be built into an array if it desired that different ships move at different speeds
@@ -279,7 +315,7 @@ let loadingStock = 0;
 
 // Resets commentary
 function clearCommentary() {
-
+    if(workFlow == 1) {console.log('Clearing commentary: ' + (Date.now() - launchTime)); }
     for (var i = commentary.children.length - 1; i > -1; i--) {
         if (commentary.children[i].id == 'firstLine' || commentary.children[i].id == 'secondLine') {
             commentary.children[i].innerText = '';
@@ -295,6 +331,7 @@ function clearCommentary() {
 // ------------------------------------
 
 function clickGoods(e) {
+    if(workFlow == 1) {console.log('Goods quantity selection: ' + (Date.now() - launchTime)); }
     let xClickCommentary = e.clientX - commentary.offsetLeft;
     let element = e.target;
 
@@ -371,6 +408,7 @@ let boardMarkTop = boardMarkNode.offsetTop;
 //console.log('here', boardMarkLeft, boardMarkTop);
 
 boardMarkNode.addEventListener('click', function(event) {
+    if(workFlow == 1) {console.log('Board mark node click event listener triggered: ' + (Date.now() - launchTime)); }
     let xClick = event.pageX - boardMarkLeft;
     let yClick = event.pageY - boardMarkTop;
 

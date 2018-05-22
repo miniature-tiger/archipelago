@@ -4,122 +4,127 @@ let pirates = {
 
     pirateShips: [],
 
+    pirateCount: -1,
+
+    pirateMove: function() {
+        if(workFlow == 1) {console.log('Pirate ship ' + pirates.pirateCount + ' moves: '+ (Date.now() - launchTime)); }
+        if(pirates.pirateCount < pirates.pirateShips.length) {
+            // Resets movement array
+            pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
+            pirates.conflictArray = {conflict: false, start: {row: '', col: ''}, end: {row: '', col: ''}};
+
+            let pathDistance = 0;
+            // Starting tile for pirate ship move taken from array of pirate ships
+            pieceMovement.movementArray.start = pirates.pirateShips[pirates.pirateCount].start;
+            // Tiles activated which also finds path for moves and target information on reachable area
+            // true / false allow red boundaries to be highlighted or not
+            if (pieceMovement.movementArray.start.pieces.damageStatus == 'damaged') {
+                if(workFlow == 1) {console.log('Damaged ship - find paths: '+ (Date.now() - launchTime)); }
+                let searchRange = Math.max(Math.abs(pirates.pirateShips[pirates.pirateCount].start.pieces.homeRow - pirates.pirateShips[pirates.pirateCount].start.row), Math.abs(pirates.pirateShips[pirates.pirateCount].start.pieces.homeCol - pirates.pirateShips[pirates.pirateCount].start.col));
+                pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, 2.1, searchRange, false, 'damaged');
+            } else if (pieceMovement.movementArray.start.pieces.damageStatus == 'good') {
+                if(workFlow == 1) {console.log('Good ship - find paths: '+ (Date.now() - launchTime)); }
+                pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, maxMove, maxMove, false, 'good');
+            }
+            //console.log('findPath', pieceMovement.findPath);
+            // Redraw active tile layer after activation to show activated tiles
+            gameBoard.drawActiveTiles();
+
+            if (pieceMovement.movementArray.start.pieces.damageStatus == 'damaged') {
+                if(workFlow == 1) {console.log('Damaged ship - decide move: '+ (Date.now() - launchTime)); }
+                lastTile = pirates.findLastActive(pieceMovement.findPath[pirates.pirateShips[pirates.pirateCount].start.pieces.homeRow][pirates.pirateShips[pirates.pirateCount].start.pieces.homeCol].path, 0);
+                pirates.pirateShips[pirates.pirateCount].end.row = pieceMovement.findPath[pirates.pirateShips[pirates.pirateCount].start.pieces.homeRow][pirates.pirateShips[pirates.pirateCount].start.pieces.homeCol].path[lastTile].fromRow;
+                pirates.pirateShips[pirates.pirateCount].end.col = pieceMovement.findPath[pirates.pirateShips[pirates.pirateCount].start.pieces.homeRow][pirates.pirateShips[pirates.pirateCount].start.pieces.homeCol].path[lastTile].fromCol;
+                pathDistance = 2;
+
+            } else if (pieceMovement.movementArray.start.pieces.damageStatus == 'good') {
+                if(workFlow == 1) {console.log('Good ship - decide move: '+ (Date.now() - launchTime)); }
+
+                // Finds targetable cargo ships within reach, then cuts down array based on distance and move cost
+                pirates.findTarget();
+                pirates.useTelescope();
+                if ((pirates.targetCargo.length > 0) && (pirates.pirateShips[pirates.pirateCount].start.pieces.damageStatus != 'damaged')) {
+                    //console.log('targetCargo - before', pirates.targetCargo);
+                    pirates.targetCargo = pirates.minArray(pirates.targetCargo, 'distance');
+                    pirates.targetCargo = pirates.minArray(pirates.targetCargo, 'moveCost');
+                    //console.log('targetCargo - min', pirates.targetCargo);
+                    pathDistance = pirates.targetCargo[0].distance;
+                    // Attacks targetable cargo ship if in range (currently just uses first cargo ship in array - to improve in future)
+                    // Keep - useful for debugging - console.log('found target: ' + pirates.targetCargo[0].row + ' ' + pirates.targetCargo[0].col);
+                    lastTile = pirates.findLastActive(pieceMovement.findPath[pirates.targetCargo[0].row][pirates.targetCargo[0].col].path, -1);
+                    pirates.pirateShips[pirates.pirateCount].end.row = pieceMovement.findPath[pirates.targetCargo[0].row][pirates.targetCargo[0].col].path[lastTile].fromRow;
+                    pirates.pirateShips[pirates.pirateCount].end.col = pieceMovement.findPath[pirates.targetCargo[0].row][pirates.targetCargo[0].col].path[lastTile].fromCol;
+                    //console.log('launch ship conflict', pirates.pirateShips[pirates.pirateCount].end.row, pirates.pirateShips[pirates.pirateCount].end.col, pirates.targetCargo[0].row, pirates.targetCargo[0].col);
+                    //pieceMovement.shipConflict(pirates.pirateShips[pirates.pirateCount].end.row, pirates.pirateShips[pirates.pirateCount].end.col, pirates.targetCargo[0].row, pirates.targetCargo[0].col);
+                    pirates.conflictArray = {conflict: true, pirate: {row: pirates.pirateShips[pirates.pirateCount].end.row, col: pirates.pirateShips[pirates.pirateCount].end.col}, ship: {row: pirates.targetCargo[0].row, col: pirates.targetCargo[0].col}};
+                } else if (pirates.targetTelescope.length > 0 && (pirates.pirateShips[pirates.pirateCount].start.pieces.damageStatus != 'damaged')) {
+                    // Finds cargo ships within visual range (localMaxMove) then cuts down array based on minimum distance and move cost
+                    //console.log('targetTelescope - before', pirates.targetTelescope);
+                    pirates.targetTelescope = pirates.minArray(pirates.targetTelescope, 'distance');
+                    pirates.targetTelescope = pirates.minArray(pirates.targetTelescope, 'moveCost');
+                    //console.log('targetTelescope - min', pirates.targetTelescope);
+                    pathDistance = pirates.targetTelescope[0].distance;
+                    lastTile = pirates.findLastActive(pieceMovement.findPath[pirates.targetTelescope[0].row][pirates.targetTelescope[0].col].path, 0);
+                    pirates.pirateShips[pirates.pirateCount].end.row = pieceMovement.findPath[pirates.targetTelescope[0].row][pirates.targetTelescope[0].col].path[lastTile].fromRow;
+                    pirates.pirateShips[pirates.pirateCount].end.col = pieceMovement.findPath[pirates.targetTelescope[0].row][pirates.targetTelescope[0].col].path[lastTile].fromCol;
+                    //console.log('findLast', pirates.pirateShips[pirates.pirateCount].end.row, pirates.pirateShips[pirates.pirateCount].end.col, 0);
+                } else {
+                    // If no ships in active range or visual range moves to maximum distance at minimum wind cost
+                    if(workFlow == 1) {console.log('Finds max distance move at minimum cost: ' + (Date.now() - launchTime)); }
+                    pirates.maxPathDistance();
+                    pirates.minCostTiles = pirates.minArray(pirates.maxDistanceTiles, 'moveCost');
+                    pathDistance = pirates.minCostTiles[0].distance;
+                    //console.log('minCostTiles', pirates.minCostTiles);
+                    // Keep - useful for debugging - console.log('just moving: ' + pirates.minCostTiles[0].row + ' ' + pirates.minCostTiles[0].col);
+                    pirates.pirateShips[pirates.pirateCount].end.row = pirates.minCostTiles[0].row;
+                    pirates.pirateShips[pirates.pirateCount].end.col = pirates.minCostTiles[0].col;
+                }
+            }
+            // End position for pirate ship confirmed with movement array then move activated and dashboard recalculated
+            pieceMovement.movementArray.end = pirates.pirateShips[pirates.pirateCount].end;
+            if(workFlow == 1) {
+                console.log('Pirates move decided - movement array shown below: '+ (Date.now() - launchTime));
+                console.log(pieceMovement.movementArray);
+            }
+            pieceMovement.deactivateTiles(maxMove);
+            pieceMovement.shipTransition(gameSpeed);
+            
+          }
+      },
+
     // Method to manage automated movement of pirate ship moves
     automatePirates: function() {
-        // Generate array of all pirate ships to be moved
-        this.populatePirateShipsArray();
-        let pathDistance = 0;
-        //console.log('this.pirateShips', this.pirateShips);
-        // Loop through each pirate ship with delay to allow transormations to occur
-        let i = 0;
-        function moves() {
-                // Resets movement array
-                pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
-                pirates.conflictArray = {conflict: false, start: {row: '', col: ''}, end: {row: '', col: ''}};
-
-                let pathDistance = 0;
-                console.log(' -------------------- pirate ship: ' + i);
-                // Starting tile for pirate ship move taken from array of pirate ships
-                pieceMovement.movementArray.start = pirates.pirateShips[i].start;
-                // Tiles activated which also finds path for moves and target information on reachable area
-                // true / false allow red boundaries to be highlighted or not
-                if (pieceMovement.movementArray.start.pieces.damageStatus == 'damaged') {
-                    console.log('damaged start');
-                    let searchRange = Math.max(Math.abs(pirates.pirateShips[i].start.pieces.homeRow - pirates.pirateShips[i].start.row), Math.abs(pirates.pirateShips[i].start.pieces.homeCol - pirates.pirateShips[i].start.col));
-                    console.log(searchRange);
-                    pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, 2.1, searchRange, false, 'damaged');
-                } else if (pieceMovement.movementArray.start.pieces.damageStatus == 'good') {
-                    console.log('good start');
-                    pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, maxMove, maxMove, false, 'good');
-                }
-                //console.log('findPath', pieceMovement.findPath);
-                // Redraw active tile layer after activation to show activated tiles
-                gameBoard.drawActiveTiles();
-
-                if (pieceMovement.movementArray.start.pieces.damageStatus == 'damaged') {
-                    console.log('damaged end');
-                    lastTile = pirates.findLastActive(pieceMovement.findPath[pirates.pirateShips[i].start.pieces.homeRow][pirates.pirateShips[i].start.pieces.homeCol].path, 0);
-                    pirates.pirateShips[i].end.row = pieceMovement.findPath[pirates.pirateShips[i].start.pieces.homeRow][pirates.pirateShips[i].start.pieces.homeCol].path[lastTile].fromRow;
-                    pirates.pirateShips[i].end.col = pieceMovement.findPath[pirates.pirateShips[i].start.pieces.homeRow][pirates.pirateShips[i].start.pieces.homeCol].path[lastTile].fromCol;
-                    pathDistance = 2;
-
-                } else if (pieceMovement.movementArray.start.pieces.damageStatus == 'good') {
-                    console.log('good end');
-
-                    // Finds targetable cargo ships within reach, then cuts down array based on distance and move cost
-                    pirates.findTarget();
-                    pirates.useTelescope();
-                    if ((pirates.targetCargo.length > 0) && (pirates.pirateShips[i].start.pieces.damageStatus != 'damaged')) {
-                        //console.log('targetCargo - before', pirates.targetCargo);
-                        pirates.targetCargo = pirates.minArray(pirates.targetCargo, 'distance');
-                        pirates.targetCargo = pirates.minArray(pirates.targetCargo, 'moveCost');
-                        //console.log('targetCargo - min', pirates.targetCargo);
-                        pathDistance = pirates.targetCargo[0].distance;
-                        // Attacks targetable cargo ship if in range (currently just uses first cargo ship in array - to improve in future)
-                        // Keep - useful for debugging - console.log('found target: ' + pirates.targetCargo[0].row + ' ' + pirates.targetCargo[0].col);
-                        lastTile = pirates.findLastActive(pieceMovement.findPath[pirates.targetCargo[0].row][pirates.targetCargo[0].col].path, -1);
-                        pirates.pirateShips[i].end.row = pieceMovement.findPath[pirates.targetCargo[0].row][pirates.targetCargo[0].col].path[lastTile].fromRow;
-                        pirates.pirateShips[i].end.col = pieceMovement.findPath[pirates.targetCargo[0].row][pirates.targetCargo[0].col].path[lastTile].fromCol;
-                        //console.log('launch ship conflict', pirates.pirateShips[i].end.row, pirates.pirateShips[i].end.col, pirates.targetCargo[0].row, pirates.targetCargo[0].col);
-                        //pieceMovement.shipConflict(pirates.pirateShips[i].end.row, pirates.pirateShips[i].end.col, pirates.targetCargo[0].row, pirates.targetCargo[0].col);
-                        pirates.conflictArray = {conflict: true, pirate: {row: pirates.pirateShips[i].end.row, col: pirates.pirateShips[i].end.col}, ship: {row: pirates.targetCargo[0].row, col: pirates.targetCargo[0].col}};
-                    } else if (pirates.targetTelescope.length > 0 && (pirates.pirateShips[i].start.pieces.damageStatus != 'damaged')) {
-                        // Finds cargo ships within visual range (localMaxMove) then cuts down array based on minimum distance and move cost
-                        //console.log('targetTelescope - before', pirates.targetTelescope);
-                        pirates.targetTelescope = pirates.minArray(pirates.targetTelescope, 'distance');
-                        pirates.targetTelescope = pirates.minArray(pirates.targetTelescope, 'moveCost');
-                        //console.log('targetTelescope - min', pirates.targetTelescope);
-                        pathDistance = pirates.targetTelescope[0].distance;
-                        lastTile = pirates.findLastActive(pieceMovement.findPath[pirates.targetTelescope[0].row][pirates.targetTelescope[0].col].path, 0);
-                        pirates.pirateShips[i].end.row = pieceMovement.findPath[pirates.targetTelescope[0].row][pirates.targetTelescope[0].col].path[lastTile].fromRow;
-                        pirates.pirateShips[i].end.col = pieceMovement.findPath[pirates.targetTelescope[0].row][pirates.targetTelescope[0].col].path[lastTile].fromCol;
-                        //console.log('findLast', pirates.pirateShips[i].end.row, pirates.pirateShips[i].end.col, 0);
-                    } else {
-                        // If no ships in active range or visual range moves to maximum distance at minimum wind cost
-                        pirates.maxPathDistance();
-                        pirates.minCostTiles = pirates.minArray(pirates.maxDistanceTiles, 'moveCost');
-                        pathDistance = pirates.minCostTiles[0].distance;
-                        //console.log('minCostTiles', pirates.minCostTiles);
-                        // Keep - useful for debugging - console.log('just moving: ' + pirates.minCostTiles[0].row + ' ' + pirates.minCostTiles[0].col);
-                        pirates.pirateShips[i].end.row = pirates.minCostTiles[0].row;
-                        pirates.pirateShips[i].end.col = pirates.minCostTiles[0].col;
-                    }
-                }
-                console.log('general');
-                // End position for pirate ship confirmed with movement array then move activated and dashboard recalculated
-                pieceMovement.movementArray.end = pirates.pirateShips[i].end;
-                console.log('pirates movement array', pieceMovement.movementArray);
-                pieceMovement.deactivateTiles(maxMove);
-                pieceMovement.shipTransition(gameSpeed);
-
-                // Update the stock dashboard
-                stockDashboard.stockTake();
-                stockDashboard.drawStock();
-
-                // Moves on to next ship
-                i+=1;
-
-            // Loops through with delay
-            if(i < pirates.pirateShips.length) {
-                let conflictDelay = 0;
-                if (pirates.conflictArray.conflict == true) {
-                    conflictDelay = 5000;
-                }
-                setTimeout(moves, (500 * pathDistance + conflictDelay) * gameSpeed);
-
-            } else {
-                // Resets pirate ship array once all moves made
-                pirates.pirateShips = [];
-            }
+        if(workFlow == 1) {console.log('Automate pirates - ship to move or completion: ' + (Date.now() - launchTime)); }
+        if (pirates.pirateCount == -1) {
+            // Generate array of all pirate ships to be moved
+            this.populatePirateShipsArray();
         }
-        // Calls function above
-        moves();
+        // Moves on to next ship
+        pirates.pirateCount +=1;
+
+        let pathDistance = 0;
+        // Loop through each pirate ship with delay to allow transormations to occur
+        if(pirates.pirateCount < pirates.pirateShips.length) {
+            // Calls function above
+            pirates.pirateMove();
+        } else {
+            if(workFlow == 1) {console.log('All pirate ships moved. Update dashboards and reset pirate info: ' + (Date.now() - launchTime)); }
+            // Update the stock dashboard
+            stockDashboard.stockTake();
+            stockDashboard.drawStock();
+
+            // Resets pirate ship array once all moves made
+            pirates.pirateShips = [];
+            pirates.pirateCount = -1;
+        }
+
     },
 
 
     // Method to generate a list of pirate ships to move
     // -------------------------------------------------
     populatePirateShipsArray: function() {
+        if(workFlow == 1) {console.log('Populate pirate ship array: ' + (Date.now() - launchTime)); }
         for (var i = 0; i < gameBoard.boardArray.length; i++) {
             for (var j = 0; j < gameBoard.boardArray[i].length; j++) {
                 if((gameBoard.boardArray[i][j].pieces.team == 'Pirate') && (gameBoard.boardArray[i][j].pieces.type = 'cargo ship')) {
@@ -143,6 +148,7 @@ let pirates = {
     // Method to get array of tiles in findPath with target cargo ships
     // ----------------------------------------------------------------
     findTarget: function() {
+        if(workFlow == 1) {console.log('Find cargo ship as target: ' + (Date.now() - launchTime)); }
         this.targetCargo = [];
         for (var i = 0; i < col; i++) {
             for (var j = 0; j < row; j++) {
@@ -157,6 +163,7 @@ let pirates = {
     // Method to get array of tiles in findPath which are not active but are within telescope range
     // --------------------------------------------------------------------------------------------
     useTelescope: function() {
+        if(workFlow == 1) {console.log('Use telescope: ' + (Date.now() - launchTime)); }
         this.targetTelescope = [];
         for (var i = 0; i < col; i++) {
             for (var j = 0; j < row; j++) {
@@ -224,6 +231,7 @@ let pirates = {
     },
 
     safeHarbour: function() {
+        if(workFlow == 1) {console.log('Determine safe harbours: ' + (Date.now() - launchTime)); }
         for (var i = 0; i < row; i++) {
             for (var j = 0; j < col; j++) {
                 if (gameBoard.boardArray[i][j].pieces.type == 'fort') {

@@ -32,7 +32,7 @@ let resourceManagement = {
         }
 
         let numberDesert = unoccupiedIslands - unDesertCount;
-        console.log(numberDesert);
+        //console.log(numberDesert);
 
         for (var j = 0; j < numberDesert; j++) {
             this.resourceDeck.push({type: 'desert', goods: 'none'});
