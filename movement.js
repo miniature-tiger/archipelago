@@ -21,6 +21,7 @@ let pieceMovement = {
     // Future update:
     //    code for different pieces
     activateTiles: function(localStartRow, localStartCol, localMaxMove, searchRadius, displayActive, localDamagedStatus) {
+        if(workFlow == 1) {console.log('Active tiles and paths determined: ' + (Date.now() - launchTime)); }
         // Initialises findPath array which holds board size array of
         // active/inactive status, movement cost to reach that tile, path to that tile
         this.initialisefindPath(localStartRow, localStartCol);
@@ -213,6 +214,7 @@ let pieceMovement = {
     // Method to deactivate tiles after a piece has moved
     // --------------------------------------------------
     deactivateTiles: function(localMaxMove) {
+        if(workFlow == 1) {console.log('Active tiles deactivated'); }
         let moveDistance = localMaxMove;
         // Simply deactivates all tiles within the maximum potential move distance
         for (var i = -moveDistance; i < moveDistance + 1; i++) {
@@ -231,6 +233,7 @@ let pieceMovement = {
     // Method to reset pieces from 'used' to 'unused' once a turn has ended
     // --------------------------------------------------------------------
     usedPiecesReset: function() {
+        if(workFlow == 1) {console.log('Used pieces reset'); }
         for (var y = 0; y <  col; y++) {
             for (var x = 0; x <  row; x++) {
                 if (gameBoard.boardArray[x][y].pieces.used == 'used') {
@@ -243,6 +246,7 @@ let pieceMovement = {
     // Method for capturing moves
     // --------------------------
     captureMove: function(fromTo, yClickTile, xClickTile) {
+        if(workFlow == 1) {console.log('Move information captured: ' + (Date.now() - launchTime)); }
         if (fromTo == 'start') {
             this.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
         }
@@ -271,10 +275,15 @@ let pieceMovement = {
     // Method for ship movement and transition
     // ---------------------------------------
     shipTransition: function(gameSpeed) {
+        if(workFlow == 1) {console.log('----- Ship transition -----: ' + (Date.now() - launchTime)); }
         // Variables for transition movements
         let topDirection = 0;
         let leftDirection = 0;
         let rotateDirection = 0;
+        let moveCount = 0;
+        let indicator = 0;
+        let endTime = 0;
+        let transEndCounter = 0;
 
         // Calculate placement on board of start tile for move
         IDPieceStart = 'tile' + Number(this.movementArray.start.row*1000 + this.movementArray.start.col);
@@ -288,71 +297,153 @@ let pieceMovement = {
 
         // Obtaining path of piece that leads to end tile of move from findPath array
         let localPath = this.findPath[this.movementArray.end.row][this.movementArray.end.col].path;
-        //console.log(localPath);
 
         // Length gives number of steps in path
         let numberOfTiles = localPath.length - 1;
 
         // Loop through each step of move
-        for (var i = 0; i < numberOfTiles; i++) {
 
-            // Calculating transformations to be applied to square holding piece
-            // Directional translation
-            topDirection = (localPath[i+1].fromRow - localPath[i].fromRow);
-            leftDirection = (localPath[i+1].fromCol - localPath[i].fromCol);
-            // Rotational translation
-            rotateDirection = this.movementDirection[(localPath[i+1].fromCol - localPath[i].fromCol)+1][(localPath[i+1].fromRow - localPath[i].fromRow)+1];
+        function transitionManagement() {
+            if (numberOfTiles == 0) {
+                if(workFlow == 1) {console.log('no move - probably a pirate attack: ' + (Date.now() - launchTime)); }
+                pieceMovement.harbourRepairArrival(chosenPiece);
+                pieceMovement.shipConflict(pieceMovement.movementArray.start.pieces.direction);
+            } else {
+                if(transitionMonitor == 1) {
+                    console.log('TM: Transition management run: ' + (Date.now() - launchTime));
+                    console.log('TM: local path shown below:');
+                    console.log(localPath);
+                }
 
-            // Applying the transformation for step i of the move path
-            this.turnAndMove(i, chosenPiece, topDirection, leftDirection, rotateDirection, gameSpeed);
+            // for (var i = 0; i < numberOfTiles; i++) {
+                // Calculating transformations to be applied to square holding piece
+                // Directional translation
+                topDirection = (localPath[moveCount+1].fromRow - localPath[moveCount].fromRow);
+                leftDirection = (localPath[moveCount+1].fromCol - localPath[moveCount].fromCol);
+                // Rotational translation
+                rotateDirection = pieceMovement.movementDirection[(localPath[moveCount+1].fromCol - localPath[moveCount].fromCol)+1][(localPath[moveCount+1].fromRow - localPath[moveCount].fromRow)+1];
+
+                // Applying the transformation for step i of the move path
+                if(transitionMonitor == 1) {
+                    console.log('TM: moveCount = ' + moveCount + ': ' + (Date.now() - launchTime));
+                    console.log('from: ' + localPath[moveCount].fromRow + '-' + localPath[moveCount].fromCol +  ' to: ' + localPath[moveCount+1].fromRow + '-' + localPath[moveCount+1].fromCol);
+                }
+
+                moveCount = pieceMovement.turnAndMove(moveCount, chosenPiece, topDirection, leftDirection, rotateDirection, gameSpeed);
+
+
+                chosenPiece.addEventListener('transitionend', function transitionHandler(e) {
+
+                    transEndCounter += 1;
+                    if(transitionMonitor == 1) {console.log('TM: transitionend triggered: ' + transEndCounter + ' ' + e.propertyName + ' ' + (Date.now() - launchTime));}
+                    if(e.timeStamp - endTime > 200 * gameSpeed) {
+                        endTime = e.timeStamp;
+                    //if (indicator < moveCount) {
+                        if (e.propertyName == 'top' || e.propertyName == 'left') {
+
+                            chosenPiece.removeEventListener('transitionend', transitionHandler);
+                            //console.log(e.propertyName, indicator, moveCount, e.elapsedTime, e.timeStamp);
+                            //console.log(e);
+
+                            indicator = moveCount;
+                            if(moveCount < numberOfTiles) {
+                                if(transitionMonitor == 1) {console.log('TM: Transition completed and loop to next transition: '+ (Date.now() - launchTime));}
+                                transitionManagement()
+                            } else {
+                                if(transitionMonitor == 1) {console.log('TM: All transitions complete - Applying moves to game board array: '+ (Date.now() - launchTime));}
+                                //console.log(chosenPiece);
+                                //console.log(pieceMovement.movementArray);
+                                gameBoard.boardArray[pieceMovement.movementArray['start'].row][pieceMovement.movementArray['start'].col].pieces = {populatedSquare: false, category: '', type: 'no piece', direction: '', used: 'unused', damageStatus: 'good', team: '', goods: 'none', stock: 0};
+                                gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces = {populatedSquare: true, category: pieceMovement.movementArray.start.pieces.category, type: pieceMovement.movementArray.start.pieces.type, direction: rotateDirection, used: 'used', damageStatus: pieceMovement.movementArray.start.pieces.damageStatus, team: pieceMovement.movementArray.start.pieces.team, goods: pieceMovement.movementArray.start.pieces.goods, stock: pieceMovement.movementArray.start.pieces.stock, homeRow: pieceMovement.movementArray.start.pieces.homeRow, homeCol: pieceMovement.movementArray.start.pieces.homeCol};
+
+                                //Updating piece information
+                                chosenPiece.setAttribute('id', 'tile' + Number(pieceMovement.movementArray.end.row*1000 + pieceMovement.movementArray.end.col));
+                                chosenPiece.style.transition = '';
+                                pieceMovement.harbourRepairArrival(chosenPiece);
+                                pieceMovement.shipConflict(rotateDirection);
+                            }
+                        } else {
+                            if(transitionMonitor == 1) {console.log('TM: Transition ignored - rotation not translation');}
+                        }
+                    } else {
+                        if(transitionMonitor == 1) {console.log('TM: Transition ignored as part of prior move');}
+                    }
+                });
+            }
         }
 
-        // Applying moves to game board array
-        gameBoard.boardArray[pieceMovement.movementArray['start'].row][pieceMovement.movementArray['start'].col].pieces = {populatedSquare: false, category: '', type: 'no piece', direction: '', used: 'unused', damageStatus: 'good', team: '', goods: 'none', stock: 0};
-        gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces = {populatedSquare: true, category: this.movementArray.start.pieces.category, type: this.movementArray.start.pieces.type, direction: rotateDirection, used: 'used', damageStatus: this.movementArray.start.pieces.damageStatus, team: this.movementArray.start.pieces.team, goods: this.movementArray.start.pieces.goods, stock: this.movementArray.start.pieces.stock, homeRow: this.movementArray.start.pieces.homeRow, homeCol: this.movementArray.start.pieces.homeCol};
+        transitionManagement();
 
-        //Updating piece information
-        chosenPiece.setAttribute('id', 'tile' + Number(pieceMovement.movementArray.end.row*1000 + pieceMovement.movementArray.end.col));
+
+            /*chosenPiece.addEventListener('transitionrun', function(e) {
+                console.log(e);
+                if (e.propertyName == 'top') {
+                    console.log('transitionrun', i, 'top');
+                } else if (e.propertyName == 'left') {
+                    console.log('transitionrun', i, 'left');
+                }
+            });
+            chosenPiece.addEventListener('transitionend', function(e) {
+                console.log('transitionend', i);
+                console.log(e);
+                console.log(e.propertyName);
+            });*/
+
+
+
 
         // Reset of transitions delayed in proportion to number of moves
-        setTimeout(function() {
-            chosenPiece.style.transition = '';
-            if (gameManagement.turn != 'Pirate') {
-                pieceMovement.landDiscovery();
-                pieceMovement.harbourRepairArrival(chosenPiece);
-            } else if (gameManagement.turn == 'Pirate') {
-                pieceMovement.shipConflict();
-                pieceMovement.harbourRepairArrival(chosenPiece);
-            }
+        //setTimeout(function() {
+
+        //}, numberOfTiles * 500 * gameSpeed);
+
+    },
+
+    // Method to complete ship movement once all transitions have been cycled through
+    // ------------------------------------------------------------------------------
+    moveCompletion: function(chosenPiece) {
+        // Applying moves to game board array
+        if(workFlow == 1) {console.log('----- Move Completion activated ----- ' + (Date.now() - launchTime)); }
+
+        if (gameManagement.turn != 'Pirate') {
+            pieceMovement.landDiscovery();
 
             // Resetting movement array once second click has been made (if move valid)
             pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
             startEnd = 'start';
-        }, numberOfTiles * 500 * gameSpeed);
+        } else if (gameManagement.turn == 'Pirate') {
 
+            // Resetting movement array once second click has been made (if move valid)
+            pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
+            startEnd = 'start';
+            pirates.automatePirates();
+        }
     },
 
 
     // Method for piece to turn in direction of move and then move
     // -----------------------------------------------------------
     turnAndMove: function(n, chosenPiece, topDirection, leftDirection, rotateDirection, gameSpeed) {
+        if(transitionMonitor == 1) {console.log('TM: Turn and Move method run: ' + (Date.now() - launchTime))}
         // n is number of transition in chain
         // Transitions to be applied (added here to allow different transitions to be applied dynamically in future)
         chosenPiece.style.transition = 'transform ' + (0.1 * gameSpeed) + 's 0s ease-in-out, left ' + (0.35 * gameSpeed) + 's ' + (0.1 * gameSpeed) + 's ease-in-out, top ' + (0.35 * gameSpeed) + 's ' + (0.1 * gameSpeed) + 's ease-in-out';
 
         // Delayed application of transformations to give board game style move effect
-        setTimeout(function() {
+        //setTimeout(function() {
             //console.log(chosenPiece.style.left, chosenPiece.style.top);
             chosenPiece.style.left = parseFloat(chosenPiece.style.left) + (leftDirection * (gridSize + tileBorder*2)) + 'px';
             chosenPiece.style.top = parseFloat(chosenPiece.style.top) + (topDirection * (gridSize + tileBorder*2)) + 'px';
             chosenPiece.style.transform = 'rotate(' + rotateDirection + 'deg)';
-        }, n * 500 * gameSpeed);
+        //}, 500 * gameSpeed);
 
+        return n + 1;
     },
 
     // Method to allow discovery of new land tiles
     // -------------------------------------------
     landDiscovery: function() {
+        if(workFlow == 1) {console.log('Land discovery: ' + (Date.now() - launchTime)); }
         // At end of each move check a 1x1 grid to see if the ship is next to land that is unpopulated
         let searchDistance = 1;
         for (var i = -searchDistance; i < searchDistance + 1; i++) {
@@ -382,6 +473,7 @@ let pieceMovement = {
     // Method to check a ship is nearby to allow resource to be settled
     // ----------------------------------------------------------------
     shipAvailable: function(searchType) {
+        if(workFlow == 1) {console.log('Checking ship available to settle resource: ' + (Date.now() - launchTime)); }
         let searchDistance = 1;
         let result = 'no ship';
         for (var i = -searchDistance; i < searchDistance + 1; i++) {
@@ -413,6 +505,7 @@ let pieceMovement = {
     // Method to check if an unloading point is available
     // --------------------------------------------------
     depotAvailable: function(searchType) {
+        if(workFlow == 1) {console.log('Checking depot available for unloading: ' + (Date.now() - launchTime)); }
         let searchDistance = 1;
         let result = [];
         for (var i = -searchDistance; i < searchDistance + 1; i++) {
@@ -449,8 +542,10 @@ let pieceMovement = {
 
     // Method to organise the battles between ships
     // --------------------------------------------
-    shipConflict: function() {
+    shipConflict: function(startDirection) {
+        let endCannon = 0;
         if (pirates.conflictArray.conflict == true) {
+            if(workFlow == 1) {console.log('Ship conflict - battle: ' + (Date.now() - launchTime)); }
             //console.log(pirates.conflictArray);
             // Obtains ID and element of pirates
             IDPirate = 'tile' + Number(pirates.conflictArray.pirate.row*1000 + pirates.conflictArray.pirate.col);
@@ -472,9 +567,11 @@ let pieceMovement = {
 
             // Function animates sea battle, calculates winner, and transfers stolen goods if necessary
             function cannonFire() {
+                if(workFlow == 1) {console.log('Runs cannon fire: ' + (Date.now() - launchTime)); }
                 if (repeat > 0) {
                     shipPiece.style.transition = 'transform ' + (0.4 * gameSpeed) + 's 0s ease-in-out, left ' + (0.7 * gameSpeed * fireEffect) + 's ' + (0.0 * gameSpeed * fireEffect) + 's ease-in-out, top ' + (0.7 * gameSpeed * fireEffect) + 's ' + (0.0 * gameSpeed * fireEffect) + 's ease-in-out';
                     piratePiece.style.transition = 'transform ' + (0.4 * gameSpeed) + 's 0s ease-in-out, left ' + (0.7 * gameSpeed * fireEffect) + 's ' + (0.0 * gameSpeed * fireEffect) + 's ease-in-out, top ' + (0.7 * gameSpeed * fireEffect) + 's ' + (0.0 * gameSpeed * fireEffect) + 's ease-in-out';
+                    console.log(piratePiece.style.transition);
                     shipPiece.style.transform = 'rotate(' + conflictDirection + 'deg)';
                     piratePiece.style.transform = 'rotate(' + conflictDirection + 'deg)';
                     shipPiece.style.left = parseFloat(shipPiece.style.left) - (conflictLeftDirection * reductionDirection * (gridSize + tileBorder*2)) + 'px';
@@ -494,8 +591,20 @@ let pieceMovement = {
                         fireEffect = 1;
                     }
                     repeat -= 1;
-                    setTimeout(cannonFire, gameSpeed * 1000);
+                    piratePiece.addEventListener('transitionend', function cannonHandler(e) {
+                        if (e.propertyName == 'top' || e.propertyName == 'left') {
+                            if(e.timeStamp - endCannon > 50 * gameSpeed) {
+                                endCannon = e.timeStamp;
+                                if(workFlow == 1) {console.log('Conflict single transition end: ' + (Date.now() - launchTime)); }
+                                piratePiece.removeEventListener('transitionend', cannonHandler);
+                                cannonFire();
+                            }
+                        }
+                    });
+
                 } else {
+                    if(workFlow == 1) {console.log('Conflict transition ended - decide winner and update board array: ' + (Date.now() - launchTime)); }
+                    console.log(pirates.conflictArray);
                     // Calculates winner of sea battle  - 50% chance of each ship winning battle
                     if (Math.random()>0.5) {
                         // Pirate ship wins battle and team ship is damaged
@@ -509,15 +618,22 @@ let pieceMovement = {
                         gameBoard.damageShip(piratePiece, 'Pirate');
                         gameBoard.boardArray[pirates.conflictArray.pirate.row][pirates.conflictArray.pirate.col].pieces.damageStatus = 'damaged';
                     }
+                    pirates.conflictArray = {conflict: false, start: {row: '', col: ''}, end: {row: '', col: ''}};
+                    pieceMovement.moveCompletion();
                 }
             }
             cannonFire();
+
+        } else {
+            if(workFlow == 1) {console.log('Ship conflict - No battle: ' + (Date.now() - launchTime)); }
+            pieceMovement.moveCompletion();
         }
     },
 
     // Method to repair ship in safe harbour
     // -------------------------------------
     harbourRepairArrival: function(shipPiece) {
+        if(workFlow == 1) {console.log('Harbour repair arrival: ' + (Date.now() - launchTime)); }
         let repairDirection = 0;
         // Finds moves that end in harbour repair
         if (this.movementArray.start.pieces.damageStatus == 'damaged' && gameManagement.turn != 'Pirate' && gameBoard.boardArray[this.movementArray.end.row][this.movementArray.end.col].subTerrain == 'harbour') {
@@ -550,6 +666,7 @@ let pieceMovement = {
     // Method to check for ships to repair at start of turn
     // ----------------------------------------------------
     harbourRepair: function() {
+        if(workFlow == 1) {console.log('Harbour repair check: ' + (Date.now() - launchTime)); }
         // Finds ships in harbour undergoing repair
         for (var i = 0; i < gameBoard.boardArray.length; i++) {
             for (var j = 0; j < gameBoard.boardArray[i].length; j++) {

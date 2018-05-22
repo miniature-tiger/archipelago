@@ -105,17 +105,21 @@ let gameBoard = {
         this.boardArray[boardCenter+1][boardCenter-1].terrain = 'sea';
 
         // Creation of bay shaped islands
-        this.overlayTiles(boardCenter-1, boardCenter+1, 2*((row-1)/3)+3, 2*((row-1)/3)+4, 'land');
-        this.boardArray[boardCenter][2*((row-1)/3)+3].terrain = 'sea';
+        this.overlayTiles(boardCenter-1, boardCenter+1, 2*((row-1)/3)+4, 2*((row-1)/3)+4, 'land');
+        //this.overlayTiles(boardCenter-1, boardCenter+1, 2*((row-1)/3)+3, 2*((row-1)/3)+4, 'land');
+        //this.boardArray[boardCenter][2*((row-1)/3)+3].terrain = 'sea';
 
-        this.overlayTiles(boardCenter-1, boardCenter+1, (row-1)/3-4, (row-1)/3-3, 'land');
-        this.boardArray[boardCenter][(row-1)/3-3].terrain = 'sea';
+        this.overlayTiles(boardCenter-1, boardCenter+1, (row-1)/3-4, (row-1)/3-4, 'land');
+        //this.overlayTiles(boardCenter-1, boardCenter+1, (row-1)/3-4, (row-1)/3-3, 'land');
+        //this.boardArray[boardCenter][(row-1)/3-3].terrain = 'sea';
 
-        this.overlayTiles(2*((row-1)/3)+3, 2*((row-1)/3)+4, boardCenter-1, boardCenter+1, 'land');
-        this.boardArray[2*((row-1)/3)+3][boardCenter].terrain = 'sea';
+        this.overlayTiles(2*((row-1)/3)+4, 2*((row-1)/3)+4, boardCenter-1, boardCenter+1, 'land');
+        //this.overlayTiles(2*((row-1)/3)+3, 2*((row-1)/3)+4, boardCenter-1, boardCenter+1, 'land');
+        //this.boardArray[2*((row-1)/3)+3][boardCenter].terrain = 'sea';
 
-        this.overlayTiles((row-1)/3-4, (row-1)/3-3, boardCenter-1, boardCenter+1, 'land');
-        this.boardArray[(row-1)/3-3][boardCenter].terrain = 'sea';
+        this.overlayTiles((row-1)/3-4, (row-1)/3-4, boardCenter-1, boardCenter+1, 'land');
+        //this.overlayTiles((row-1)/3-4, (row-1)/3-3, boardCenter-1, boardCenter+1, 'land');
+        //this.boardArray[(row-1)/3-3][boardCenter].terrain = 'sea';
 
 
         // Creation of land around bases
@@ -437,6 +441,7 @@ let gameBoard = {
     // Method to damage cargo ship after conflict
     // ------------------------------------------
     damageShip: function(actionTile, localTeam) {
+        if(workFlow == 1) {console.log('Ship damage displayed: ' + (Date.now() - launchTime)); }
         console.log(actionTile.children);
         actionTile.children[2].remove();
         actionTile.children[1].remove();
@@ -455,6 +460,7 @@ let gameBoard = {
     // Method to repair cargo ship docked in harbour
     // ---------------------------------------------
     repairShip: function(actionTile, localTeam, localStatus) {
+        if(workFlow == 1) {console.log('Ship repair displayed: ' + (Date.now() - launchTime)); }
         console.log(actionTile.children);
 
         // Puts up scaffolding
@@ -986,6 +992,7 @@ let gameBoard = {
     // ----------------------------------------------------------------------------
     // gridSize is the size of the tile, row and col depict the number of tiles on the board
     drawBoard: function(row, col, gridSize) {
+        if(workFlow == 1) {console.log('Board drawn: ' + (Date.now() - launchTime)); }
         // Loop through board array to draw tiles
           let octagonArray = [  {type: 'visible', gap: 0, width: 1, colour: 'rgb(235, 215, 195)', background: 'rgb(246, 232, 206)'},
                                 {type: 'land', gap: 6, width: 6, colour: 'rgb(213, 191, 163)', background: 'rgb(246, 232, 206)'},
@@ -1002,6 +1009,7 @@ let gameBoard = {
     // New method to create the board pieces based on the boardArray using SVG
     // ----------------------------------------------------------------------------
     drawPieces: function() {
+        if(workFlow == 1) {console.log('Pieces drawn: ' + (Date.now() - launchTime)); }
         // Loops for pieces
         for (var i = 0; i < row; i++) {
             Ycenter = (gridSize + tileBorder * 2) * i + (gridSize/2 + boardSurround + tileBorder);
@@ -1061,6 +1069,7 @@ let gameBoard = {
     // Method to set up canvas overlay layer for piece activation
     // ----------------------------------------------------------
     drawActiveTiles: function () {
+        if(workFlow == 1) {console.log('Active tiles drawn: ' + (Date.now() - launchTime)); }
         // Clears the canvas for redraw
         canvasActive.clearRect(0, 0, canvasActive.canvas.width, canvasActive.canvas.height);
 
@@ -1074,6 +1083,7 @@ let gameBoard = {
     // Method to add safe harbours to the map
     // --------------------------------------
     drawHarbours: function () {
+        if(workFlow == 1) {console.log('Harbours drawn: ' + (Date.now() - launchTime)); }
         // safe harbours are also drawn on canvasActive later - can be changed later if necessary
         this.drawTiles ('harbour', canvasActive, 0, 1, 'transparent', 'rgb(233, 211, 183)');
         this.drawTiles ('pirateHarbour', canvasActive, 0, 1, '#353839', 'rgb(233, 211, 183)');
@@ -1098,7 +1108,7 @@ let gameBoard = {
     // Method to draw compass and game logo on lowest layer of board
     // -------------------------------------------------------------
     drawCompass: function() {
-
+        if(workFlow == 1) {console.log('Compass drawn: ' + (Date.now() - launchTime)); }
         let compassSize = (gridSize + tileBorder * 2) * 2;
         let logoSize = (gridSize + tileBorder * 2) * 2;
         let Xsize = (col * (gridSize + tileBorder * 2) + boardSurround * 2);
