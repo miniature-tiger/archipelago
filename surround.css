@@ -68,9 +68,6 @@ html {
 /* style for the frame sidebars */
 .sidebar {
     position: fixed;
-
-    font-size: 0.5em;
-
     background-color: rgb(251, 242, 234);
     background-color: transparent;
     top: 0%;
@@ -79,7 +76,6 @@ html {
     height: 84%;
     top: 8%;
     background-color: rgba(138, 87, 50, 0.1);
-    font-size:0.6em;
 }
 
 .left {
@@ -228,7 +224,7 @@ html {
     text-align: center;
     overflow: hidden;
     white-space: nowrap;
-    font-size: 45%;
+    font-size: 85%;
     vertical-align: bottom;
 
 
@@ -241,7 +237,7 @@ html {
     top: -1px;
     margin-top: 0%;
     margin-left: 0%;
-    
+
 
     border-radius: 50%;
     background-color: rgb(231, 190, 151);

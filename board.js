@@ -994,9 +994,9 @@ let gameBoard = {
     drawBoard: function(row, col, gridSize) {
         if(workFlow == 1) {console.log('Board drawn: ' + (Date.now() - launchTime)); }
         // Loop through board array to draw tiles
-          let octagonArray = [  {type: 'visible', gap: 0, width: 1, colour: 'rgb(235, 215, 195)', background: 'rgb(246, 232, 206)'},
-                                {type: 'land', gap: 6, width: 6, colour: 'rgb(213, 191, 163)', background: 'rgb(246, 232, 206)'},
-                                {type: 'land', gap: 4, width: 1.5, colour: 'rgb(138, 87, 50)', background: 'transparent'} ]
+          let octagonArray = [  {type: 'visible', gap: 0*screenReduction, width: 1*screenReduction, colour: 'rgb(235, 215, 195)', background: 'rgb(246, 232, 206)'},
+                                {type: 'land', gap: 6*screenReduction, width: 6*screenReduction, colour: 'rgb(213, 191, 163)', background: 'rgb(246, 232, 206)'},
+                                {type: 'land', gap: 4*screenReduction, width: 1.5*screenReduction, colour: 'rgb(138, 87, 50)', background: 'transparent'} ]
 
         for (var h = 0; h < octagonArray.length; h++) {
             this.drawTiles (octagonArray[h].type, canvasBoard, octagonArray[h].gap, octagonArray[h].width, octagonArray[h].colour, octagonArray[h].background)
@@ -1230,7 +1230,7 @@ let gameBoard = {
         let logoArchipelagoInner = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         logoArchipelagoInner.setAttribute('cx', + logoSize + boardSurround);
         logoArchipelagoInner.setAttribute('cy', + logoSize + boardSurround);
-        logoArchipelagoInner.setAttribute('r', logoSize - 30);
+        logoArchipelagoInner.setAttribute('r', logoSize - (30*screenReduction));
         logoArchipelagoInner.setAttribute('fill', 'none');
         logoArchipelagoInner.setAttribute('stroke', 'rgb(213, 191, 163)');
         logoArchipelagoInner.style.strokeWidth = '1px';
@@ -1240,15 +1240,15 @@ let gameBoard = {
         let logoTextPath = document.createElementNS('http://www.w3.org/2000/svg', 'textPath');
         let logoDefsPath = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
         let logoDefsPath2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        let text = document.createTextNode('archipelago - archipelago - archipelago - ');
+        let text = document.createTextNode(' --- archipelago ----- archipelago ----- archipelago ---');
 
         // Game logo text and path
         logoDefsPath.appendChild(logoDefsPath2);
         logoDefsPath2.setAttribute('id', 'circlePath');
-        logoDefsPath2.setAttribute('d', 'M ' + (boardSurround + 20) + ' ' + (logoSize + boardSurround) + ' A ' + (logoSize - 20) + ' ' + (logoSize - 20) + ' 0 1 1 ' + (boardSurround + 20) + ' ' + (logoSize + boardSurround + 1));
+        logoDefsPath2.setAttribute('d', 'M ' + (boardSurround + 20*screenReduction) + ' ' + (logoSize + boardSurround) + ' A ' + (logoSize - 20*screenReduction) + ' ' + (logoSize - 20*screenReduction) + ' 0 1 1 ' + (boardSurround + 20*screenReduction) + ' ' + (logoSize + boardSurround + 1));
 
         logoText.appendChild(logoTextPath);
-        logoText.setAttribute('font-size','17.3px');
+        logoText.setAttribute('font-size', 14 * Math.pow(screenReduction, 1.2));
         logoText.setAttribute('stroke', 'rgb(213, 191, 163)');
         logoTextPath.appendChild(text);
 
