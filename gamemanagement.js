@@ -323,7 +323,7 @@ let gameManagement = {
         turnCircle.setAttribute('cx', 50 * localScale);
         turnCircle.setAttribute('cy', 50 * localScale);
         turnCircle.setAttribute('r', 32 * localScale);
-        turnCircle.style.strokeWidth = '1px';
+        turnCircle.style.strokeWidth = 1*screenReduction + 'px';
         turnCircle.style.strokeLinecap = 'round';
 
         endTurnButton.appendChild(turnCircle);

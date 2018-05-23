@@ -32,18 +32,20 @@ if(workFlow == 1) {
 let row = 31, col = 31, boardShape='octagon';
 let screenWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
+let screenReduction = window.innerWidth/1280;
 
 let surroundSize = Math.floor(0.065 * screenWidth);
 
 let mapWidth = screenWidth;
 let gridSize = Math.round( (mapWidth - 2*surroundSize) / ((col + 3)*1.5) );
-let tileBorder = Math.round( 0.25 * gridSize);
+let tileBorder = Math.round(0.25 * gridSize);
 let boardSurround = (mapWidth - 31 * (gridSize + tileBorder * 2))/2;
 
 let sideCollection = document.querySelectorAll('.left, .right');
 
 for (var a = 0; a < sideCollection.length; a++) {
   sideCollection[a].style.width = surroundSize + 'px';
+  sideCollection[a].style.fontSize = (0.6 * screenReduction) + 'em';
 }
 
 let headFootCollection = document.querySelectorAll(' .the_header, .the_footer, .commentary');
@@ -52,6 +54,7 @@ for (var c = 0; c < headFootCollection.length; c++) {
 
     headFootCollection[c].style.width = (screenWidth - 2*surroundSize) + 'px';
     headFootCollection[c].style.left = surroundSize + 'px';
+    headFootCollection[c].style.fontSize = (0.8 * screenReduction) + 'em';
 }
 
 // boardMarkNode is board holder in document
@@ -196,7 +199,7 @@ needle.style.transform = 'rotate(' + needleDirection + 'deg)';
 // -----------------------
 var endTurn = document.querySelector('.endturnmark');
 endTurn.setAttribute('class', gameManagement.turn + ' team_fill team_stroke');
-gameManagement.createTurnCircle(false, 0.7*surroundSize/100, -0.2*surroundSize, 0.15*surroundSize, endTurn, 'icon_holder');
+gameManagement.createTurnCircle(false, 0.7*surroundSize/100, -20*screenReduction, 0.15*surroundSize, endTurn, 'icon_holder');
 
 endTurn.addEventListener('click', function() {
     // Used pieces are resert to unused
@@ -257,7 +260,7 @@ var settingsIcon = document.querySelector('.settingsmark');
 var settingsPopup = document.querySelector('.settings_popup');
 
 // Icon in bottom left corner
-gameManagement.createSettingsCog(false, 0.7*surroundSize/100, -0.2*surroundSize, 0.15*surroundSize, settingsIcon, 'icon_holder');
+gameManagement.createSettingsCog(false, 0.7*surroundSize/100, -20*screenReduction, 0.15*surroundSize, settingsIcon, 'icon_holder');
 // Settings pop up box
 gameManagement.createSettingsCog(true, screenWidth*(12/2000), 0, (screenWidth*4/20), settingsPopup, 'popup_cog');
 var popupCog = document.querySelector('.popup_cog');
