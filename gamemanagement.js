@@ -53,6 +53,7 @@ let gameManagement = {
         } else if (e.target.classList.contains('icon6')) {
             this.clearPanel();
             settingsPopup.style.display = "none";
+            window.removeEventListener('click', popRunClose);
         }
     },
 

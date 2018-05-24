@@ -197,17 +197,29 @@ needle.style.transform = 'rotate(' + needleDirection + 'deg)';
 
 // Next turn functionality
 // -----------------------
-var endTurn = document.querySelector('.endturnmark');
-endTurn.setAttribute('class', gameManagement.turn + ' team_fill team_stroke');
-gameManagement.createTurnCircle(false, 0.7*surroundSize/100, -20*screenReduction, 0.15*surroundSize, endTurn, 'icon_holder');
 
-endTurn.addEventListener('click', function() {
+function nextTurn() {
     // Used pieces are resert to unused
+    if(workFlow == 1) {console.log(' ------ Next turn: ---------: ' + (Date.now() - launchTime)); }
+    // Resetting if second click not applied
+    pieceMovement.deactivateTiles(maxMove);
+    gameBoard.drawActiveTiles();
+
+    // Resetting movement array in case second click has not been made
+    pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
+    startEnd = 'start';
+
+    // Removing commentary goods event handler
+    commentary.removeEventListener('click', clickGoods);
+    clearCommentary();
+
+    // Resetting used pieces
     pieceMovement.usedPiecesReset();
+
     // Team is changed
     gameManagement.nextTurn();
 
-    if(workFlow == 1) {console.log(' ------ Next turn: ' + gameManagement.turn + ' ---------: ' + (Date.now() - launchTime)); }
+    if(workFlow == 1) {console.log('Turn changed to ' + gameManagement.turn + ' : ' + (Date.now() - launchTime)); }
     if(gameBoardTrack == 1) {console.log(gameBoard.boardArray); }
 
     // Wind direction is set for next turn
@@ -248,8 +260,13 @@ endTurn.addEventListener('click', function() {
         // Update the goods dashboard
         stockDashboard.goodsStockTake();
     }
+}
 
-});
+var endTurn = document.querySelector('.endturnmark');
+endTurn.setAttribute('class', gameManagement.turn + ' team_fill team_stroke');
+gameManagement.createTurnCircle(false, 0.7*surroundSize/100, -20*screenReduction, 0.15*surroundSize, endTurn, 'icon_holder');
+endTurn.addEventListener('click', nextTurn);
+
 
 // Settings pop-up box
 // --------------------
@@ -275,16 +292,19 @@ settingsIcon.addEventListener('click', function() {
     settingsPopup.style.display = "block";
     popupCog.style.display = "block";
     // Event handler for settings pop up once launched
-    window.addEventListener('click', function(e) {
-        console.log('window event listener');
-        if (e.target == settingsPopup) {
-            gameManagement.clearPanel();
-            settingsPopup.style.display = "none";
-        } else {
-            gameManagement.manageSettings(e, screenWidth*(12/2000));
-        }
-    });
+    window.addEventListener('click', popRunClose);
 });
+
+function popRunClose(e) {
+    console.log('window event listener');
+    if (e.target == settingsPopup) {
+        gameManagement.clearPanel();
+        settingsPopup.style.display = "none";
+        window.removeEventListener('click', popRunClose);
+    } else {
+        gameManagement.manageSettings(e, screenWidth*(12/2000));
+    }
+};
 
 // ------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------
@@ -404,14 +424,9 @@ function clickGoods(e) {
 // Event handler for board
 // -----------------------
 
-// boardMarkNode is board holder in document
-let boardMarkLeft = boardMarkNode.offsetLeft;
-let boardMarkTop = boardMarkNode.offsetTop;
 
-//console.log('here', boardMarkLeft, boardMarkTop);
-
-boardMarkNode.addEventListener('click', function(event) {
-    if(workFlow == 1) {console.log('Board mark node click event listener triggered: ' + (Date.now() - launchTime)); }
+function boardHandler(event) {
+    if(workFlow == 1) {console.log('Board mark node click event listener triggered. Start/End = ' + startEnd + ': ' + (Date.now() - launchTime)); }
     let xClick = event.pageX - boardMarkLeft;
     let yClick = event.pageY - boardMarkTop;
 
@@ -486,6 +501,8 @@ boardMarkNode.addEventListener('click', function(event) {
                     }
                     // Redraw gameboard to show activated tiles
                     gameBoard.drawActiveTiles();
+                    console.log('within boardMArkNode loop');
+                    console.log(pieceMovement.movementArray);
                 }
             }
 
@@ -577,6 +594,8 @@ boardMarkNode.addEventListener('click', function(event) {
 
             // Piece movement
             } else if (pieceMovement.movementArray.start.pieces.type == 'cargo ship') {
+                endTurn.removeEventListener('click', nextTurn);
+                boardMarkNode.removeEventListener('click', boardHandler);
                 pieceMovement.deactivateTiles(maxMove);
                 // Redraw active tile layer after deactivation to remove activated tiles
                 gameBoard.drawActiveTiles();
@@ -601,4 +620,12 @@ boardMarkNode.addEventListener('click', function(event) {
         stockDashboard.stockTake();
         stockDashboard.drawStock();
     }
-});
+};
+
+// boardMarkNode is board holder in document
+let boardMarkLeft = boardMarkNode.offsetLeft;
+let boardMarkTop = boardMarkNode.offsetTop;
+
+//console.log('here', boardMarkLeft, boardMarkTop);
+
+boardMarkNode.addEventListener('click', boardHandler);

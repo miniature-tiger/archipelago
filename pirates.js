@@ -88,13 +88,15 @@ let pirates = {
             }
             pieceMovement.deactivateTiles(maxMove);
             pieceMovement.shipTransition(gameSpeed);
-            
+
           }
       },
 
     // Method to manage automated movement of pirate ship moves
     automatePirates: function() {
         if(workFlow == 1) {console.log('Automate pirates - ship to move or completion: ' + (Date.now() - launchTime)); }
+        endTurn.removeEventListener('click', nextTurn);
+        boardMarkNode.removeEventListener('click', boardHandler);
         if (pirates.pirateCount == -1) {
             // Generate array of all pirate ships to be moved
             this.populatePirateShipsArray();
@@ -116,6 +118,8 @@ let pirates = {
             // Resets pirate ship array once all moves made
             pirates.pirateShips = [];
             pirates.pirateCount = -1;
+            endTurn.addEventListener('click', nextTurn);
+            boardMarkNode.addEventListener('click', boardHandler);
         }
 
     },
