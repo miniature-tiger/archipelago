@@ -450,9 +450,9 @@ let pieceMovement = {
         // At end of each move check a 1x1 grid to see if the ship is next to land that is unpopulated
         let searchDistance = 1;
         for (var i = -searchDistance; i < searchDistance + 1; i++) {
-            if(this.movementArray.start.row+i >=0 && this.movementArray.start.row+i <row) {
+            if(this.movementArray.end.row+i >=0 && this.movementArray.end.row+i <row) {
                 for (var j = -searchDistance; j < searchDistance + 1; j++) {
-                    if(this.movementArray.start.col+j >=0 && this.movementArray.start.col+j <col) {
+                    if(this.movementArray.end.col+j >=0 && this.movementArray.end.col+j <col) {
                         // Reduces seacrh to exclude diagonals
                         if(i == 0 || j == 0) {
                             // Checks if tile is land and unpopulated
