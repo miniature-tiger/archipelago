@@ -4,10 +4,16 @@
 // --------------------------
 // --------------------------
 
+window.addEventListener("error", function(e) {
+    console.log('error: ' + e.message + ' at linenumber: ' + e.lineno + ' of file: ' +e.filename);
+});
+
+
 const launchTime = Date.now();
 let workFlow = 1;
 let gameBoardTrack = 0;
 let transitionMonitor = 1;
+
 
 
 
