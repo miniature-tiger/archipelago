@@ -270,6 +270,7 @@ let pieceMovement = {
         } else {
             this.movementArray[fromTo].activeStatus = gameBoard.boardArray[this.movementArray[fromTo].row][this.movementArray[fromTo].col].activeStatus;
         }
+        console.log(this.movementArray);
     },
 
     // Method for ship movement and transition
