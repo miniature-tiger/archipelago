@@ -214,7 +214,7 @@ let pieceMovement = {
     // Method to deactivate tiles after a piece has moved
     // --------------------------------------------------
     deactivateTiles: function(localMaxMove) {
-        if(workFlow == 1) {console.log('Active tiles deactivated'); }
+        if(workFlow == 1) {console.log('Active tiles deactivated: ' + (Date.now() - launchTime)); }
         let moveDistance = localMaxMove;
         // Simply deactivates all tiles within the maximum potential move distance
         for (var i = -moveDistance; i < moveDistance + 1; i++) {
@@ -233,7 +233,7 @@ let pieceMovement = {
     // Method to reset pieces from 'used' to 'unused' once a turn has ended
     // --------------------------------------------------------------------
     usedPiecesReset: function() {
-        if(workFlow == 1) {console.log('Used pieces reset'); }
+        if(workFlow == 1) {console.log('Used pieces reset: ' + (Date.now() - launchTime)); }
         for (var y = 0; y <  col; y++) {
             for (var x = 0; x <  row; x++) {
                 if (gameBoard.boardArray[x][y].pieces.used == 'used') {
@@ -411,6 +411,8 @@ let pieceMovement = {
             // Resetting movement array once second click has been made (if move valid)
             pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
             startEnd = 'start';
+            endTurn.addEventListener('click', nextTurn);
+            boardMarkNode.addEventListener('click', boardHandler);
         } else if (gameManagement.turn == 'Pirate') {
 
             // Resetting movement array once second click has been made (if move valid)
