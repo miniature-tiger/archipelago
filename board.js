@@ -993,6 +993,7 @@ let gameBoard = {
     // gridSize is the size of the tile, row and col depict the number of tiles on the board
     drawBoard: function(row, col, gridSize) {
         if(workFlow == 1) {console.log('Board drawn: ' + (Date.now() - launchTime)); }
+
         // Loop through board array to draw tiles
           let octagonArray = [  {type: 'visible', gap: 0*screenReduction, width: 1*screenReduction, colour: 'rgb(235, 215, 195)', background: 'rgb(246, 232, 206)'},
                                 {type: 'land', gap: 6*screenReduction, width: 6*screenReduction, colour: 'rgb(213, 191, 163)', background: 'rgb(246, 232, 206)'},
@@ -1003,6 +1004,7 @@ let gameBoard = {
         }
         this.drawHarbours();
         this.drawCompass();
+        this.drawBoardBorder(canvasBoard);
 
     },
 
@@ -1105,23 +1107,24 @@ let gameBoard = {
         }
     },
 
-    // Method to draw compass and game logo on lowest layer of board
+    // Method to draw compass layer elements
+    // -------------------------------------
+    drawCompassLayer: function() {
+        if(workFlow == 1) {console.log('Compass layer drawn: ' + (Date.now() - launchTime)); }
+        this.drawCompass();
+        this.drawLogo();
+        this.drawBoardBorder();
+    },
+
+    // Method to draw compass on lowest layer of board
     // -------------------------------------------------------------
     drawCompass: function() {
-        if(workFlow == 1) {console.log('Compass drawn: ' + (Date.now() - launchTime)); }
         let compassSize = (gridSize + tileBorder * 2) * 2;
         let logoSize = (gridSize + tileBorder * 2) * 2;
         let Xsize = (col * (gridSize + tileBorder * 2) + boardSurround * 2);
         let Ysize = (row * (gridSize + tileBorder * 2) + boardSurround * 2);
         let Xcenter = (gridSize + tileBorder * 2) * (col - 3) + (gridSize/2 + boardSurround + tileBorder);
         let Ycenter = (gridSize + tileBorder * 2) * (row - 3) + (gridSize/2 + boardSurround + tileBorder);
-
-        // Create SVG layer of same height and width as board
-        let compassLayer = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        compassLayer.setAttribute('width', col * (gridSize + tileBorder * 2) + boardSurround * 2);
-        compassLayer.setAttribute('height', row * (gridSize + tileBorder * 2) + boardSurround * 2);
-        compassLayer.setAttribute('viewBox', '0, 0, ' + (col * (gridSize + tileBorder * 2) + boardSurround * 2) +  ', ' + (row * (gridSize + tileBorder * 2) + boardSurround * 2));
-        compassLayer.setAttribute('class', 'compass');
 
         // Compass outer circle
         let compassOuter = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
@@ -1217,7 +1220,29 @@ let gameBoard = {
         compassCircle.style.strokeWidth = '0.5px';
         compassCircle.style.strokeLinecap = 'round';
 
+        // Add all SVG elements to board
+        compassLayer.appendChild(compassRing);
+        compassLayer.appendChild(compassOuter);
+        compassLayer.appendChild(compassInner);
+        compassLayer.appendChild(compassLines);
+        compassLayer.appendChild(compassPointsFill);
+        compassLayer.appendChild(compassPointsEmpty);
+
+        compassNeedleBox.appendChild(compassNeedle);
+        compassNeedleBox.appendChild(compassCircle);
+
+        boardMarkNode.appendChild(compassLayer);
+        boardMarkNode.appendChild(compassNeedleBox);
+
+    },
+
+    // Method for drawing logo on board
+    // ----------------------------------------
+
+    drawLogo: function() {
         // Game logo
+        let logoSize = (gridSize + tileBorder * 2) * 2;
+
         let logoArchipelago = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         logoArchipelago.setAttribute('cx', + logoSize + boardSurround);
         logoArchipelago.setAttribute('cy', + logoSize + boardSurround);
@@ -1255,28 +1280,41 @@ let gameBoard = {
         //logoDefsPath.setAttribute('path');
         logoTextPath.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '#circlePath');
 
-
-        // Add all SVG elements to board
-        compassLayer.appendChild(compassRing);
-        compassLayer.appendChild(compassOuter);
-        compassLayer.appendChild(compassInner);
-        compassLayer.appendChild(compassLines);
-        compassLayer.appendChild(compassPointsFill);
-        compassLayer.appendChild(compassPointsEmpty);
-
         compassLayer.appendChild(logoArchipelago);
         compassLayer.appendChild(logoArchipelagoInner);
         compassLayer.appendChild(logoDefsPath);
         compassLayer.appendChild(logoText);
-
-        compassNeedleBox.appendChild(compassNeedle);
-        compassNeedleBox.appendChild(compassCircle);
-
-        boardMarkNode.appendChild(compassLayer);
-        boardMarkNode.appendChild(compassNeedleBox);
-
-
     },
+
+    // Method for drawing board border on board layer
+    // ----------------------------------------------
+    drawBoardBorder: function() {
+        // Border
+        let equalGap = gridSize;
+        let octagonBorder = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        octagonBorder.setAttribute('d',
+        'M ' + (boardSurround + tileBorder + (gridSize + tileBorder * 2) * 10)  + ' ' + (boardSurround + tileBorder - equalGap) +
+        'L ' + (boardSurround + tileBorder + (gridSize + tileBorder * 2) * 20 + gridSize) + ' ' + (boardSurround + tileBorder - equalGap) +
+        'L ' + (boardSurround + tileBorder + (gridSize + tileBorder * 2) * 30 + gridSize + equalGap) + ' ' + (boardSurround + tileBorder + (gridSize + tileBorder * 2) * 10) +
+        'L ' + (boardSurround + tileBorder + (gridSize + tileBorder * 2) * 30 + gridSize + equalGap) + ' ' + (boardSurround + tileBorder + (gridSize + tileBorder * 2) * 20  + gridSize) +
+        'L ' + (boardSurround + tileBorder + (gridSize + tileBorder * 2) * 20 + gridSize) + ' ' + (boardSurround + tileBorder + (gridSize + tileBorder * 2) * 30  + gridSize  + equalGap) +
+        'L ' + (boardSurround + tileBorder + (gridSize + tileBorder * 2) * 10) + ' ' + (boardSurround + tileBorder + (gridSize + tileBorder * 2) * 30  + gridSize + equalGap) +
+        'L ' + (boardSurround + tileBorder + (gridSize + tileBorder * 2) * 0 - equalGap) + ' ' + (boardSurround + tileBorder + (gridSize + tileBorder * 2) * 20  + gridSize) +
+        'L ' + (boardSurround + tileBorder + (gridSize + tileBorder * 2) * 0 - equalGap) + ' ' + (boardSurround + tileBorder + (gridSize + tileBorder * 2) * 10) + ' Z'
+        );
+
+        octagonBorder.style.strokeWidth = '6px';
+        octagonBorder.setAttribute('stroke', 'rgb(235, 215, 195)');
+        octagonBorder.setAttribute('stroke', 'rgb(213, 191, 163)');
+        octagonBorder.setAttribute('opacity', '1');
+        octagonBorder.setAttribute('fill', 'none');
+        octagonBorder.style.strokeLinecap = 'round';
+
+        compassLayer.appendChild(octagonBorder);
+    },
+
+
+
 
     // Method to add trade route layer to board
     // -----------------------------------------
