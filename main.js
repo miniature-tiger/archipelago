@@ -84,6 +84,13 @@ canvasActive.canvas.height = col * (gridSize + tileBorder * 2) + boardSurround *
 // ID is set with CSS styles of higher z-index and transparent background to function as overlay
 activeBoard.setAttribute('id', 'activeBoard');
 
+// Create SVG layer of same height and width as board
+let compassLayer = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+compassLayer.setAttribute('width', col * (gridSize + tileBorder * 2) + boardSurround * 2);
+compassLayer.setAttribute('height', row * (gridSize + tileBorder * 2) + boardSurround * 2);
+compassLayer.setAttribute('viewBox', '0, 0, ' + (col * (gridSize + tileBorder * 2) + boardSurround * 2) +  ', ' + (row * (gridSize + tileBorder * 2) + boardSurround * 2));
+compassLayer.setAttribute('class', 'compass');
+
 // SVG layer for trade routes set up
 let tradeRouteLayer = gameBoard.createTradeRouteLayer();
 boardMarkNode.appendChild(tradeRouteLayer);
@@ -99,6 +106,7 @@ function boardSetUp(row, col, gridSize, boardShape) {
     //gameBoard.allocateStartTiles();
 
     // Drawing of board
+    gameBoard.drawCompassLayer();
     gameBoard.drawBoard(row, col, gridSize);
     gameBoard.drawPieces();
 }
