@@ -442,7 +442,6 @@ let gameBoard = {
     // ------------------------------------------
     damageShip: function(actionTile, localTeam) {
         if(workFlow == 1) {console.log('Ship damage displayed: ' + (Date.now() - launchTime)); }
-        console.log(actionTile.children);
         actionTile.children[2].remove();
         actionTile.children[1].remove();
 
@@ -461,7 +460,6 @@ let gameBoard = {
     // ---------------------------------------------
     repairShip: function(actionTile, localTeam, localStatus) {
         if(workFlow == 1) {console.log('Ship repair displayed: ' + (Date.now() - launchTime)); }
-        console.log(actionTile.children);
 
         // Puts up scaffolding
         if (localStatus == 'repair0') {
@@ -1003,9 +1001,6 @@ let gameBoard = {
             this.drawTiles (octagonArray[h].type, canvasBoard, octagonArray[h].gap, octagonArray[h].width, octagonArray[h].colour, octagonArray[h].background)
         }
         this.drawHarbours();
-        this.drawCompass();
-        this.drawBoardBorder(canvasBoard);
-
     },
 
     // New method to create the board pieces based on the boardArray using SVG

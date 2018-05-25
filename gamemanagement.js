@@ -27,7 +27,12 @@ let gameManagement = {
 
     // Settings and options
     // --------------------
-    optionsArray: [ {variable: 'speed', active: 'fast', options: [{text: 'slow', active: false, constant: 1.5}, {text: 'medium', active: false, constant: 1}, {text: 'fast', active: true, constant: 0.6}]}, ],
+    optionsArray: [
+                  { variable: 'speed', active: 'fast', options: [{text: 'slow', active: false, constant: 1.5}, {text: 'medium', active: false, constant: 1}, {text: 'fast', active: true, constant: 0.6}] },
+                  { variable: 'dev', options: [{text: 'workflow', active: true}, {text: 'transitions', active: true}] },
+                  ],
+
+
 
     // Event handling for settings popup
     // ---------------------------------
@@ -54,6 +59,16 @@ let gameManagement = {
             this.clearPanel();
             settingsPopup.style.display = "none";
             window.removeEventListener('click', popRunClose);
+        } else if (e.target.classList.contains('icon7')) {
+          this.clearPanel();
+          this.devPanel(localScale);
+        } else if (e.target.classList.contains('dev')) {
+            indexNew = this.optionsArray[1].options.findIndex(item => item.text == e.target.classList.item(1));
+            this.optionsArray[1].options[indexNew].active = !this.optionsArray[1].options[indexNew].active;
+            workFlow = this.optionsArray[1].options[0].active;
+            transitionMonitor = this.optionsArray[1].options[1].active;
+            this.clearPanel();
+            this.devPanel(localScale);
         }
     },
 
@@ -61,22 +76,39 @@ let gameManagement = {
     // -------------------------------
     speedPanel: function(localScale) {
         // Icon at top of panel
-        headerIcon = settingsPanel.appendChild(this.speedIcon(5));
+        headerIcon = settingsPanel.appendChild(this.speedIcon(7));
         headerIcon.setAttribute('transform', 'translate(' + (25 * localScale - 25*1) + ', ' + (1 * localScale) + ') scale(1)');
         // Panel text
         settingsPanel.appendChild(this.panelText(screenWidth*(12/2000), 14, 'Select speed', 'for game movement.'));
         // Panel buttons - make into a loop?
-        slowRect = settingsPanel.appendChild(this.optionBox(localScale, this.optionsArray[0].options[0], this.optionsArray[0].variable));
+        slowRect = settingsPanel.appendChild(this.optionBox(localScale, this.optionsArray[0].options[0], this.optionsArray[0].variable, 12));
         slowRect.setAttribute('transform', 'translate(' + (10 * localScale - 6 * localScale) + ', ' + (25 * localScale - 2 * localScale) + ')');
-        mediumRect = settingsPanel.appendChild(this.optionBox(localScale, this.optionsArray[0].options[1], this.optionsArray[0].variable));
+        mediumRect = settingsPanel.appendChild(this.optionBox(localScale, this.optionsArray[0].options[1], this.optionsArray[0].variable, 12));
         mediumRect.setAttribute('transform', 'translate(' + (25 * localScale - 6 * localScale) + ', ' + (25 * localScale - 2 * localScale) + ')');
-        fastRect = settingsPanel.appendChild(this.optionBox(localScale, this.optionsArray[0].options[2], this.optionsArray[0].variable));
+        fastRect = settingsPanel.appendChild(this.optionBox(localScale, this.optionsArray[0].options[2], this.optionsArray[0].variable, 12));
         fastRect.setAttribute('transform', 'translate(' + (40 * localScale - 6 * localScale) + ', ' + (25 * localScale - 2 * localScale) + ')');
+    },
+
+
+    // Setting up the developer panel
+    // -------------------------------
+    devPanel: function(localScale) {
+        // Icon at top of panel
+        headerIcon = settingsPanel.appendChild(this.spannerIcon(5));
+        headerIcon.setAttribute('transform', 'translate(' + (25 * localScale - 25*1) + ', ' + (1 * localScale) + ') scale(1)');
+        // Panel text
+        settingsPanel.appendChild(this.panelText(screenWidth*(12/2000), 14, 'Select elements', 'to monitor.'));
+        // Panel buttons - make into a loop?
+        workFlowCheck = settingsPanel.appendChild(this.optionBox(localScale, this.optionsArray[1].options[0], this.optionsArray[1].variable, 18));
+        workFlowCheck.setAttribute('transform', 'translate(' + (25 * localScale - 9 * localScale) + ', ' + (25 * localScale - 2 * localScale) + ')');
+        transitionsCheck = settingsPanel.appendChild(this.optionBox(localScale, this.optionsArray[1].options[1], this.optionsArray[1].variable, 18));
+        transitionsCheck.setAttribute('transform', 'translate(' + (25 * localScale - 9 * localScale) + ', ' + (32 * localScale - 2 * localScale) + ')');
+
     },
 
     // A single option box on a settings panel
     // ---------------------------------------
-    optionBox: function(localScale, localOptions, localVariable) {
+    optionBox: function(localScale, localOptions, localVariable, boxWidth) {
         let boxGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         boxGroup.setAttribute('class', localVariable + ' ' + localOptions.text);
 
@@ -84,7 +116,7 @@ let gameManagement = {
         box.setAttribute('class', localVariable + ' ' + localOptions.text);
         box.setAttribute('x', '0');
         box.setAttribute('y', '0');
-        box.setAttribute('width', 12 * localScale);
+        box.setAttribute('width', boxWidth * localScale);
         box.setAttribute('height', 5 * localScale);
         box.setAttribute('rx', '2');
         box.setAttribute('ry', '2');
@@ -99,7 +131,7 @@ let gameManagement = {
 
         let textHolder = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         textHolder.setAttribute('class', localVariable + ' ' + localOptions.text);
-        textHolder.setAttribute('x', 6 * localScale);
+        textHolder.setAttribute('x', boxWidth/2 * localScale);
         textHolder.setAttribute('y', 3.2 * localScale);
         textHolder.setAttribute('font-weight', 'normal');
         textHolder.setAttribute('font-size', (localScale * 2.6 ) + 'px');
@@ -220,9 +252,13 @@ let gameManagement = {
                     // Keep for assisting in future icon designs
                     //let squareHelper = this.tempSquare(i);
                     //squareHelper.setAttribute('transform', 'translate(' + (50 * localScale + (100 * localScale/4)*1.2 * Math.cos((i) * this.octagonAngle) - 20) + ', ' + (50 * localScale + (100 * localScale/4)*1.2 * Math.sin((i) * this.octagonAngle) - 20) + ') scale(0.8)');
-                    //settingsCog.appendChild(squareHelper);
+                    //localNode.appendChild(squareHelper);
                 } else if (i==6) {
                     iconDesign = this.closeIcon(i);
+                    iconDesign.setAttribute('transform', 'translate(' + (50 * localScale + (100 * localScale/4)*1.2 * Math.cos((i) * this.octagonAngle) - 20) + ', ' + (50 * localScale + (100 * localScale/4)*1.2 * Math.sin((i) * this.octagonAngle) -20) + ') scale(0.8)');
+                    localNode.appendChild(iconDesign);
+                } else if (i==7) {
+                    iconDesign = this.spannerIcon(i);
                     iconDesign.setAttribute('transform', 'translate(' + (50 * localScale + (100 * localScale/4)*1.2 * Math.cos((i) * this.octagonAngle) - 20) + ', ' + (50 * localScale + (100 * localScale/4)*1.2 * Math.sin((i) * this.octagonAngle) -20) + ') scale(0.8)');
                     localNode.appendChild(iconDesign);
                 } else {
@@ -276,6 +312,44 @@ let gameManagement = {
           lightningBolt.style.strokeWidth = '1px';
           lightningBolt.style.strokeLinecap = 'round';
           return lightningBolt
+    },
+
+    // Spanner icon design
+    // -----------------
+    spannerIcon: function(localI) {
+          let builtSpanner = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
+          let spannerCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          spannerCircle.setAttribute('class', 'icon' + localI);
+          spannerCircle.setAttribute('cx', 34);
+          spannerCircle.setAttribute('cy', 14);
+          spannerCircle.setAttribute('r', 11);
+          spannerCircle.setAttribute('fill', 'rgb(102, 102, 102)');
+          spannerCircle.setAttribute('stroke','rgb(102, 102, 102)');
+          spannerCircle.style.strokeWidth = '1px';
+          spannerCircle.style.strokeLinecap = 'round';
+
+          let spannerHandle = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          spannerHandle.setAttribute('class', 'icon' + localI);
+          spannerHandle.setAttribute('d', 'M 30 18 L 10 38');
+          spannerHandle.setAttribute('fill', 'rgb(102, 102, 102)');
+          spannerHandle.setAttribute('stroke','rgb(102, 102, 102)');
+          spannerHandle.style.strokeWidth = '10px';
+          spannerHandle.style.strokeLinecap = 'round';
+
+          let spannerNut = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          spannerNut.setAttribute('class', 'icon' + localI);
+          spannerNut.setAttribute('d', 'M 39 8.25 L 36 11.25 L 36 12 L 36.75 12 L 39.75 9 Z');
+          spannerNut.setAttribute('fill', 'darkgrey');
+          spannerNut.setAttribute('stroke','darkgrey');
+          spannerNut.style.strokeWidth = '10px';
+          spannerNut.style.strokeLinecap = 'round';
+
+          builtSpanner.appendChild(spannerCircle);
+          builtSpanner.appendChild(spannerHandle);
+          builtSpanner.appendChild(spannerNut);
+
+          return builtSpanner
     },
 
     // Close icon design

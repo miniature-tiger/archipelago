@@ -270,7 +270,7 @@ let pieceMovement = {
         } else {
             this.movementArray[fromTo].activeStatus = gameBoard.boardArray[this.movementArray[fromTo].row][this.movementArray[fromTo].col].activeStatus;
         }
-        console.log(this.movementArray);
+        //console.log(this.movementArray);
     },
 
     // Method for ship movement and transition
@@ -574,7 +574,6 @@ let pieceMovement = {
                 if (repeat > 0) {
                     shipPiece.style.transition = 'transform ' + (0.4 * gameSpeed) + 's 0s ease-in-out, left ' + (0.7 * gameSpeed * fireEffect) + 's ' + (0.0 * gameSpeed * fireEffect) + 's ease-in-out, top ' + (0.7 * gameSpeed * fireEffect) + 's ' + (0.0 * gameSpeed * fireEffect) + 's ease-in-out';
                     piratePiece.style.transition = 'transform ' + (0.4 * gameSpeed) + 's 0s ease-in-out, left ' + (0.7 * gameSpeed * fireEffect) + 's ' + (0.0 * gameSpeed * fireEffect) + 's ease-in-out, top ' + (0.7 * gameSpeed * fireEffect) + 's ' + (0.0 * gameSpeed * fireEffect) + 's ease-in-out';
-                    console.log(piratePiece.style.transition);
                     shipPiece.style.transform = 'rotate(' + conflictDirection + 'deg)';
                     piratePiece.style.transform = 'rotate(' + conflictDirection + 'deg)';
                     shipPiece.style.left = parseFloat(shipPiece.style.left) - (conflictLeftDirection * reductionDirection * (gridSize + tileBorder*2)) + 'px';
@@ -607,7 +606,7 @@ let pieceMovement = {
 
                 } else {
                     if(workFlow == 1) {console.log('Conflict transition ended - decide winner and update board array: ' + (Date.now() - launchTime)); }
-                    console.log(pirates.conflictArray);
+                    //console.log(pirates.conflictArray);
                     // Calculates winner of sea battle  - 50% chance of each ship winning battle
                     if (Math.random()>0.5) {
                         // Pirate ship wins battle and team ship is damaged

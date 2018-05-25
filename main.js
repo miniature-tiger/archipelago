@@ -10,9 +10,10 @@ window.addEventListener("error", function(e) {
 
 
 const launchTime = Date.now();
-let workFlow = 1;
+
+let workFlow = gameManagement.optionsArray[1].options[0].active;
 let gameBoardTrack = 0;
-let transitionMonitor = 1;
+let transitionMonitor = gameManagement.optionsArray[1].options[1].active;
 
 
 
@@ -293,10 +294,10 @@ var settingsPopup = document.querySelector('.settings_popup');
 // Icon in bottom left corner
 gameManagement.createSettingsCog(false, 0.7*surroundSize/100, -20*screenReduction, 0.15*surroundSize, settingsIcon, 'icon_holder');
 // Settings pop up box
-gameManagement.createSettingsCog(true, screenWidth*(12/2000), 0, (screenWidth*4/20), settingsPopup, 'popup_cog');
+gameManagement.createSettingsCog(true, screenWidth*(12/2000), -50*screenReduction, (screenWidth*4/20), settingsPopup, 'popup_cog');
 var popupCog = document.querySelector('.popup_cog');
 popupCog.appendChild(gameManagement.panelCircle(screenWidth*(12/2000)));
-gameManagement.createSettingsPanel(screenWidth*(12/2000), 0, (screenWidth*4/20), settingsPopup, 'popup_panel');
+gameManagement.createSettingsPanel(screenWidth*(12/2000), -50*screenReduction, (screenWidth*4/20), settingsPopup, 'popup_panel');
 var settingsPanel = document.querySelector('.popup_panel');
 gameManagement.createSettingsIcons(true, screenWidth*(12/2000), 0, (screenWidth*4/20), popupCog, 'popup_cog');
 
@@ -310,7 +311,6 @@ settingsIcon.addEventListener('click', function() {
 });
 
 function popRunClose(e) {
-    console.log('window event listener');
     if (e.target == settingsPopup) {
         gameManagement.clearPanel();
         settingsPopup.style.display = "none";
@@ -446,7 +446,6 @@ function boardHandler(event) {
 
     let xClickTile = Math.floor((xClick - boardSurround) / (gridSize + tileBorder * 2));
     let yClickTile = Math.floor((yClick - boardSurround) / (gridSize + tileBorder * 2));
-    console.log(yClickTile, xClickTile);
     if((xClickTile >= 0 && xClickTile < col) && (yClickTile >= 0 && yClickTile < row)) {
 
         // Obtain details of most recent tile clicked on - separated between start and end points
@@ -517,8 +516,6 @@ function boardHandler(event) {
                         }
                         // Redraw gameboard to show activated tiles
                         gameBoard.drawActiveTiles();
-                        console.log('within boardMArkNode loop');
-                        console.log(pieceMovement.movementArray);
                     }
                 }
 
