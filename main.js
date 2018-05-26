@@ -64,37 +64,30 @@ for (var c = 0; c < headFootCollection.length; c++) {
     headFootCollection[c].style.fontSize = (0.8 * screenReduction) + 'em';
 }
 
+// Setting up game layers
+
 // boardMarkNode is board holder in document
 let boardMarkNode = document.querySelector('div.boardmark');
 
 // Canvas element createed for board
-let board = document.createElement('canvas');
-board.setAttribute('id', 'board');
+let [board, canvasBoard] = gameBoard.createCanvasLayer('board');
 boardMarkNode.appendChild(board);
-// Canavs 'canvasBoard' is created and size is set dynamically
-let canvasBoard = board.getContext('2d');
-canvasBoard.canvas.width = col * (gridSize + tileBorder * 2) + boardSurround * 2;
-canvasBoard.canvas.height = row * (gridSize + tileBorder * 2) + boardSurround * 2;
 
 // Canvas 'activeBoard' (for active tiles that can be moved to) is created and size is set dynamically
-let activeBoard = document.createElement('canvas');
+let [activeBoard, canvasActive] = gameBoard.createCanvasLayer('activeBoard');
 boardMarkNode.appendChild(activeBoard);
-let canvasActive = activeBoard.getContext('2d');
-canvasActive.canvas.width = row * (gridSize + tileBorder * 2) + boardSurround * 2;
-canvasActive.canvas.height = col * (gridSize + tileBorder * 2) + boardSurround * 2;
-// ID is set with CSS styles of higher z-index and transparent background to function as overlay
-activeBoard.setAttribute('id', 'activeBoard');
 
-// Create SVG layer of same height and width as board
-let compassLayer = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-compassLayer.setAttribute('width', col * (gridSize + tileBorder * 2) + boardSurround * 2);
-compassLayer.setAttribute('height', row * (gridSize + tileBorder * 2) + boardSurround * 2);
-compassLayer.setAttribute('viewBox', '0, 0, ' + (col * (gridSize + tileBorder * 2) + boardSurround * 2) +  ', ' + (row * (gridSize + tileBorder * 2) + boardSurround * 2));
-compassLayer.setAttribute('class', 'compass');
+// SVG layer for compass set up (same height and width as board)
+let compassLayer = gameBoard.createNewLayer('compass');
+boardMarkNode.appendChild(compassLayer);
 
-// SVG layer for trade routes set up
-let tradeRouteLayer = gameBoard.createTradeRouteLayer();
+// SVG layer for trade routes set up (same height and width as board)
+let tradeRouteLayer = gameBoard.createNewLayer('tradeRoute');
 boardMarkNode.appendChild(tradeRouteLayer);
+
+// SVG layer for moon and time set up (same height and width as board)
+let moonLayer = gameBoard.createNewLayer('moonLayer');
+boardMarkNode.appendChild(moonLayer);
 
 // Function to set up board and resource deck and allocate resources
 function boardSetUp(row, col, gridSize, boardShape) {
@@ -108,6 +101,7 @@ function boardSetUp(row, col, gridSize, boardShape) {
 
     // Drawing of board
     gameBoard.drawCompassLayer();
+    gameBoard.drawMoonLayer();
     gameBoard.drawBoard(row, col, gridSize);
     gameBoard.drawPieces();
 }
@@ -237,10 +231,12 @@ function nextTurn() {
     if(workFlow == 1) {console.log('Turn changed to ' + gameManagement.turn + ' : ' + (Date.now() - launchTime)); }
     if(gameBoardTrack == 1) {console.log(gameBoard.boardArray); }
 
+    // Moon is redrawn for next turn
+    gameBoard.drawMoonLayer();
+
     // Wind direction is set for next turn
     windDirection = compass.newWindDirection(windDirection);
     needleDirection = compass.directionArray[windDirection].needle;
-
     needle.style.transform = 'rotate(' + needleDirection + 'deg)';
 
     // Comment bar reset

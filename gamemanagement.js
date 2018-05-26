@@ -18,12 +18,45 @@ let gameManagement = {
     // Future update: initialise first go randomly
     turn: 'Green Team',
 
+    // Current game date
+    // -----------------
+    gameDate: 1,
 
     // Method to activate next turn
     // ----------------------------
     nextTurn: function() {
+        // Game date updated after all players have moved
+        if (this.turn == 'Pirate') {
+            this.gameDate += 1;
+        }
         this.turn = this.teamArray[(this.teamArray.indexOf(this.turn)+1) % (this.teamArray.length)];
     },
+
+    // Method to calculate moon phases from date
+    // -----------------------------------------
+    moonDate: function(localDate) {
+        let moonPhase = localDate % 8;
+        if (moonPhase == 0) {
+            moonPhase = 8;
+        }
+        let moonMonth = (localDate - moonPhase) / 8 + 1;
+
+        function ordinalNumber(cardinalNumber) {
+            if (cardinalNumber % 10 == 1) {
+                return cardinalNumber + 'st';
+            } else if (cardinalNumber % 10 == 2) {
+                return cardinalNumber + 'nd';
+            } else if (cardinalNumber % 10 == 3) {
+                return cardinalNumber + 'rd';
+            } else {
+                return cardinalNumber + 'th';
+            }
+        }
+        moonPhaseOrd = ordinalNumber(moonPhase);
+        moonMonthOrd = ordinalNumber(moonMonth);
+        return ({moonPhase: moonPhase, moonMonth: moonMonth, moonPhaseOrd: moonPhaseOrd, moonMonthOrd: moonMonthOrd})
+    },
+
 
     // Settings and options
     // --------------------
