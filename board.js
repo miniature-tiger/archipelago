@@ -170,19 +170,19 @@ let gameBoard = {
         this.boardArray[boardCenter+1][0].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '90', used: 'unused', damageStatus: 'good', team: 'Blue Team', goods: 'none', stock: 0, homeRow: boardCenter+1, homeCol: 0};
 
         // Creation of pirate ships and pirate harbours
-        this.boardArray[4][6] = {xpos: 4, ypos: 6, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '135', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0, homeRow: 4, homeCol: 6}};
+      //  this.boardArray[4][6] = {xpos: 4, ypos: 6, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '135', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0, homeRow: 4, homeCol: 6}};
         //this.boardArray[4][6].terrain = 'sea';
         //this.boardArray[4][6].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '135', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
 
-        this.boardArray[row-7][4] = {xpos: row-7, ypos: 4, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0, homeRow: row-7, homeCol: 4}};
+      //  this.boardArray[row-7][4] = {xpos: row-7, ypos: 4, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0, homeRow: row-7, homeCol: 4}};
         //this.boardArray[row-7][4].terrain = 'sea';
         //this.boardArray[row-7][4].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
 
-        this.boardArray[row-5][col-7] = {xpos: row-5, ypos: col-7, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0, homeRow: row-5, homeCol: col-7}};
+      //  this.boardArray[row-5][col-7] = {xpos: row-5, ypos: col-7, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0, homeRow: row-5, homeCol: col-7}};
         //this.boardArray[row-5][col-7].terrain = 'sea';
         //this.boardArray[row-5][col-7].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
 
-        this.boardArray[6][col-5] = {xpos: 6, ypos: col-5, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-135', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0, homeRow: 6, homeCol: col-5}};
+      //  this.boardArray[6][col-5] = {xpos: 6, ypos: col-5, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-135', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0, homeRow: 6, homeCol: col-5}};
         //this.boardArray[6][col-5].terrain = 'sea';
         //this.boardArray[6][col-5].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-135', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
 
@@ -1143,8 +1143,8 @@ let gameBoard = {
 
         // Compass reading lines that stretch across board
         let compassLines = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        compassLines.setAttribute('d', 'M ' + (Xsize - boardSurround) + ' ' + (Ysize - boardSurround) + 'L ' + (boardSurround+logoSize*2) + ' ' + (boardSurround+logoSize*2) + 'M ' + (Xsize - boardSurround) + ' ' + Ycenter + 'L ' + boardSurround + ' ' + Ycenter
-                                        + 'M ' + Xcenter + ' ' + (Ysize - boardSurround) + 'L ' + Xcenter + ' ' + boardSurround + 'M ' + (2 * Xcenter + boardSurround - Xsize) + ' ' + (Ysize - boardSurround) + 'L ' + (Xsize - boardSurround) + ' ' + (2 * Ycenter + boardSurround - Ysize) );
+        compassLines.setAttribute('d', 'M ' + (Xsize - boardSurround) + ' ' + (Ysize - boardSurround) + 'L ' + (boardSurround+logoSize*2) + ' ' + (boardSurround+logoSize*2) + 'M ' + (Xsize - boardSurround) + ' ' + Ycenter + 'L ' + (boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * 6) + ' ' + Ycenter
+                                        + 'M ' + Xcenter + ' ' + (Ysize - boardSurround) + 'L ' + Xcenter + ' ' + (boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * 6) + 'M ' + (2 * Xcenter + boardSurround - Xsize) + ' ' + (Ysize - boardSurround) + 'L ' + (Xsize - boardSurround) + ' ' + (2 * Ycenter + boardSurround - Ysize) );
         compassLines.style.strokeWidth = '1px';
         compassLines.setAttribute('stroke', 'rgb(235, 215, 195)');
         compassLines.setAttribute('opacity', '1');
@@ -1226,7 +1226,6 @@ let gameBoard = {
         compassNeedleBox.appendChild(compassNeedle);
         compassNeedleBox.appendChild(compassCircle);
 
-        boardMarkNode.appendChild(compassLayer);
         boardMarkNode.appendChild(compassNeedleBox);
 
     },
@@ -1270,6 +1269,7 @@ let gameBoard = {
         logoText.appendChild(logoTextPath);
         logoText.setAttribute('font-size', 14 * Math.pow(screenReduction, 1.2));
         logoText.setAttribute('stroke', 'rgb(213, 191, 163)');
+        logoText.setAttribute('fill', 'rgb(213, 191, 163)');
         logoTextPath.appendChild(text);
 
         //logoDefsPath.setAttribute('path');
@@ -1308,17 +1308,26 @@ let gameBoard = {
         compassLayer.appendChild(octagonBorder);
     },
 
+    // Method to add new canvas layer to board
+    // ---------------------------------------
+    createCanvasLayer: function(localID) {
+        let layer = document.createElement('canvas');
+        layer.setAttribute('id', localID);
+        let contextLayer = layer.getContext('2d');
+        contextLayer.canvas.width = row * (gridSize + tileBorder * 2) + boardSurround * 2;
+        contextLayer.canvas.height = col * (gridSize + tileBorder * 2) + boardSurround * 2;
+        return([layer, contextLayer]);
+    },
 
 
-
-    // Method to add trade route layer to board
-    // -----------------------------------------
-    createTradeRouteLayer: function() {
+    // Method to add new SVG layer to board
+    // ---------------------------------
+    createNewLayer: function(localClass) {
         let layer = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         layer.setAttribute('width', col * (gridSize + tileBorder * 2) + boardSurround * 2);
         layer.setAttribute('height', row * (gridSize + tileBorder * 2) + boardSurround * 2);
         layer.setAttribute('viewBox', '0, 0, ' + (col * (gridSize + tileBorder * 2) + boardSurround * 2) +  ', ' + (row * (gridSize + tileBorder * 2) + boardSurround * 2));
-        layer.setAttribute('class', 'tradeRoute');
+        layer.setAttribute('class', localClass);
         return(layer);
     },
 
@@ -1365,6 +1374,71 @@ let gameBoard = {
         endCircle.style.strokeLinecap = 'round';
         //endCircle.setAttribute('fill', 'none');
         tradeRouteLayer.appendChild(endCircle);
+
+    },
+
+    // Method to draw moon and time on the board
+    // -----------------------------------------
+    drawMoonLayer: function() {
+
+        // Clear the moon layer before redrawing
+        while (moonLayer.lastChild) {
+            moonLayer.removeChild(moonLayer.lastChild);
+        }
+
+        let moonRadius = (gridSize + tileBorder * 2) * 2 - (10*screenReduction);
+        let moonCentreX = (gridSize + tileBorder * 2) * (col - 3) + (gridSize/2 + boardSurround + tileBorder);
+        let moonCentreY = boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * 2;
+
+        // Backing circle of moon
+        let moonCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        moonCircle.setAttribute('cx', moonCentreX);
+        moonCircle.setAttribute('cy', moonCentreY);
+        moonCircle.setAttribute('r', moonRadius);
+        moonCircle.setAttribute('fill', 'rgb(233, 211, 183)');
+        moonCircle.setAttribute('stroke', 'rgb(233, 211, 183)');
+        moonCircle.style.strokeWidth = '1px';
+        moonCircle.style.strokeLinecap = 'round';
+        moonLayer.appendChild(moonCircle);
+
+        // Obtaining date inputs (moonPhase and moonMonth plus ordinals)
+        let dateInputs = gameManagement.moonDate(gameManagement.gameDate);
+
+        // Inputs for drawing moon arcs
+        let nearSide = [1, 1, 1, 1, 0.5, 0, 0.5];
+        let farSide = [0.5, 0, 0.5, 1, 1, 1, 1];
+        let nearSideArc = [1, 1, 1, 1, 1, 0, 0];
+        let farSideArc = [0, 0, 1, 1, 1, 1, 1];
+
+        // Lighter moon overlay uses two arcs to give shape of moon - not added in 8th phase (new moon)
+        if(dateInputs.moonPhase < 8) {
+
+            let moonArc = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            moonArc.setAttribute('d',
+            'M ' + (moonCentreX)  + ' ' + (moonCentreY - moonRadius) +
+            ' A ' + (moonRadius*farSide[dateInputs.moonPhase-1]) + ' ' + moonRadius + ' 0 0 ' + farSideArc[dateInputs.moonPhase-1] + ' ' + (moonCentreX)  + ' ' + (moonCentreY + moonRadius) +
+            ' A ' + (moonRadius*nearSide[dateInputs.moonPhase-1]) + ' ' + moonRadius + ' 0 0 ' + nearSideArc[dateInputs.moonPhase-1] + ' ' + (moonCentreX)  + ' ' + (moonCentreY - moonRadius)
+           );
+            moonArc.setAttribute('fill', 'rgb(249, 240, 223)');
+            moonArc.setAttribute('stroke', 'rgb(213, 191, 163)');
+            moonArc.setAttribute('stroke-linecap', 'round');
+            moonArc.setAttribute('stroke-linejoin', 'round');
+            moonArc.style.strokeWidth = '1px';
+            moonLayer.appendChild(moonArc);
+        }
+
+        // Text under the moon
+        let timeText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        let text = document.createTextNode(dateInputs.moonPhaseOrd + ' phase of ' + dateInputs.moonMonthOrd + ' moon');
+        timeText.setAttribute('font-size', 14 * screenReduction);
+        timeText.setAttribute('stroke', 'rgb(179, 156, 128)');
+        timeText.setAttribute('fill', 'rgb(179, 156, 128)');
+        timeText.setAttribute('x', moonCentreX);
+        timeText.setAttribute('y', moonCentreY + moonRadius + 14 * screenReduction + tileBorder);
+        timeText.setAttribute('text-anchor', 'middle');
+        timeText.setAttribute('font-style', 'italic');
+        timeText.appendChild(text);
+        moonLayer.appendChild(timeText);
 
     },
 
