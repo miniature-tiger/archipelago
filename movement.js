@@ -459,7 +459,10 @@ let pieceMovement = {
                             if(gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].terrain == 'land' && !gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].pieces.populatedSquare) {
                                 // If so - picks a reource card type using resourceManagement.pickFromResourceDeck() and updates boardArray to this tile tile with unoccupied team
                                 deckCard = resourceManagement.pickFromResourceDeck();
-                                gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].pieces = {populatedSquare: true, category: 'Resources', type: deckCard.type, direction: '0', used: 'unused', damageStatus: 'good', team: 'Unclaimed', goods: deckCard.goods, stock: 0};
+                                console.log(deckCard);
+                                //randomProduction = Math.floor(Math.random() * (deckCard.maxProduction)) + 1;
+                                gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].pieces = {populatedSquare: true, category: 'Resources', type: deckCard.type, direction: '0', used: 'unused', damageStatus: 'good', team: 'Unclaimed', goods: deckCard.goods, stock: 0, production: deckCard.production};
+                                console.log(gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j]);
                                 // and then creates an SVG resource tile for the land space
                                 boardMarkNode.appendChild(gameBoard.createActionTile(this.movementArray.end.row+i, this.movementArray.end.col+j, gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].pieces.type, gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].pieces.team,
                                   'tile' + Number((this.movementArray.end.row+i)*1000 + (this.movementArray.end.col+j)), boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * (this.movementArray.end.row+i), boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * (this.movementArray.end.col+j), 1, gameBoard.boardArray[this.movementArray.end.row+i][(this.movementArray.end.col+j)].pieces.direction));
