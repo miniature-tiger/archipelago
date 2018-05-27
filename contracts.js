@@ -12,16 +12,18 @@ let tradeContracts = {
     // Method to populate contracts array
     // ----------------------------------
     populateContracts: function() {
+        if(workFlow == 1) {console.log('Contracts array populated: ' + (Date.now() - launchTime)); }
         // Loop for each kingdom island
         for (var i = 0; i < this.contractsArray.length; i++) {
             // Totals for number of open contracts and number of unopened contracts
             this.contractsArray[i].totalOpen = 0;
+            this.contractsArray[i].totalActive = 0;
             this.contractsArray[i].totalClosed = 0;
             this.contractsArray[i].totalUnopen = resourceManagement.resourcePieces.length;
             // Loop for each resource type
             let teamContracts = {};
             for (var j = 0; j < resourceManagement.resourcePieces.length; j++) {
-                teamContracts[resourceManagement.resourcePieces[j].goods] = {created: false, struck: 'unopen', initial: 0, renewal: 0};
+                teamContracts[resourceManagement.resourcePieces[j].goods] = {created: false, struck: 'unopen', team: 'none', initial: 0, renewal: 0, timeRemaining: 0};
             }
             this.contractsArray[i].contracts = teamContracts;
         }
@@ -30,6 +32,7 @@ let tradeContracts = {
     // Method to randomly generate new contract
     // ----------------------------------------
     newContract: function() {
+        if(workFlow == 1) {console.log('New contract issuance assessed: ' + (Date.now() - launchTime)); }
         // x% chance that a new contract is generated
         if (Math.random() > 0.75) {
             // Chooses a kingdom settlement at random
@@ -47,14 +50,15 @@ let tradeContracts = {
                 while (this.contractsArray[settlementNumber].contracts[resourceType].struck != 'unopen')
 
                 // Picks a random initial amount for delivery plus a recurring weekly amount
-                let initialAmount = Math.floor((Math.random() * (resourceManagement.resourcePieces[resourceNumber].production * 4))) + 5;
-                let renewalAmount = resourceManagement.resourcePieces[resourceNumber].production;
-                //console.log(initialAmount, renewalAmount);
+                let initialAmount = Math.floor(Math.random() * (resourceManagement.resourcePieces[resourceNumber].maxProduction * 4)) + 5;
+                let renewalAmount = 1;
+                //let renewalAmount = Math.floor(Math.random() * (resourceManagement.resourcePieces[resourceNumber].maxProduction)) + 1;
+
 
                 // Put into array as open contract and updates totals
                 this.contractsArray[settlementNumber].totalOpen += 1;
                 this.contractsArray[settlementNumber].totalUnopen -= 1;
-                this.contractsArray[settlementNumber].contracts[resourceType] = {created: true, struck: 'open', initial: initialAmount, renewal: renewalAmount};
+                this.contractsArray[settlementNumber].contracts[resourceType] = {created: true, struck: 'open', team: 'none', initial: initialAmount, renewal: renewalAmount, timeRemaining: 8};
 
 
                 // Comment that a contract is generated
@@ -110,9 +114,39 @@ let tradeContracts = {
         }
 
         // Updates contracts array based on delivery
-        this.contractsArray[chosenFort].contracts[deliveryGoods].struck = gameManagement.turn;
+        this.contractsArray[chosenFort].contracts[deliveryGoods].struck = 'active';
+        this.contractsArray[chosenFort].contracts[deliveryGoods].team = gameManagement.turn;
         this.contractsArray[chosenFort].totalOpen -=1;
-        this.contractsArray[chosenFort].totalClosed +=1;
+        this.contractsArray[chosenFort].totalActive +=1;
+    },
+
+    // Method to track continuance and countdown of contract
+    // --------------------------------------
+    contractContinuance : function() {
+        // For a single team whose turn it is
+        // Check through their contracts
+        // Reduce delivery time by one
+        // Once completed change status to closed
+
+        //console.log(resourceManagement.resourcePieces);
+        for (var k = 0; k < this.contractsArray.length; k++) {
+            for (var l = 0; l < resourceManagement.resourcePieces.length; l++) {
+                if (this.contractsArray[k].contracts[resourceManagement.resourcePieces[l].goods].team == gameManagement.turn) {
+
+                    if(this.contractsArray[k].contracts[resourceManagement.resourcePieces[l].goods].struck == 'active') {
+                        this.contractsArray[k].contracts[resourceManagement.resourcePieces[l].goods].timeRemaining -= 1;
+                        gameBoard.boardArray[this.contractsArray[k].contracts[resourceManagement.resourcePieces[l].goods].resourceRow][this.contractsArray[k].contracts[resourceManagement.resourcePieces[l].goods].resourceCol].pieces.stock -=1;
+
+                        if (this.contractsArray[k].contracts[resourceManagement.resourcePieces[l].goods].timeRemaining == 0) {
+                            this.contractsArray[k].contracts[resourceManagement.resourcePieces[l].goods].struck = 'closed';
+                            this.contractsArray[k].totalActive -=1;
+                            this.contractsArray[k].totalClosed +=1;
+                        }
+                    }
+                }
+
+            }
+        }
     },
 
     // Array of paths for finding trade route
@@ -208,6 +242,18 @@ let tradeContracts = {
         // creates the SVG path for the trade route
         let localPath = this.tradePath[harbour.harbourEndRow][harbour.harbourEndCol].path;
         gameBoard.tradeRoute(localPath, gameManagement.turn);
+
+        // Add path and Resource tile to contract array
+        for (var f = 0; f < this.contractsArray.length; f++) {
+            if(this.contractsArray[f].row == localEndRow && this.contractsArray[f].col == localEndCol) {
+                chosenFort = f;
+            }
+        }
+        this.contractsArray[chosenFort].contracts[localGoods].resourceRow = localStartRow;
+        this.contractsArray[chosenFort].contracts[localGoods].resourceCol = localStartCol;
+        this.contractsArray[chosenFort].contracts[localGoods].contractPath = localPath;
+        console.log(this.contractsArray[chosenFort]);
+
     },
 
     // Method to seacrh for route around obstacles
@@ -365,6 +411,8 @@ let tradeContracts = {
 // ---------------------------------------------------------
 
     drawContracts: function() {
+        console.log(this.contractsArray);
+        if(workFlow == 1) {console.log('Contracts (right) dashboard drawn: ' + (Date.now() - launchTime)); }
         // Finds the stockDashboard holder in the left hand panel
         let contractDashboardNode = document.querySelector('div.contractDashboard');
 
@@ -383,7 +431,7 @@ let tradeContracts = {
                 divIsland.appendChild(divIslandTitle);
 
                 // 'No contracts' shown if no contracts open
-                if (this.contractsArray[i].totalOpen + this.contractsArray[i].totalClosed == 0) {
+                if (this.contractsArray[i].totalOpen + this.contractsArray[i].totalActive + this.contractsArray[i].totalClosed == 0) {
                     let divForStock = document.createElement('div');
                     divForStock.setAttribute('class', 'stock_item_holder');
                     divForStock.innerHTML = 'no contracts';
@@ -408,11 +456,18 @@ let tradeContracts = {
 
                             // Icon added
                             if (this.contractsArray[i].contracts[resourceManagement.resourcePieces[j].goods].struck == 'open') {
+                                console.log('open');
                                 let divTypeIcon = gameBoard.createActionTile(0, 0, resourceManagement.resourcePieces[j].type, 'Unclaimed', 'dash_' + resourceManagement.resourcePieces[j].type, 2, 0, 1.5, 0);
                                 divType.appendChild(divTypeIcon);
                                 divForText.innerHTML = this.contractsArray[i].contracts[resourceManagement.resourcePieces[j].goods].struck;
-                            } else {
-                                let divTypeIcon = gameBoard.createActionTile(0, 0, resourceManagement.resourcePieces[j].type, this.contractsArray[i].contracts[resourceManagement.resourcePieces[j].goods].struck, 'dash_' + resourceManagement.resourcePieces[j].type, 2, 0, 1.5, 0);
+                            } else if (this.contractsArray[i].contracts[resourceManagement.resourcePieces[j].goods].struck == 'active') {
+                                console.log('active', this.contractsArray[i].contracts[resourceManagement.resourcePieces[j].goods].struck);
+                                let divTypeIcon = gameBoard.createActionTile(0, 0, resourceManagement.resourcePieces[j].type, this.contractsArray[i].contracts[resourceManagement.resourcePieces[j].goods].team, 'dash_' + resourceManagement.resourcePieces[j].type, 2, 0, 1.5, 0);
+                                divType.appendChild(divTypeIcon);
+                                divForText.innerHTML = 'active';
+                            } else if (this.contractsArray[i].contracts[resourceManagement.resourcePieces[j].goods].struck == 'closed') {
+                                console.log('closed');
+                                let divTypeIcon = gameBoard.createActionTile(0, 0, resourceManagement.resourcePieces[j].type, this.contractsArray[i].contracts[resourceManagement.resourcePieces[j].goods].team, 'dash_' + resourceManagement.resourcePieces[j].type, 2, 0, 1.5, 0);
                                 divType.appendChild(divTypeIcon);
                                 divForText.innerHTML = 'closed';
                             }
@@ -420,8 +475,14 @@ let tradeContracts = {
                             // Delivery amounts added
                             let divForStock = document.createElement('div');
                             divForStock.setAttribute('class', 'stock_item_holder');
-                            divForStock.innerHTML = this.contractsArray[i].contracts[resourceManagement.resourcePieces[j].goods].initial + ' + ' + this.contractsArray[i].contracts[resourceManagement.resourcePieces[j].goods].renewal;
                             divIsland.appendChild(divForStock);
+                            if (this.contractsArray[i].contracts[resourceManagement.resourcePieces[j].goods].struck == 'open') {
+                                divForStock.innerHTML = '--> ' + this.contractsArray[i].contracts[resourceManagement.resourcePieces[j].goods].initial + ' ' + resourceManagement.resourcePieces[j].goods;
+                                //divForStock.innerHTML = resourceManagement.resourcePieces[j].goods;
+                            } else if (this.contractsArray[i].contracts[resourceManagement.resourcePieces[j].goods].struck == 'active') {
+                                divForStock.innerHTML = this.contractsArray[i].contracts[resourceManagement.resourcePieces[j].goods].timeRemaining + ' phase';
+                            }
+
 
                         }
                     }

@@ -25,7 +25,12 @@ let resourceManagement = {
         for (var i = 0; i < stockDashboard.pieceTypes.length; i++) {
             if (stockDashboard.pieceTypes[i].category == 'Resources') {
                 for (var j = 0; j < stockDashboard.pieceTypes[i].deckNumber; j++) {
-                    this.resourceDeck.push({type: stockDashboard.pieceTypes[i].type, goods: stockDashboard.pieceTypes[i].goods});
+                    if (j==0) {
+                        this.resourceDeck.push({type: stockDashboard.pieceTypes[i].type, goods: stockDashboard.pieceTypes[i].goods, production: stockDashboard.pieceTypes[i].maxProduction});
+                    } else {
+                        this.resourceDeck.push({type: stockDashboard.pieceTypes[i].type, goods: stockDashboard.pieceTypes[i].goods, production: 1});
+                        //this.resourceDeck.push({type: stockDashboard.pieceTypes[i].type, goods: stockDashboard.pieceTypes[i].goods, production: (Math.floor(Math.random() * (stockDashboard.pieceTypes[i].maxProduction)) + 1)});
+                    }
                     unDesertCount += 1;
                 }
             }
@@ -37,6 +42,7 @@ let resourceManagement = {
         for (var j = 0; j < numberDesert; j++) {
             this.resourceDeck.push({type: 'desert', goods: 'none'});
         }
+        console.log(this.resourceDeck);
 
     },
 

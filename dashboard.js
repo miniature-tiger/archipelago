@@ -10,12 +10,12 @@ let stockDashboard = {
     // Array to hold list of all piece types
     // -------------------------------------
     // Pieces must be added in the order: Settlements, Transport, Resources
-    pieceTypes: [ {type: 'fort', category: 'Settlements', maxNo: 1000, goods: 'none', production: 0, deckNumber: 0},
-                  {type: 'cargo ship', category: 'Transport', maxNo: 1000, goods: 'none', production: 0, deckNumber: 0},
-                  {type: 'forest', category: 'Resources', maxNo: 3, goods: 'wood', production: 3, deckNumber: 4},
-                  {type: 'ironworks', category: 'Resources', maxNo: 3, goods: 'iron', production: 1, deckNumber: 4},
-                  {type: 'quarry', category: 'Resources', maxNo: 3, goods: 'stone', production: 2, deckNumber: 4},
-                  {type: 'plantation', category: 'Resources', maxNo: 3, goods: 'coffee', production: 3, deckNumber: 4}
+    pieceTypes: [ {type: 'fort', category: 'Settlements', maxNo: 2, goods: 'none', maxProduction: 0, deckNumber: 0},
+                  {type: 'cargo ship', category: 'Transport', maxNo: 2, goods: 'none', maxProduction: 0, deckNumber: 0},
+                  {type: 'forest', category: 'Resources', maxNo: 1, goods: 'wood', maxProduction: 2, deckNumber: 4},
+                  {type: 'ironworks', category: 'Resources', maxNo: 1, goods: 'iron', maxProduction: 2, deckNumber: 4},
+                  {type: 'quarry', category: 'Resources', maxNo: 1, goods: 'stone', maxProduction: 2, deckNumber: 4},
+                  {type: 'plantation', category: 'Resources', maxNo: 1, goods: 'coffee', maxProduction: 2, deckNumber: 4}
                 ],
 
 
@@ -111,8 +111,15 @@ let stockDashboard = {
                                 divType.appendChild(divForText);
 
                                 //let divTypeTitle = document.createTextNode(' ' + this.pieceTypes[i].type + ': ' + this.pieceTotals[0].pieces[this.pieceTypes[i].type]);
-                                let divTypeTitle = document.createTextNode('');
-                                divForText.appendChild(divTypeTitle);
+                                if (this.pieceTypes[k].category == 'Resources' && gameBoard.boardArray[i][j].pieces.production > 1) {
+                                    let divTypeTitle = document.createTextNode('x' + gameBoard.boardArray[i][j].pieces.production);
+                                    divForText.style.fontWeight = 'bold';
+                                    divForText.appendChild(divTypeTitle);
+                                } else {
+                                    let divTypeTitle = document.createTextNode('');
+                                    divForText.appendChild(divTypeTitle);
+                                }
+
 
                                 let divForStock = document.createElement('div');
                                 divForStock.setAttribute('class', 'stock_item_holder');
@@ -202,7 +209,7 @@ let stockDashboard = {
                     if(gameBoard.boardArray[i][j].pieces.category == 'Resources') {
                         let arrayPosition = stockDashboard.pieceTypes.findIndex(k => k.goods == gameBoard.boardArray[i][j].pieces.goods);
                         // Maximum goods set to 20
-                        gameBoard.boardArray[i][j].pieces.stock = Math.min(gameBoard.boardArray[i][j].pieces.stock + this.pieceTypes[arrayPosition].production, 20);
+                        gameBoard.boardArray[i][j].pieces.stock = Math.min(gameBoard.boardArray[i][j].pieces.stock + gameBoard.boardArray[i][j].pieces.production, 20);
                     }
                 }
             }

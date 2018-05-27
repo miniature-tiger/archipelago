@@ -260,6 +260,10 @@ function nextTurn() {
         if(workFlow == 1) {console.log('Adding new goods production: ' + (Date.now() - launchTime)); }
         stockDashboard.newTurnGoods();
 
+        // Manage on-going contracts
+        if(workFlow == 1) {console.log('Managing active contracts: ' + (Date.now() - launchTime)); }
+        tradeContracts.contractContinuance();
+
         // Update the stock dashboard
         if(workFlow == 1) {console.log('Updating stock dashboard and contracts dashboard: ' + (Date.now() - launchTime)); }
         stockDashboard.stockTake();
@@ -457,9 +461,15 @@ function boardHandler(event) {
                 commentary.appendChild(gameBoard.createIcon('stock' + i, 1.5, pieceMovement.movementArray.start.pieces.goods, (screenWidth - 2*surroundSize) * 0.7 - tileBorder/2 + (((i % 10) - 0.5) * (gridSize + tileBorder) / 1.5), 10 + Math.floor(i/10) * ((gridSize + tileBorder) / 1.5)));
             }
 
-            firstLineComment.innerText = pieceMovement.movementArray[startEnd].pieces.team + ' ' + pieceMovement.movementArray[startEnd].pieces.type;
+            if (pieceMovement.movementArray[startEnd].pieces.type == 'desert') {
+                firstLineComment.innerText = 'Desert';
+            } else if (pieceMovement.movementArray[startEnd].pieces.category == 'Resources') {
+                firstLineComment.innerText = pieceMovement.movementArray[startEnd].pieces.team + ' ' + pieceMovement.movementArray[startEnd].pieces.type + ': produces ' + pieceMovement.movementArray[startEnd].pieces.production + ' ' + pieceMovement.movementArray[startEnd].pieces.goods + ' per phase';
+            } else {
+                firstLineComment.innerText = pieceMovement.movementArray[startEnd].pieces.team + ' ' + pieceMovement.movementArray[startEnd].pieces.type;
+            }
             if (pieceMovement.movementArray[startEnd].pieces.stock > 0) {
-                  firstLineComment.insertAdjacentText('beforeend', ' - ' + pieceMovement.movementArray[startEnd].pieces.goods + ": " + pieceMovement.movementArray[startEnd].pieces.stock);
+                firstLineComment.insertAdjacentText('beforeend', ' - ' + pieceMovement.movementArray[startEnd].pieces.goods + ": " + pieceMovement.movementArray[startEnd].pieces.stock);
             }
             commentary.style.bottom = 0;
 

@@ -185,9 +185,9 @@ html {
 .dashboard_text {
     position: relative;
     display: inline-block;
-    padding-left: 45%;
+    padding-left: 40%;
     padding-bottom: 2%;
-    font-size: 0.8em;
+    font-size: 90%;
     vertical-align: bottom;
 }
 
