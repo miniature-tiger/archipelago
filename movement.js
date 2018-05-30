@@ -67,7 +67,7 @@ let pieceMovement = {
         //if (displayActive) {
         //    gameBoard.boardArray[localStartRow][localStartCol].activeStatus = 'inactive';
         //}
-        //console.log('completed find path slice', this.findPath.slice(0));
+        console.log('completed find path slice', this.findPath.slice(0));
     },
 
     initialisefindPath: function(localStartRow, localStartCol) {
@@ -355,7 +355,7 @@ let pieceMovement = {
                                 //console.log(chosenPiece);
                                 //console.log(pieceMovement.movementArray);
                                 gameBoard.boardArray[pieceMovement.movementArray['start'].row][pieceMovement.movementArray['start'].col].pieces = {populatedSquare: false, category: '', type: 'no piece', direction: '', used: 'unused', damageStatus: 'good', team: '', goods: 'none', stock: 0};
-                                gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces = {populatedSquare: true, category: pieceMovement.movementArray.start.pieces.category, type: pieceMovement.movementArray.start.pieces.type, direction: rotateDirection, used: 'used', damageStatus: pieceMovement.movementArray.start.pieces.damageStatus, team: pieceMovement.movementArray.start.pieces.team, goods: pieceMovement.movementArray.start.pieces.goods, stock: pieceMovement.movementArray.start.pieces.stock, homeRow: pieceMovement.movementArray.start.pieces.homeRow, homeCol: pieceMovement.movementArray.start.pieces.homeCol};
+                                gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces = {populatedSquare: true, category: pieceMovement.movementArray.start.pieces.category, type: pieceMovement.movementArray.start.pieces.type, direction: rotateDirection, used: 'used', damageStatus: pieceMovement.movementArray.start.pieces.damageStatus, team: pieceMovement.movementArray.start.pieces.team, goods: pieceMovement.movementArray.start.pieces.goods, stock: pieceMovement.movementArray.start.pieces.stock, ref: pieceMovement.movementArray.start.pieces.ref};
 
                                 //Updating piece information
                                 chosenPiece.setAttribute('id', 'tile' + Number(pieceMovement.movementArray.end.row*1000 + pieceMovement.movementArray.end.col));

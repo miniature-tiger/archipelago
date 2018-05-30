@@ -335,7 +335,7 @@ if(workFlow == 1) {
 // Maximum number of iterations for movement and thus maximum number of tiles that can be moved
 // --- movement is also influenced by the movement cost
 // --- once more transport is created this will all need to be built into an array if it desired that different ships move at different speeds
-let maxMove = 5;
+let maxMove = 4;
 
 // Variables for clicked tiles with startEnd indicating the start or end of the move
 let startEnd = 'start';

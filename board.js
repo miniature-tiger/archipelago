@@ -170,19 +170,19 @@ let gameBoard = {
         this.boardArray[boardCenter+1][0].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '90', used: 'unused', damageStatus: 'good', team: 'Blue Team', goods: 'none', stock: 0, production: 0, homeRow: boardCenter+1, homeCol: 0};
 
         // Creation of pirate ships and pirate harbours
-        this.boardArray[4][6] = {xpos: 4, ypos: 6, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '135', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0, homeRow: 4, homeCol: 6}};
+        this.boardArray[4][6] = {xpos: 4, ypos: 6, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '135', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0, ref: 0}};
         //this.boardArray[4][6].terrain = 'sea';
         //this.boardArray[4][6].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '135', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
 
-        this.boardArray[row-7][4] = {xpos: row-7, ypos: 4, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0, homeRow: row-7, homeCol: 4}};
+        this.boardArray[row-7][4] = {xpos: row-7, ypos: 4, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0, ref: 1}};
         //this.boardArray[row-7][4].terrain = 'sea';
         //this.boardArray[row-7][4].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
 
-        this.boardArray[row-5][col-7] = {xpos: row-5, ypos: col-7, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0, homeRow: row-5, homeCol: col-7}};
+        this.boardArray[row-5][col-7] = {xpos: row-5, ypos: col-7, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0, ref: 2}};
         //this.boardArray[row-5][col-7].terrain = 'sea';
         //this.boardArray[row-5][col-7].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
 
-        this.boardArray[6][col-5] = {xpos: 6, ypos: col-5, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-135', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0, homeRow: 6, homeCol: col-5}};
+        this.boardArray[6][col-5] = {xpos: 6, ypos: col-5, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-135', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0, ref: 3}};
         //this.boardArray[6][col-5].terrain = 'sea';
         //this.boardArray[6][col-5].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-135', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
 
@@ -1334,7 +1334,11 @@ let gameBoard = {
     // Method to draw a trade route on the board
     // -----------------------------------------
     // Local path is an array of objects of the form {fromRow: 15, fromCol: 4}
-    tradeRoute: function(localPath, localTeam) {
+    tradeRoute: function(localPath, localTeam, localFort, localGoods) {
+
+        let pathGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        tradeRouteLayer.appendChild(pathGroup);
+        pathGroup.id = localGoods + '_' + localFort;
 
         let route = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         route.setAttribute('class', localTeam + ' team_route');
@@ -1353,7 +1357,7 @@ let gameBoard = {
         route.setAttribute('stroke-linejoin', 'round');
         route.setAttribute('stroke-opacity', '0.5');
         route.style.strokeWidth = '3px';
-        tradeRouteLayer.appendChild(route);
+        pathGroup.appendChild(route);
 
         let startCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         startCircle.setAttribute('class', localTeam + ' team_fill team_route');
@@ -1363,7 +1367,7 @@ let gameBoard = {
         startCircle.style.strokeWidth = '1px';
         startCircle.style.strokeLinecap = 'round';
         startCircle.setAttribute('fill', 'none');
-        tradeRouteLayer.appendChild(startCircle);
+        pathGroup.appendChild(startCircle);
 
         let endCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         endCircle.setAttribute('class', localTeam + ' team_fill team_route');
@@ -1373,7 +1377,7 @@ let gameBoard = {
         endCircle.style.strokeWidth = '1px';
         endCircle.style.strokeLinecap = 'round';
         //endCircle.setAttribute('fill', 'none');
-        tradeRouteLayer.appendChild(endCircle);
+        pathGroup.appendChild(endCircle);
 
     },
 

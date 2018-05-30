@@ -134,20 +134,48 @@ let tradeContracts = {
                 if (this.contractsArray[k].contracts[resourceManagement.resourcePieces[l].goods].team == gameManagement.turn) {
 
                     if(this.contractsArray[k].contracts[resourceManagement.resourcePieces[l].goods].struck == 'active') {
-                        this.contractsArray[k].contracts[resourceManagement.resourcePieces[l].goods].timeRemaining -= 1;
-                        gameBoard.boardArray[this.contractsArray[k].contracts[resourceManagement.resourcePieces[l].goods].resourceRow][this.contractsArray[k].contracts[resourceManagement.resourcePieces[l].goods].resourceCol].pieces.stock -=1;
-
-                        if (this.contractsArray[k].contracts[resourceManagement.resourcePieces[l].goods].timeRemaining == 0) {
-                            this.contractsArray[k].contracts[resourceManagement.resourcePieces[l].goods].struck = 'closed';
+                        if(this.contractObstacle(this.contractsArray[k].contracts[resourceManagement.resourcePieces[l].goods].contractPath) == true) {
+                            IDtradeRoute = resourceManagement.resourcePieces[l].goods + '_' + k;
+                            let closedTradeRoute = document.getElementById(IDtradeRoute);
+                            closedTradeRoute.remove();
+                            this.contractsArray[k].contracts[resourceManagement.resourcePieces[l].goods] = {created: false, struck: 'unopen', team: 'none', initial: 0, renewal: 0, timeRemaining: 0};
                             this.contractsArray[k].totalActive -=1;
-                            this.contractsArray[k].totalClosed +=1;
+                            this.contractsArray[k].totalUnopen +=1;
+                        } else {
+                            this.contractsArray[k].contracts[resourceManagement.resourcePieces[l].goods].timeRemaining -= 1;
+                            gameBoard.boardArray[this.contractsArray[k].contracts[resourceManagement.resourcePieces[l].goods].resourceRow][this.contractsArray[k].contracts[resourceManagement.resourcePieces[l].goods].resourceCol].pieces.stock -=1;
+
+                            if (this.contractsArray[k].contracts[resourceManagement.resourcePieces[l].goods].timeRemaining == 0) {
+                                this.contractsArray[k].contracts[resourceManagement.resourcePieces[l].goods].struck = 'closed';
+                                this.contractsArray[k].totalActive -=1;
+                                this.contractsArray[k].totalClosed +=1;
+                                console.log(resourceManagement.resourcePieces[l].goods + '_' + k);
+                                IDtradeRoute = resourceManagement.resourcePieces[l].goods + '_' + k;
+                                let closedTradeRoute = document.getElementById(IDtradeRoute);
+                                closedTradeRoute.remove();
+                            }
                         }
                     }
                 }
-
             }
         }
     },
+
+    // Method to check whether obstacles are present to prevent trade being delivered along route
+    // ------------------------------------------------------------------------------------------
+    contractObstacle: function(tradePath) {
+        let obstacle = false;
+        for (var i = 0; i < tradePath.length; i++) {
+            if(gameBoard.boardArray[tradePath[i].fromRow][tradePath[i].fromCol].pieces.team == 'Pirate') {
+                obstacle = true;
+                console.log(tradePath[i], 'Pirate');
+            } else {
+                console.log(tradePath[i], 'clear');
+            }
+        }
+        return obstacle;
+    },
+
 
     // Array of paths for finding trade route
     // --------------------------------------
@@ -239,9 +267,9 @@ let tradeContracts = {
             }
             k += 1;
         }
-        // creates the SVG path for the trade route
+
+        // separates the path for the trade route
         let localPath = this.tradePath[harbour.harbourEndRow][harbour.harbourEndCol].path;
-        gameBoard.tradeRoute(localPath, gameManagement.turn);
 
         // Add path and Resource tile to contract array
         for (var f = 0; f < this.contractsArray.length; f++) {
@@ -253,6 +281,9 @@ let tradeContracts = {
         this.contractsArray[chosenFort].contracts[localGoods].resourceCol = localStartCol;
         this.contractsArray[chosenFort].contracts[localGoods].contractPath = localPath;
         console.log(this.contractsArray[chosenFort]);
+
+        // creates the SVG path for the trade route
+        gameBoard.tradeRoute(localPath, gameManagement.turn, chosenFort, localGoods);
 
     },
 
