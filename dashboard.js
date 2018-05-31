@@ -10,12 +10,14 @@ let stockDashboard = {
     // Array to hold list of all piece types
     // -------------------------------------
     // Pieces must be added in the order: Settlements, Transport, Resources
-    pieceTypes: [ {type: 'fort', category: 'Settlements', maxNo: 2, goods: 'none', maxProduction: 0, deckNumber: 0},
-                  {type: 'cargo ship', category: 'Transport', maxNo: 2, goods: 'none', maxProduction: 0, deckNumber: 0},
-                  {type: 'forest', category: 'Resources', maxNo: 1, goods: 'wood', maxProduction: 2, deckNumber: 4},
-                  {type: 'ironworks', category: 'Resources', maxNo: 1, goods: 'iron', maxProduction: 2, deckNumber: 4},
-                  {type: 'quarry', category: 'Resources', maxNo: 1, goods: 'stone', maxProduction: 2, deckNumber: 4},
-                  {type: 'plantation', category: 'Resources', maxNo: 1, goods: 'coffee', maxProduction: 2, deckNumber: 4}
+    pieceTypes: [ {type: 'fort', category: 'Settlements', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 0, deckNumber: 0},
+                  {type: 'catamaran', category: 'Transport', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 5, deckNumber: 0},
+                  {type: 'warship', category: 'Transport', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 4, deckNumber: 0},
+                  {type: 'cargo ship', category: 'Transport', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 3, deckNumber: 0},
+                  {type: 'forest', category: 'Resources', maxNo: 1, goods: 'wood', maxProduction: 2, maxMove: 0, deckNumber: 4},
+                  {type: 'ironworks', category: 'Resources', maxNo: 1, goods: 'iron', maxProduction: 2, maxMove: 0, deckNumber: 4},
+                  {type: 'quarry', category: 'Resources', maxNo: 1, goods: 'stone', maxProduction: 2, maxMove: 0, deckNumber: 4},
+                  {type: 'plantation', category: 'Resources', maxNo: 1, goods: 'coffee', maxProduction: 2, maxMove: 0, deckNumber: 4}
                 ],
 
 
@@ -74,7 +76,7 @@ let stockDashboard = {
                 //Sets counter to zero
                 let counter = 0;
                 // Icon setting base on piece type
-                if (this.pieceTypes[k].type == 'cargo ship') {
+                if (this.pieceTypes[k].category == 'Transport') {
                     rotateIcon = 90;
                     xPosition = -8;
                 } else {
