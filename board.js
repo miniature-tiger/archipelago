@@ -19,10 +19,10 @@ let gameBoard = {
             for (var x = 0; x < row; x++) {
                 // A few random land tiles
                 if(Math.random() > 0.995) {
-                    rowArray.push({xpos: + x, ypos: + y, terrain: 'land', subTerrain: 'none', activeStatus: 'inactive', pieces: {populatedSquare: false, category: '', type: 'no piece', direction: '', used: 'unused', damageStatus: 'good', team: '', goods: 'none', stock: 0, production: 0}});
+                    rowArray.push({xpos: + x, ypos: + y, terrain: 'land', subTerrain: 'none', activeStatus: 'inactive', pieces: {populatedSquare: false, category: '', type: 'no piece', direction: '', used: 'unused', damageStatus: 5, team: '', goods: 'none', stock: 0, production: 0}});
                 // But mainly sea tiles
                 } else {
-                    rowArray.push({xpos: + x, ypos: + y, terrain: 'sea', subTerrain: 'none', activeStatus: 'inactive', pieces: {populatedSquare: false, category: '', type: 'no piece', direction: '', used: 'unused', damageStatus: 'good', team: '', goods: 'none', stock: 0, production: 0}});
+                    rowArray.push({xpos: + x, ypos: + y, terrain: 'sea', subTerrain: 'none', activeStatus: 'inactive', pieces: {populatedSquare: false, category: '', type: 'no piece', direction: '', used: 'unused', damageStatus: 5, team: '', goods: 'none', stock: 0, production: 0}});
                 }
             }
         this.boardArray.push(rowArray);
@@ -52,33 +52,33 @@ let gameBoard = {
         this.overlayTilesTri((row-1)/3-2, (col-1)/3-2, 3, 'BR', 'land');
         this.boardArray[(row-1)/3][(col-1)/3-1].terrain = 'sea';
         this.boardArray[(row-1)/3-1][(col-1)/3].terrain = 'sea';
-        this.boardArray[(row-1)/3][(col-1)/3].pieces = {populatedSquare: true, category: 'Resources', type: 'desert', direction: '0', used: 'unused', damageStatus: 'good', team: 'Kingdom', goods: 'none', stock: 0};
-        this.boardArray[(row-1)/3-2][(col-1)/3].pieces = {populatedSquare: true, category: 'Resources', type: 'desert', direction: '0', used: 'unused', damageStatus: 'good', team: 'Kingdom', goods: 'none', stock: 0};
-        this.boardArray[(row-1)/3][(col-1)/3-2].pieces = {populatedSquare: true, category: 'Resources', type: 'desert', direction: '0', used: 'unused', damageStatus: 'good', team: 'Kingdom', goods: 'none', stock: 0};
+        this.boardArray[(row-1)/3][(col-1)/3].pieces = {populatedSquare: true, category: 'Resources', type: 'desert', direction: '0', used: 'unused', damageStatus: 5, team: 'Kingdom', goods: 'none', stock: 0};
+        this.boardArray[(row-1)/3-2][(col-1)/3].pieces = {populatedSquare: true, category: 'Resources', type: 'desert', direction: '0', used: 'unused', damageStatus: 5, team: 'Kingdom', goods: 'none', stock: 0};
+        this.boardArray[(row-1)/3][(col-1)/3-2].pieces = {populatedSquare: true, category: 'Resources', type: 'desert', direction: '0', used: 'unused', damageStatus: 5, team: 'Kingdom', goods: 'none', stock: 0};
 
         this.overlayTiles(2*((row-1)/3)-1, 2*((row-1)/3)+3, 2*((col-1)/3)-1, 2*((col-1)/3)+3, 'sea');
         this.overlayTilesTri(2*((row-1)/3), 2*((col-1)/3), 3, 'TL', 'land');
         this.boardArray[2*((row-1)/3)+1][2*((col-1)/3)].terrain = 'sea';
         this.boardArray[2*((row-1)/3)][2*((col-1)/3)+1].terrain = 'sea';
-        this.boardArray[2*((row-1)/3)][2*((col-1)/3)].pieces = {populatedSquare: true, category: 'Resources', type: 'desert', direction: '0', used: 'unused', damageStatus: 'good', team: 'Kingdom', goods: 'none', stock: 0};
-        this.boardArray[2*((row-1)/3)+2][2*((col-1)/3)].pieces = {populatedSquare: true, category: 'Resources', type: 'desert', direction: '0', used: 'unused', damageStatus: 'good', team: 'Kingdom', goods: 'none', stock: 0};
-        this.boardArray[2*((row-1)/3)][2*((col-1)/3)+2].pieces = {populatedSquare: true, category: 'Resources', type: 'desert', direction: '0', used: 'unused', damageStatus: 'good', team: 'Kingdom', goods: 'none', stock: 0};
+        this.boardArray[2*((row-1)/3)][2*((col-1)/3)].pieces = {populatedSquare: true, category: 'Resources', type: 'desert', direction: '0', used: 'unused', damageStatus: 5, team: 'Kingdom', goods: 'none', stock: 0};
+        this.boardArray[2*((row-1)/3)+2][2*((col-1)/3)].pieces = {populatedSquare: true, category: 'Resources', type: 'desert', direction: '0', used: 'unused', damageStatus: 5, team: 'Kingdom', goods: 'none', stock: 0};
+        this.boardArray[2*((row-1)/3)][2*((col-1)/3)+2].pieces = {populatedSquare: true, category: 'Resources', type: 'desert', direction: '0', used: 'unused', damageStatus: 5, team: 'Kingdom', goods: 'none', stock: 0};
 
         this.overlayTiles((row-1)/3-3, (row-1)/3+1, 2*((col-1)/3)-1, 2*((col-1)/3)+3, 'sea');
         this.overlayTilesTri((row-1)/3-2, 2*((row-1)/3), 3, 'BL', 'land');
         this.boardArray[(row-1)/3-1][2*((col-1)/3)].terrain = 'sea';
         this.boardArray[(row-1)/3][2*((col-1)/3)+1].terrain = 'sea';
-        this.boardArray[(row-1)/3-2][2*((row-1)/3)].pieces = {populatedSquare: true, category: 'Resources', type: 'desert', direction: '0', used: 'unused', damageStatus: 'good', team: 'Kingdom', goods: 'none', stock: 0};
-        this.boardArray[(row-1)/3][2*((row-1)/3)].pieces = {populatedSquare: true, category: 'Resources', type: 'desert', direction: '0', used: 'unused', damageStatus: 'good', team: 'Kingdom', goods: 'none', stock: 0};
-        this.boardArray[(row-1)/3][2*((row-1)/3)+2].pieces = {populatedSquare: true, category: 'Resources', type: 'desert', direction: '0', used: 'unused', damageStatus: 'good', team: 'Kingdom', goods: 'none', stock: 0};
+        this.boardArray[(row-1)/3-2][2*((row-1)/3)].pieces = {populatedSquare: true, category: 'Resources', type: 'desert', direction: '0', used: 'unused', damageStatus: 5, team: 'Kingdom', goods: 'none', stock: 0};
+        this.boardArray[(row-1)/3][2*((row-1)/3)].pieces = {populatedSquare: true, category: 'Resources', type: 'desert', direction: '0', used: 'unused', damageStatus: 5, team: 'Kingdom', goods: 'none', stock: 0};
+        this.boardArray[(row-1)/3][2*((row-1)/3)+2].pieces = {populatedSquare: true, category: 'Resources', type: 'desert', direction: '0', used: 'unused', damageStatus: 5, team: 'Kingdom', goods: 'none', stock: 0};
 
         this.overlayTiles(2*((row-1)/3)-1, 2*((row-1)/3)+3, (row-1)/3-3, (row-1)/3+1, 'sea');
         this.overlayTilesTri(2*((row-1)/3), (row-1)/3-2, 3, 'TR', 'land');
         this.boardArray[2*((row-1)/3)][(row-1)/3-1].terrain = 'sea';
         this.boardArray[2*((row-1)/3)+1][(row-1)/3].terrain = 'sea';
-        this.boardArray[2*((row-1)/3)][(row-1)/3-2].pieces = {populatedSquare: true, category: 'Resources', type: 'desert', direction: '0', used: 'unused', damageStatus: 'good', team: 'Kingdom', goods: 'none', stock: 0};
-        this.boardArray[2*((row-1)/3)][(row-1)/3].pieces = {populatedSquare: true, category: 'Resources', type: 'desert', direction: '0', used: 'unused', damageStatus: 'good', team: 'Kingdom', goods: 'none', stock: 0};
-        this.boardArray[2*((row-1)/3)+2][(row-1)/3].pieces = {populatedSquare: true, category: 'Resources', type: 'desert', direction: '0', used: 'unused', damageStatus: 'good', team: 'Kingdom', goods: 'none', stock: 0};
+        this.boardArray[2*((row-1)/3)][(row-1)/3-2].pieces = {populatedSquare: true, category: 'Resources', type: 'desert', direction: '0', used: 'unused', damageStatus: 5, team: 'Kingdom', goods: 'none', stock: 0};
+        this.boardArray[2*((row-1)/3)][(row-1)/3].pieces = {populatedSquare: true, category: 'Resources', type: 'desert', direction: '0', used: 'unused', damageStatus: 5, team: 'Kingdom', goods: 'none', stock: 0};
+        this.boardArray[2*((row-1)/3)+2][(row-1)/3].pieces = {populatedSquare: true, category: 'Resources', type: 'desert', direction: '0', used: 'unused', damageStatus: 5, team: 'Kingdom', goods: 'none', stock: 0};
 
         // Creation of outlying islands
         this.boardArray[(row-1)/3][2].terrain = 'land';
@@ -137,80 +137,81 @@ let gameBoard = {
 
 
         // Creation of forts
-        this.boardArray[boardCenter][col-1].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '270', used: 'unused', damageStatus: 'good', team: 'Orange Team', goods: 'none', stock: 0, production: 0};
-        this.boardArray[0][boardCenter].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '180', used: 'unused', damageStatus: 'good', team: 'Red Team', goods: 'none', stock: 0, production: 0};
-        this.boardArray[row-1][boardCenter].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', damageStatus: 'good', team: 'Green Team', goods: 'none', stock: 0, production: 0};
-        this.boardArray[boardCenter][0].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '90', used: 'unused', damageStatus: 'good', team: 'Blue Team', goods: 'none', stock: 0, production: 0};
+        this.boardArray[boardCenter][col-1].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '270', used: 'unused', damageStatus: 5, team: 'Orange Team', goods: 'none', stock: 0, production: 0};
+        this.boardArray[0][boardCenter].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '180', used: 'unused', damageStatus: 5, team: 'Red Team', goods: 'none', stock: 0, production: 0};
+        this.boardArray[row-1][boardCenter].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', damageStatus: 5, team: 'Green Team', goods: 'none', stock: 0, production: 0};
+        this.boardArray[boardCenter][0].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '90', used: 'unused', damageStatus: 5, team: 'Blue Team', goods: 'none', stock: 0, production: 0};
 
 
         // Creation of Kingdom forts
-        this.boardArray[boardCenter][boardCenter].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', damageStatus: 'good', team: 'Kingdom', goods: 'none', stock: 0, production: 0};
-        this.boardArray[9][9].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', damageStatus: 'good', team: 'Kingdom', goods: 'none', stock: 0, production: 0};
+        this.boardArray[boardCenter][boardCenter].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', damageStatus: 5, team: 'Kingdom', goods: 'none', stock: 0, production: 0};
+        this.boardArray[9][9].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', damageStatus: 5, team: 'Kingdom', goods: 'none', stock: 0, production: 0};
         tradeContracts.contractsArray[0].row = 9;
         tradeContracts.contractsArray[0].col = 9;
-        this.boardArray[9][col-10].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', damageStatus: 'good', team: 'Kingdom', goods: 'none', stock: 0, production: 0};
+        this.boardArray[9][col-10].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', damageStatus: 5, team: 'Kingdom', goods: 'none', stock: 0, production: 0};
         tradeContracts.contractsArray[1].row = 9;
         tradeContracts.contractsArray[1].col = col-10;
-        this.boardArray[row-10][9].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', damageStatus: 'good', team: 'Kingdom', goods: 'none', stock: 0, production: 0};
+        this.boardArray[row-10][9].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', damageStatus: 5, team: 'Kingdom', goods: 'none', stock: 0, production: 0};
         tradeContracts.contractsArray[3].row = row-10;
         tradeContracts.contractsArray[3].col = 9;
-        this.boardArray[row-10][col-10].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', damageStatus: 'good', team: 'Kingdom', goods: 'none', stock: 0, production: 0};
+        this.boardArray[row-10][col-10].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', damageStatus: 5, team: 'Kingdom', goods: 'none', stock: 0, production: 0};
         tradeContracts.contractsArray[2].row = row-10;
         tradeContracts.contractsArray[2].col = col-10;
 
 
         // Creation of ships
-        this.boardArray[boardCenter-1][col-1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-90', used: 'unused', damageStatus: 'good', team: 'Orange Team', goods: 'none', stock: 0, production: 0, homeRow: boardCenter-1, homeCol: col-1};
-        this.boardArray[boardCenter+1][col-1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-90', used: 'unused', damageStatus: 'good', team: 'Orange Team', goods: 'none', stock: 0, production: 0, homeRow: boardCenter+1, homeCol: col-1};
-        this.boardArray[0][boardCenter-1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '180', used: 'unused', damageStatus: 'good', team: 'Red Team', goods: 'none', stock: 0, production: 0, homeRow: 0, homeCol: boardCenter-1};
-        this.boardArray[0][boardCenter+1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '180', used: 'unused', damageStatus: 'good', team: 'Red Team', goods: 'none', stock: 0, production: 0, homeRow: 0, homeCol: boardCenter+1};
-        this.boardArray[row-1][boardCenter-1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '0', used: 'unused', damageStatus: 'good', team: 'Green Team', goods: 'none', stock: 0, production: 0, homeRow: row-1, homeCol: boardCenter-1};
-        this.boardArray[row-1][boardCenter+1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '0', used: 'unused', damageStatus: 'good', team: 'Green Team', goods: 'none', stock: 0, production: 0, homeRow: row-1, homeCol: boardCenter+1};
-        this.boardArray[boardCenter-1][0].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '90', used: 'unused', damageStatus: 'good', team: 'Blue Team', goods: 'none', stock: 0, production: 0, homeRow: boardCenter-1, homeCol: 0};
-        this.boardArray[boardCenter+1][0].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '90', used: 'unused', damageStatus: 'good', team: 'Blue Team', goods: 'none', stock: 0, production: 0, homeRow: boardCenter+1, homeCol: 0};
+        this.boardArray[boardCenter-1][col-1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-90', used: 'unused', damageStatus: 5, team: 'Orange Team', goods: 'none', stock: 0, production: 0, homeRow: boardCenter-1, homeCol: col-1};
+        this.boardArray[boardCenter+1][col-1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-90', used: 'unused', damageStatus: 5, team: 'Orange Team', goods: 'none', stock: 0, production: 0, homeRow: boardCenter+1, homeCol: col-1};
+        this.boardArray[0][boardCenter-1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '180', used: 'unused', damageStatus: 5, team: 'Red Team', goods: 'none', stock: 0, production: 0, homeRow: 0, homeCol: boardCenter-1};
+        this.boardArray[0][boardCenter+1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '180', used: 'unused', damageStatus: 5, team: 'Red Team', goods: 'none', stock: 0, production: 0, homeRow: 0, homeCol: boardCenter+1};
+        this.boardArray[row-1][boardCenter-1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '0', used: 'unused', damageStatus: 5, team: 'Green Team', goods: 'none', stock: 0, production: 0, homeRow: row-1, homeCol: boardCenter-1};
+        this.boardArray[row-1][boardCenter+1].pieces = {populatedSquare: true, category: 'Transport', type: 'warship', direction: '0', used: 'unused', damageStatus: 5, team: 'Green Team', goods: 'none', stock: 0, production: 0, homeRow: row-1, homeCol: boardCenter+1};
+        this.boardArray[row-2][boardCenter].pieces = {populatedSquare: true, category: 'Transport', type: 'catamaran', direction: '0', used: 'unused', damageStatus: 5, team: 'Green Team', goods: 'none', stock: 0, production: 0, homeRow: row-1, homeCol: boardCenter+1};
+        this.boardArray[boardCenter-1][0].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '90', used: 'unused', damageStatus: 5, team: 'Blue Team', goods: 'none', stock: 0, production: 0, homeRow: boardCenter-1, homeCol: 0};
+        this.boardArray[boardCenter+1][0].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '90', used: 'unused', damageStatus: 5, team: 'Blue Team', goods: 'none', stock: 0, production: 0, homeRow: boardCenter+1, homeCol: 0};
 
         // Creation of pirate ships and pirate harbours
-        this.boardArray[4][6] = {xpos: 4, ypos: 6, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '135', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0, ref: 0}};
+        this.boardArray[4][6] = {xpos: 4, ypos: 6, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'warship', direction: '135', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0, ref: 0}};
         //this.boardArray[4][6].terrain = 'sea';
-        //this.boardArray[4][6].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '135', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
+        //this.boardArray[4][6].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '135', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0};
 
-        this.boardArray[row-7][4] = {xpos: row-7, ypos: 4, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0, ref: 1}};
+        this.boardArray[row-7][4] = {xpos: row-7, ypos: 4, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'warship', direction: '45', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0, ref: 1}};
         //this.boardArray[row-7][4].terrain = 'sea';
-        //this.boardArray[row-7][4].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
+        //this.boardArray[row-7][4].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0};
 
-        this.boardArray[row-5][col-7] = {xpos: row-5, ypos: col-7, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0, ref: 2}};
+        this.boardArray[row-5][col-7] = {xpos: row-5, ypos: col-7, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'warship', direction: '-45', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0, ref: 2}};
         //this.boardArray[row-5][col-7].terrain = 'sea';
-        //this.boardArray[row-5][col-7].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
+        //this.boardArray[row-5][col-7].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-45', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0};
 
-        this.boardArray[6][col-5] = {xpos: 6, ypos: col-5, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-135', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0, ref: 3}};
+        this.boardArray[6][col-5] = {xpos: 6, ypos: col-5, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'warship', direction: '-135', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0, ref: 3}};
         //this.boardArray[6][col-5].terrain = 'sea';
-        //this.boardArray[6][col-5].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-135', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
+        //this.boardArray[6][col-5].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-135', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0};
 
         // Creation of forests
-        this.boardArray[boardCenter-1][boardCenter].pieces = {populatedSquare: true, category: 'Resources', type: 'forest', direction: '0', used: 'unused', damageStatus: 'good', team: 'Kingdom', goods: 'wood', stock: 0, production: 2};
+        this.boardArray[boardCenter-1][boardCenter].pieces = {populatedSquare: true, category: 'Resources', type: 'forest', direction: '0', used: 'unused', damageStatus: 5, team: 'Kingdom', goods: 'wood', stock: 0, production: 2};
 
         // Creation of ironworks
-        this.boardArray[boardCenter+1][boardCenter].pieces = {populatedSquare: true, category: 'Resources', type: 'ironworks', direction: '0', used: 'unused', damageStatus: 'good', team: 'Kingdom', goods: 'iron', stock: 0, production: 2};
+        this.boardArray[boardCenter+1][boardCenter].pieces = {populatedSquare: true, category: 'Resources', type: 'ironworks', direction: '0', used: 'unused', damageStatus: 5, team: 'Kingdom', goods: 'iron', stock: 0, production: 2};
 
         // Creation of quarry
-        this.boardArray[boardCenter][boardCenter-1].pieces = {populatedSquare: true, category: 'Resources', type: 'quarry', direction: '0', used: 'unused', damageStatus: 'good', team: 'Kingdom', goods: 'stone', stock: 0, production: 2};
+        this.boardArray[boardCenter][boardCenter-1].pieces = {populatedSquare: true, category: 'Resources', type: 'quarry', direction: '0', used: 'unused', damageStatus: 5, team: 'Kingdom', goods: 'stone', stock: 0, production: 2};
 
         // Creation of plantation
-        this.boardArray[boardCenter][boardCenter+1].pieces = {populatedSquare: true, category: 'Resources', type: 'plantation', direction: '0', used: 'unused', damageStatus: 'good', team: 'Kingdom', goods: 'coffee', stock: 0, production: 2};
+        this.boardArray[boardCenter][boardCenter+1].pieces = {populatedSquare: true, category: 'Resources', type: 'plantation', direction: '0', used: 'unused', damageStatus: 5, team: 'Kingdom', goods: 'coffee', stock: 0, production: 2};
 
         // TEST AREA
     /*  this.boardArray[(row-4)][boardCenter].terrain = 'land';
-        this.boardArray[(row-4)][boardCenter].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', damageStatus: 'good', team: 'Kingdom', goods: 'none', stock: 0};
+        this.boardArray[(row-4)][boardCenter].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', damageStatus: 5, team: 'Kingdom', goods: 'none', stock: 0};
         tradeContracts.contractsArray[2].row = row-4;
         tradeContracts.contractsArray[2].col = boardCenter;
 
         // Battle Royale
-        this.boardArray[row-4][boardCenter].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
-        this.boardArray[row-4][boardCenter + 1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
-        this.boardArray[row-4][boardCenter - 1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
-        this.boardArray[row-5][boardCenter + 1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
-        this.boardArray[row-5][boardCenter].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
-        this.boardArray[row-5][boardCenter -1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 'good', team: 'Pirate', goods: 'none', stock: 0};
+        this.boardArray[row-4][boardCenter].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0};
+        this.boardArray[row-4][boardCenter + 1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0};
+        this.boardArray[row-4][boardCenter - 1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0};
+        this.boardArray[row-5][boardCenter + 1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0};
+        this.boardArray[row-5][boardCenter].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0};
+        this.boardArray[row-5][boardCenter -1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0};
         //*/
 
     },
@@ -242,7 +243,7 @@ let gameBoard = {
             }
             while (stockDashboard.pieceTotals[pieceTotalsTeamPosition].pieces[deckCard.type] > 0)
 
-            gameBoard.boardArray[locali][localj].pieces = {populatedSquare: true, category: 'Resources', type: deckCard.type, direction: '0', used: 'unused', damageStatus: 'good', team: localTeam, goods: deckCard.goods, stock: 0};
+            gameBoard.boardArray[locali][localj].pieces = {populatedSquare: true, category: 'Resources', type: deckCard.type, direction: '0', used: 'unused', damageStatus: 5, team: localTeam, goods: deckCard.goods, stock: 0};
         }
 
         for (var k = 0; k < allocateArray.length; k++) {
@@ -350,19 +351,23 @@ let gameBoard = {
         actionTile.setAttribute('class', localType);
 
         if (localType == 'cargo ship') {
-            this.createCargoTile(actionTile, locali, localj, localTeam);
+            this.createCargoTile(actionTile, localTeam, 5);
+        } else if (localType == 'warship') {
+            this.createWarshipTile(actionTile, localTeam, 5);
+        } else if (localType == 'catamaran') {
+            this.createCatamaranTile(actionTile, localTeam, 5);
         } else if (localType == 'fort') {
-            this.createFortTile(actionTile, locali, localj, localTeam);
+            this.createFortTile(actionTile, localTeam);
         } else if (localType == 'forest') {
-            this.createForestTile(actionTile, locali, localj, localTeam);
+            this.createForestTile(actionTile, localTeam);
         } else if (localType == 'ironworks') {
-            this.createIronworksTile(actionTile, locali, localj, localTeam);
+            this.createIronworksTile(actionTile, localTeam);
         } else if (localType == 'quarry') {
-            this.createQuarryTile(actionTile, locali, localj, localTeam);
+            this.createQuarryTile(actionTile, localTeam);
         } else if (localType == 'desert') {
-            this.createDesertTile(actionTile, locali, localj, localTeam);
+            this.createDesertTile(actionTile, localTeam);
         } else if (localType == 'plantation') {
-            this.createPlantationTile(actionTile, locali, localj, localTeam);
+            this.createPlantationTile(actionTile, localTeam);
         }
 
         // tile is returned to drawBoard
@@ -404,46 +409,197 @@ let gameBoard = {
 
     // Method to create cargo tile
     // ---------------------------
-    createCargoTile: function(actionTile, locali, localj, localTeam) {
+    createCargoTile: function(actionTile, localTeam, localDamage) {
+        // Removes all elements of SVG for damage / repair building
+        while (actionTile.lastChild) {
+            actionTile.removeChild(actionTile.lastChild);
+        }
 
         // Cargo ship deck SVG design
         let cargoDeck = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         cargoDeck.setAttribute('class', localTeam + ' team_fill team_stroke');
         cargoDeck.setAttribute('d', 'M 12.5 1 C 8 6.2 7 11.1 7.3 15.6 Q 7.7 20.2 9.25 24 L 15.75 24 Q 17 20.2 17.5 15.6 C 17.8 11.1 16.6 6.2 12.5 1 Z');
         cargoDeck.style.strokeWidth = '1px';
+        actionTile.appendChild(cargoDeck);
 
-        // Cargo ship sail SVG design
-        let cargoSail = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        cargoSail.setAttribute('d', 'M 2 16 L 22 16 C 20.5 13.5 16.5 12 12 12 C 7.5 12 3.5 13.5 2 16 Z');
-        cargoSail.setAttribute('class', localTeam + ' team_stroke');
-        cargoSail.setAttribute('fill', 'white');
-        cargoSail.style.strokeWidth = '1px';
+        if (localDamage >= 2) {
+            // Cargo ship mast SVG design
+            let cargoMast = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            cargoMast.setAttribute('class', localTeam + ' team_stroke');
+            cargoMast.setAttribute('cx', '12.5');
+            cargoMast.setAttribute('cy', '12');
+            cargoMast.setAttribute('r', '1');
+            cargoMast.style.strokeWidth = '1px';
+            cargoMast.style.strokeLinecap = 'round';
+            actionTile.appendChild(cargoMast);
+        }
 
-        // Cargo ship sail SVG design
-        let cargoMast = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        cargoMast.setAttribute('class', localTeam + ' team_stroke');
-        cargoMast.setAttribute('cx', '12.5');
-        cargoMast.setAttribute('cy', '17');
-        cargoMast.setAttribute('r', '1');
-        cargoMast.style.strokeWidth = '1px';
-        cargoMast.style.strokeLinecap = 'round';
+        if (localDamage >= 3) {
+            // Cargo ship mast SVG design
+            let cargoMast2 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            cargoMast2.setAttribute('class', localTeam + ' team_stroke');
+            cargoMast2.setAttribute('cx', '12.5');
+            cargoMast2.setAttribute('cy', '20');
+            cargoMast2.setAttribute('r', '1');
+            cargoMast2.style.strokeWidth = '1px';
+            cargoMast2.style.strokeLinecap = 'round';
+            actionTile.appendChild(cargoMast2);
+        }
+
+        if (localDamage >= 4) {
+            // Cargo ship sail SVG design
+            let cargoSail = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            cargoSail.setAttribute('d', 'M 2 11 L 23 11 C 20.5 8.5 16.5 7 12.5 7 C 7.5 7 3.5 8.5 2 11 Z');
+            cargoSail.setAttribute('class', localTeam + ' team_stroke');
+            cargoSail.setAttribute('fill', 'white');
+            cargoSail.style.strokeWidth = '1px';
+            actionTile.appendChild(cargoSail);
+        }
+
+        if (localDamage >= 5) {
+            // Cargo ship sail SVG design
+            let cargoSail2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            cargoSail2.setAttribute('d', 'M 2 19 L 23 19 C 20.5 16.5 16.5 15 12.5 15 C 7.5 15 3.5 16.5 2 19 Z');
+            cargoSail2.setAttribute('class', localTeam + ' team_stroke');
+            cargoSail2.setAttribute('fill', 'white');
+            cargoSail2.style.strokeWidth = '1px';
+            actionTile.appendChild(cargoSail2);
+        }
+
+        return actionTile;
+    },
+
+
+    // Method to create warship tile
+    // ---------------------------
+    createWarshipTile: function(actionTile, localTeam, localDamage) {
+        // Removes all elements of SVG for damage / repair building
+        while (actionTile.lastChild) {
+            actionTile.removeChild(actionTile.lastChild);
+        }
+
+        // Warship deck SVG design
+        let warshipDeck = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        warshipDeck.setAttribute('class', localTeam + ' team_fill team_stroke');
+        warshipDeck.setAttribute('d', 'M 12.5 1 C 8 6.2 7 11.1 7.3 15.6 Q 7.7 20.2 9.25 24 L 15.75 24 Q 17 20.2 17.5 15.6 C 17.8 11.1 16.6 6.2 12.5 1 Z');
+        warshipDeck.style.strokeWidth = '1px';
+
+        // Warship line SVG design (just so has 5 children)
+        let warshipLine1 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        warshipLine1.setAttribute('class', localTeam + ' team_fill team_stroke');
+        warshipLine1.setAttribute('d', 'M 15.5 24 L 15.75 24');
+        warshipLine1.style.strokeWidth = '1px';
+
+        // Warship line SVG design (just so has 5 children)
+        let warshipLine2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        warshipLine2.setAttribute('class', localTeam + ' team_fill team_stroke');
+        warshipLine2.setAttribute('d', 'M 9.25 24 L 9.5 24');
+        warshipLine2.style.strokeWidth = '1px';
 
         // Building the tile
-        actionTile.appendChild(cargoDeck);
-        actionTile.appendChild(cargoMast);
-        actionTile.appendChild(cargoSail);
+        actionTile.appendChild(warshipDeck);
+        actionTile.appendChild(warshipLine1);
+        actionTile.appendChild(warshipLine2);
 
-        //actionTile.appendChild(shipScaffold);
+        if (localDamage >= 4) {
+            // Warship mast SVG design
+            let warshipMast = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            warshipMast.setAttribute('class', localTeam + ' team_stroke');
+            warshipMast.setAttribute('cx', '12.5');
+            warshipMast.setAttribute('cy', '17');
+            warshipMast.setAttribute('r', '1');
+            warshipMast.style.strokeWidth = '1px';
+            warshipMast.style.strokeLinecap = 'round';
+            actionTile.appendChild(warshipMast);
+        }
+
+        if (localDamage >= 5) {
+            // Warship sail SVG design
+            let warshipSail = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            warshipSail.setAttribute('d', 'M 2 16 L 23 16 C 20.5 13.5 16.5 12 12.5 12 C 7.5 12 3.5 13.5 2 16 Z');
+            warshipSail.setAttribute('class', localTeam + ' team_stroke');
+            warshipSail.setAttribute('fill', 'white');
+            warshipSail.style.strokeWidth = '1px';
+            actionTile.appendChild(warshipSail);
+        }
+
+        return actionTile;
+    },
+
+
+    // Method to create warship tile
+    // ---------------------------
+    createCatamaranTile: function(actionTile, localTeam, localDamage) {
+        // Removes all elements of SVG for damage / repair building
+        while (actionTile.lastChild) {
+            actionTile.removeChild(actionTile.lastChild);
+        }
+
+        // Cat left deck SVG design
+        let catDeck1 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        catDeck1.setAttribute('class', localTeam + ' team_fill team_stroke');
+        catDeck1.setAttribute('d', 'M 7.5 3 A 3.5 10.5 1 0 0 7.5 22 A 3.5 10.5 1 0 0 7.5 3 Z');
+        catDeck1.style.strokeWidth = '1px';
+
+        // Cat right deck SVG design
+        let catDeck2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        catDeck2.setAttribute('class', localTeam + ' team_fill team_stroke');
+        catDeck2.setAttribute('d', 'M 17.5 3 A 3.5 10.5 1 0 0 17.5 22 A 3.5 10.5 1 0 0 17.5 3 Z');
+        catDeck2.style.strokeWidth = '1px';
+
+        // Cat centre deck SVG design
+        let catCentreDeck = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        catCentreDeck.setAttribute('x', '7');
+        catCentreDeck.setAttribute('y', '8.5');
+        catCentreDeck.setAttribute('width', '11');
+        catCentreDeck.setAttribute('height', '10.5');
+        catCentreDeck.setAttribute('rx', '1');
+        catCentreDeck.setAttribute('ry', '1');
+        catCentreDeck.style.strokeWidth = '1px';
+        catCentreDeck.setAttribute('class', localTeam + ' team_fill team_stroke');
+
+        // Building the tile
+        actionTile.appendChild(catDeck1);
+        actionTile.appendChild(catDeck2);
+        actionTile.appendChild(catCentreDeck);
+
+        if (localDamage >= 4) {
+            // Catamaran mast SVG design
+            let warshipMast = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            warshipMast.setAttribute('class', localTeam + ' team_stroke');
+            warshipMast.setAttribute('cx', '12.5');
+            warshipMast.setAttribute('cy', '16.5');
+            warshipMast.setAttribute('r', '1');
+            warshipMast.style.strokeWidth = '1px';
+            warshipMast.style.strokeLinecap = 'round';
+            actionTile.appendChild(warshipMast);
+        }
+
+        if (localDamage >= 5) {
+            // Catamaran sail SVG design
+            let warshipSail = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            warshipSail.setAttribute('d', 'M 2 15.5 L 23 15.5 C 20.5 12.5 16.5 11.5 12.5 11.5 C 7.5 11.5 3.5 13 2 15.5 Z');
+            warshipSail.setAttribute('class', localTeam + ' team_stroke');
+            warshipSail.setAttribute('fill', 'white');
+            warshipSail.style.strokeWidth = '1px';
+            actionTile.appendChild(warshipSail);
+        }
 
         return actionTile;
     },
 
     // Method to damage cargo ship after conflict
     // ------------------------------------------
-    damageShip: function(actionTile, localTeam) {
+    damageShip: function(actionTile, localTeam, localType, localDamage) {
         if(workFlow == 1) {console.log('Ship damage displayed: ' + (Date.now() - launchTime)); }
-        actionTile.children[2].remove();
-        actionTile.children[1].remove();
+
+        if (localType == 'cargo ship') {
+            actionTile = this.createCargoTile(actionTile, localTeam, localDamage);
+        } else if (localType == 'warship') {
+            actionTile = this.createWarshipTile(actionTile, localTeam, localDamage);
+        } else if (localType == 'catamaran') {
+            actionTile = this.createCatamaranTile(actionTile, localTeam, localDamage);
+        }
 
         let shipOars = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         shipOars.setAttribute('d', 'M 7.5 10 L 1.5 13.5 M 17.5 10 L 23.5 13.5 M 7 13 L 1.5 16.5 M 18 13 L 23.5 16.5 M 7.5 15.5 L 1.5 19.5 M 17.5 15.5 L 23.5 19.5 M 7.5 18 L 1.5 22.5 M 17.5 18 L 23.5 22.5');
@@ -451,60 +607,39 @@ let gameBoard = {
         shipOars.style.strokeLinejoin = 'round';
         shipOars.style.strokeLinecap = 'round';
         shipOars.style.strokeWidth = '1px';
-        //shipOars.setAttribute('stroke', 'white');
 
         actionTile.appendChild(shipOars);
+
     },
 
     // Method to repair cargo ship docked in harbour
     // ---------------------------------------------
-    repairShip: function(actionTile, localTeam, localStatus) {
+    repairShip: function(actionTile, localTeam, localType, localDamage) {
         if(workFlow == 1) {console.log('Ship repair displayed: ' + (Date.now() - launchTime)); }
 
+        if (localType == 'cargo ship') {
+            actionTile = this.createCargoTile(actionTile, localTeam, localDamage);
+        } else if (localType == 'warship') {
+            actionTile = this.createWarshipTile(actionTile, localTeam, localDamage);
+        } else if (localType == 'catamaran') {
+            actionTile = this.createCatamaranTile(actionTile, localTeam, localDamage);
+        }
+
         // Puts up scaffolding
-        if (localStatus == 'repair0') {
-            actionTile.children[1].remove();
+        if (localDamage < 5) {
             let shipScaffold = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            shipScaffold.setAttribute('d', 'M 4 4 L 4 23 M 21 4 L 21 23 M 4 8 L 6.5 8 M 21 8 L 18.5 8 M 4 19 L 6 19 M 21 19 L 19 19');
+            shipScaffold.setAttribute('d', 'M 3 4 L 3 23 M 22 4 L 22 23 M 3 8 L 6.5 8 M 22 8 L 18.5 8 M 3 19 L 6 19 M 22 19 L 19 19');
             shipScaffold.setAttribute('class', localTeam + ' team_stroke');
             shipScaffold.style.strokeLinejoin = 'round';
             shipScaffold.style.strokeLinecap = 'round';
             shipScaffold.style.strokeWidth = '1px';
             actionTile.appendChild(shipScaffold);
         }
-
-        // Repairs mast
-        if (localStatus == 'repair1') {
-            let cargoMast = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            cargoMast.setAttribute('class', localTeam + ' team_stroke');
-            cargoMast.setAttribute('cx', '12.5');
-            cargoMast.setAttribute('cy', '17');
-            cargoMast.setAttribute('r', '1');
-            cargoMast.style.strokeWidth = '1px';
-            cargoMast.style.strokeLinecap = 'round';
-            actionTile.appendChild(cargoMast);
-        }
-
-        // Repairs sail
-        if (localStatus == 'repair2') {
-            // Cargo ship sail SVG design
-            let cargoSail = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            cargoSail.setAttribute('d', 'M 2 16 L 22 16 C 20.5 13.5 16.5 12 12 12 C 7.5 12 3.5 13.5 2 16 Z');
-            cargoSail.setAttribute('class', localTeam + ' team_stroke');
-            cargoSail.setAttribute('fill', 'white');
-            cargoSail.style.strokeWidth = '1px';
-            actionTile.appendChild(cargoSail);
-        }
-
-        // Removes scaffolding
-        if (localStatus == 'good') {
-            actionTile.children[1].remove();
-        }
     },
 
     // Method to create fort tile
     // ---------------------------
-    createFortTile: function(actionTile, locali, localj, localTeam) {
+    createFortTile: function(actionTile, localTeam) {
         // Fort turret design
         let fortTurret1 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         fortTurret1.setAttribute('class', localTeam + ' team_stroke');
@@ -571,7 +706,7 @@ let gameBoard = {
 
     // Method to create forest tile
     // ---------------------------
-    createForestTile: function(actionTile, locali, localj, localTeam) {
+    createForestTile: function(actionTile, localTeam) {
 
         // Canopy circle design
         let treeCanopy1 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
@@ -620,7 +755,7 @@ let gameBoard = {
 
     // Method to create ironworks tile
     // ---------------------------
-    createIronworksTile: function(actionTile, locali, localj, localTeam) {
+    createIronworksTile: function(actionTile, localTeam) {
 
         // Mountain background design
         let mountainBackground = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -661,7 +796,7 @@ let gameBoard = {
 
     // Method to create desert tile
     // ---------------------------
-    createDesertTile: function(actionTile, locali, localj, localTeam) {
+    createDesertTile: function(actionTile, localTeam) {
         // rear dune
         let rearSandDune = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         rearSandDune.setAttribute('class', localTeam);
@@ -687,7 +822,7 @@ let gameBoard = {
 
     // Method to create quarry tile
     // ---------------------------
-    createQuarryTile: function(actionTile, locali, localj, localTeam) {
+    createQuarryTile: function(actionTile, localTeam) {
         // Pick handle rectangle
         let pickHandle = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         pickHandle.setAttribute('class', localTeam + ' team_fill team_stroke');
@@ -743,7 +878,7 @@ let gameBoard = {
 
     // Method to create plantation tile
     // --------------------------------
-    createPlantationTile: function(actionTile, locali, localj, localTeam) {
+    createPlantationTile: function(actionTile, localTeam) {
         // lower berry
         let berry1 = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
         berry1.setAttribute('class', localTeam + ' team_stroke');

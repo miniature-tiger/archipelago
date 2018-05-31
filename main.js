@@ -335,7 +335,7 @@ if(workFlow == 1) {
 // Maximum number of iterations for movement and thus maximum number of tiles that can be moved
 // --- movement is also influenced by the movement cost
 // --- once more transport is created this will all need to be built into an array if it desired that different ships move at different speeds
-let maxMove = 4;
+let maxMove = 0;
 
 // Variables for clicked tiles with startEnd indicating the start or end of the move
 let startEnd = 'start';
@@ -453,6 +453,11 @@ function boardHandler(event) {
 
         // "Start" piece validation on first click
         if (startEnd == 'start') {
+            maxMove = 0;
+            let arrayPosition = stockDashboard.pieceTypes.findIndex(k => k.type == pieceMovement.movementArray[startEnd].pieces.type);
+            if (arrayPosition != -1) {
+                maxMove = stockDashboard.pieceTypes[arrayPosition].maxMove;
+            }
             // Commentary on tile clicked on
             clearCommentary();
             commentary.appendChild(gameBoard.createActionTile(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, pieceMovement.movementArray.start.pieces.type, pieceMovement.movementArray.start.pieces.team, 'startPiece', 10, (screenWidth - 2*surroundSize) * 0.3 - (gridSize + 2*tileBorder)/2, 1.5, 0));
@@ -511,14 +516,14 @@ function boardHandler(event) {
 
                 // Piece movement
                 } else if (pieceMovement.movementArray[startEnd].pieces.team == gameManagement.turn && pieceMovement.movementArray[startEnd].pieces.used == 'unused') {
-                    if (pieceMovement.movementArray[startEnd].pieces.type == 'cargo ship' && (pieceMovement.movementArray[startEnd].pieces.damageStatus == 'good' || pieceMovement.movementArray[startEnd].pieces.damageStatus == 'damaged')) {
+                    if (pieceMovement.movementArray[startEnd].pieces.category == 'Transport' && (pieceMovement.movementArray[startEnd].pieces.damageStatus == 5 || pieceMovement.movementArray[startEnd].pieces.damageStatus == 0)) {
                         secondLineComment.innerText = 'Click any red tile to move';
                         // If "Start" piece is validated startEnd gate is opened and potential tiles are activated
                         startEnd = 'end';
-                        if (pieceMovement.movementArray.start.pieces.damageStatus == 'damaged') {
-                            pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, 2.1, 2, true, 'damaged');
-                        } else if (pieceMovement.movementArray.start.pieces.damageStatus == 'good') {
-                            pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, maxMove, maxMove, true, 'good');
+                        if (pieceMovement.movementArray.start.pieces.damageStatus == 0) {
+                            pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, 2.1, 2, true, 0);
+                        } else if (pieceMovement.movementArray.start.pieces.damageStatus == 5) {
+                            pieceMovement.activateTiles(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, maxMove, maxMove, true, 5);
                         }
                         // Redraw gameboard to show activated tiles
                         gameBoard.drawActiveTiles();
@@ -526,7 +531,7 @@ function boardHandler(event) {
                 }
 
                 // Unloading of a ship
-                if (pieceMovement.movementArray.start.pieces.team == gameManagement.turn && pieceMovement.movementArray.start.pieces.type == 'cargo ship' && pieceMovement.movementArray.start.pieces.stock > 0) {
+                if (pieceMovement.movementArray.start.pieces.team == gameManagement.turn && pieceMovement.movementArray.start.pieces.category == 'Transport' && pieceMovement.movementArray.start.pieces.stock > 0) {
 
                     // Delivery of goods for contract
                     let depotSearch = pieceMovement.depotAvailable(pieceMovement.movementArray.start.pieces.goods);
@@ -574,7 +579,7 @@ function boardHandler(event) {
                     startEnd = 'start';
 
                 // Loading of goods
-                } else if ((pieceMovement.movementArray.start.pieces.category == 'Resources' || pieceMovement.movementArray.start.pieces.category == 'Settlements') && pieceMovement.movementArray.end.pieces.type == 'cargo ship') {
+              } else if ((pieceMovement.movementArray.start.pieces.category == 'Resources' || pieceMovement.movementArray.start.pieces.category == 'Settlements') && pieceMovement.movementArray.end.pieces.category == 'Transport') {
                     pieceMovement.deactivateTiles(1);
                     gameBoard.drawActiveTiles();
                     //loadingStock = gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.stock;
@@ -590,7 +595,7 @@ function boardHandler(event) {
                     loadingStock = 0;
 
                 // Delivery of goods for contract
-                } else if (pieceMovement.movementArray.start.pieces.type == 'cargo ship' && pieceMovement.movementArray.end.pieces.team == 'Kingdom' && pieceMovement.movementArray.end.pieces.type == 'fort') {
+              } else if (pieceMovement.movementArray.start.pieces.category == 'Transport' && pieceMovement.movementArray.end.pieces.team == 'Kingdom' && pieceMovement.movementArray.end.pieces.type == 'fort') {
                     pieceMovement.deactivateTiles(1);
                     gameBoard.drawActiveTiles();
                     tradeContracts.discoverPath(pieceMovement.movementArray.end.row, pieceMovement.movementArray.end.col, pieceMovement.movementArray.start.pieces.goods);
@@ -598,7 +603,7 @@ function boardHandler(event) {
                     tradeContracts.drawContracts();
 
                 // Unloading to own team fort or resource tile
-                } else if (pieceMovement.movementArray.start.pieces.type == 'cargo ship' && pieceMovement.movementArray.end.pieces.team == gameManagement.turn && (pieceMovement.movementArray.end.pieces.type == 'fort' || pieceMovement.movementArray.end.pieces.category == 'Resources')) {
+              } else if (pieceMovement.movementArray.start.pieces.category == 'Transport' && pieceMovement.movementArray.end.pieces.team == gameManagement.turn && (pieceMovement.movementArray.end.pieces.type == 'fort' || pieceMovement.movementArray.end.pieces.category == 'Resources')) {
                     pieceMovement.deactivateTiles(maxMove);
                     gameBoard.drawActiveTiles();
                     //loadingStock = gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.stock;
@@ -612,7 +617,7 @@ function boardHandler(event) {
                     loadingStock = 0;
 
                 // Piece movement
-                } else if (pieceMovement.movementArray.start.pieces.type == 'cargo ship') {
+              } else if (pieceMovement.movementArray.start.pieces.category == 'Transport') {
                     endTurn.removeEventListener('click', nextTurn);
                     boardMarkNode.removeEventListener('click', boardHandler);
                     pieceMovement.deactivateTiles(maxMove);

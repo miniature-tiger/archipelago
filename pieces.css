@@ -33,6 +33,18 @@
     z-index: 10;
 }
 
+.warship {
+    position: absolute;
+    background-color: transparent;
+    z-index: 10;
+}
+
+.catamaran {
+    position: absolute;
+    background-color: transparent;
+    z-index: 10;
+}
+
 /*.piece.cargo {
   /*Tile is gridsize -2
     Inner tile is gridsize -6 (space for border 2 like in sea tiles)
