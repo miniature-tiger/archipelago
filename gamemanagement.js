@@ -61,7 +61,7 @@ let gameManagement = {
     // Settings and options
     // --------------------
     optionsArray: [
-                  { variable: 'speed', active: 'medium', options: [{text: 'slow', active: false, constant: 1.5}, {text: 'medium', active: true, constant: 1}, {text: 'fast', active: false, constant: 0.6}] },
+                  { variable: 'speed', active: 'fast', options: [{text: 'slow', active: false, constant: 1.5}, {text: 'medium', active: false, constant: 1}, {text: 'fast', active: true, constant: 0.6}] },
                   { variable: 'dev', options: [{text: 'workflow', active: true}, {text: 'transitions', active: false}] },
                   ],
 

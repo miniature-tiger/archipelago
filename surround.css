@@ -53,9 +53,7 @@ html {
 /* style to fix the header and footer and prevent scrolling */
 .over_text {
     position: fixed;
-
-
-    z-index: 10;
+    z-index: 15;
 }
 
 .under_text {
@@ -124,7 +122,6 @@ html {
 
 /* commentary box */
 .commentary {
-
     position: fixed;
     text-align: center;
     bottom: -10%;
@@ -138,8 +135,27 @@ html {
     z-index: 15;
     background-color: rgba(138, 87, 50, 0.1);
     transition: bottom 0.2s ease-in-out
+}
 
+/* commentary box */
+.building {
+    position: fixed;
+    text-align: left;
+    bottom: -15%;
+    height: 10%;
+    left: 0%;
+    font-style: italic;
+    padding: 0.5% 0% 0.5% 0%;
+    color: rgb(137, 113, 82);
+    font-size:0.8em;
+    line-height: 140%;
+    z-index: 15;
+    background-color: rgba(138, 87, 50, 0.1);
+    transition: bottom 0.2s ease-in-out
+}
 
+#firstBuildLine, #secondBuildLine, #thirdBuildLine {
+    position: relative;
 }
 
 /* Side bar item holders and inner item formats*/
@@ -161,7 +177,7 @@ html {
     margin-top: 10%;
     padding-top: 10%;
     padding-bottom: 0%;
-    width: 90%;
+    width: 100%;
     display: inline-block;
     text-align: left;
     font-size: 100%;
@@ -174,7 +190,7 @@ html {
     padding-top: 10%;
     padding-bottom: 10%;
     margin-top: 0%;
-    width: 90%;
+    width: 100%;
     display: inline-block;
     text-align: left;
     margin-left: 8%;
