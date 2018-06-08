@@ -51,9 +51,13 @@ Contracts for delivery:
 * Mechanics for contract delivery - COMPLETE
 * Island naming: for describing location of trading settlements - COMPLETE
 * Graphics of trade routes - COMPLETE
+* Continuance of contracts over time - COMPLETE
+* Breaking of contracts due to interference - COMPLETE
 
-Building (On hold - decide if necessary once contracts implemented)
-* Recipes, time to implement, graphics etc
+Building:
+* New ship designs - Catamaran, warship, cargo ship - COMPLETE
+* Definition of goods requirements to build each ship and ship ability specifications - COMPLETE
+* Ability to construct new ships - COMPLETE
 
 Scoring: 
 * Work out scoring mechanism (linked to contracts)
@@ -65,21 +69,22 @@ Pirates
 * Add pirate ships - COMPLETE
 * Automate pirate ship movements (basic movement with wind and search for cargo ships) - COMPLETE
 * Search - telescope range of 5 tiles for stronger search for ships - COMPLETE
-* Consider separate cargo and war ships for teams
+* Separate ship types for teams - Need to consider whether all ships can defend themselves
 
 Forts
 * Add fort icons - COMPLETE
-* Create safe harbour from pirate ships
+* Create safe harbour from pirate ships - COMPLETE
 
 Conflicts
 * Attack - Develop conflict method between ships - COMPLETE
 * Stealing of cargo - COMPLETE
-* Limping back to harbour
+* Limping back to harbour - COMPLETE
+* Ship repair - COMPLETE
 
 # Phase 4 - Game Management and Settings 
 Settings
 * Settings pop up created - COMPLETE
-* Options added (game speed) - In progress
+* Options added - In progress - game speed added, developer tools added
 * Local options (player name etc)
 * Game saving and replay
 
