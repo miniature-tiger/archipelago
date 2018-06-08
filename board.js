@@ -160,15 +160,15 @@ let gameBoard = {
 
 
         // Creation of ships
-        this.boardArray[boardCenter-1][col-1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-90', used: 'unused', damageStatus: 5, team: 'Orange Team', goods: 'none', stock: 0, production: 0, homeRow: boardCenter-1, homeCol: col-1};
-        this.boardArray[boardCenter+1][col-1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-90', used: 'unused', damageStatus: 5, team: 'Orange Team', goods: 'none', stock: 0, production: 0, homeRow: boardCenter+1, homeCol: col-1};
-        this.boardArray[0][boardCenter-1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '180', used: 'unused', damageStatus: 5, team: 'Red Team', goods: 'none', stock: 0, production: 0, homeRow: 0, homeCol: boardCenter-1};
-        this.boardArray[0][boardCenter+1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '180', used: 'unused', damageStatus: 5, team: 'Red Team', goods: 'none', stock: 0, production: 0, homeRow: 0, homeCol: boardCenter+1};
-        this.boardArray[row-1][boardCenter-1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '0', used: 'unused', damageStatus: 5, team: 'Green Team', goods: 'none', stock: 0, production: 0, homeRow: row-1, homeCol: boardCenter-1};
-        this.boardArray[row-1][boardCenter+1].pieces = {populatedSquare: true, category: 'Transport', type: 'warship', direction: '0', used: 'unused', damageStatus: 5, team: 'Green Team', goods: 'none', stock: 0, production: 0, homeRow: row-1, homeCol: boardCenter+1};
-        this.boardArray[row-2][boardCenter].pieces = {populatedSquare: true, category: 'Transport', type: 'catamaran', direction: '0', used: 'unused', damageStatus: 5, team: 'Green Team', goods: 'none', stock: 0, production: 0, homeRow: row-1, homeCol: boardCenter+1};
-        this.boardArray[boardCenter-1][0].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '90', used: 'unused', damageStatus: 5, team: 'Blue Team', goods: 'none', stock: 0, production: 0, homeRow: boardCenter-1, homeCol: 0};
-        this.boardArray[boardCenter+1][0].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '90', used: 'unused', damageStatus: 5, team: 'Blue Team', goods: 'none', stock: 0, production: 0, homeRow: boardCenter+1, homeCol: 0};
+        this.boardArray[boardCenter-1][col-1].pieces = {populatedSquare: true, category: 'Transport', type: 'catamaran', direction: '-90', used: 'unused', damageStatus: 5, team: 'Orange Team', goods: 'none', stock: 0, production: 0, homeRow: boardCenter-1, homeCol: col-1};
+        //this.boardArray[boardCenter+1][col-1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-90', used: 'unused', damageStatus: 5, team: 'Orange Team', goods: 'none', stock: 0, production: 0, homeRow: boardCenter+1, homeCol: col-1};
+        this.boardArray[0][boardCenter-1].pieces = {populatedSquare: true, category: 'Transport', type: 'catamaran', direction: '180', used: 'unused', damageStatus: 5, team: 'Red Team', goods: 'none', stock: 0, production: 0, homeRow: 0, homeCol: boardCenter-1};
+        //this.boardArray[0][boardCenter+1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '180', used: 'unused', damageStatus: 5, team: 'Red Team', goods: 'none', stock: 0, production: 0, homeRow: 0, homeCol: boardCenter+1};
+        //this.boardArray[row-1][boardCenter-1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '0', used: 'unused', damageStatus: 5, team: 'Green Team', goods: 'none', stock: 0, production: 0, homeRow: row-1, homeCol: boardCenter-1};
+        this.boardArray[row-1][boardCenter+1].pieces = {populatedSquare: true, category: 'Transport', type: 'catamaran', direction: '0', used: 'unused', damageStatus: 5, team: 'Green Team', goods: 'none', stock: 0, production: 0, homeRow: row-1, homeCol: boardCenter+1};
+        //this.boardArray[row-2][boardCenter].pieces = {populatedSquare: true, category: 'Transport', type: 'warship', direction: '0', used: 'unused', damageStatus: 5, team: 'Green Team', goods: 'none', stock: 0, production: 0, homeRow: row-1, homeCol: boardCenter+1};
+        //this.boardArray[boardCenter-1][0].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '90', used: 'unused', damageStatus: 5, team: 'Blue Team', goods: 'none', stock: 0, production: 0, homeRow: boardCenter-1, homeCol: 0};
+        this.boardArray[boardCenter+1][0].pieces = {populatedSquare: true, category: 'Transport', type: 'catamaran', direction: '90', used: 'unused', damageStatus: 5, team: 'Blue Team', goods: 'none', stock: 0, production: 0, homeRow: boardCenter+1, homeCol: 0};
 
         // Creation of pirate ships and pirate harbours
         this.boardArray[4][6] = {xpos: 4, ypos: 6, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'warship', direction: '135', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0, ref: 0}};
@@ -200,11 +200,8 @@ let gameBoard = {
         this.boardArray[boardCenter][boardCenter+1].pieces = {populatedSquare: true, category: 'Resources', type: 'plantation', direction: '0', used: 'unused', damageStatus: 5, team: 'Kingdom', goods: 'coffee', stock: 0, production: 2};
 
         // TEST AREA
-    /*  this.boardArray[(row-4)][boardCenter].terrain = 'land';
-        this.boardArray[(row-4)][boardCenter].pieces = {populatedSquare: true, category: 'Settlements', type: 'fort', direction: '0', used: 'unused', damageStatus: 5, team: 'Kingdom', goods: 'none', stock: 0};
-        tradeContracts.contractsArray[2].row = row-4;
-        tradeContracts.contractsArray[2].col = boardCenter;
 
+    /*  
         // Battle Royale
         this.boardArray[row-4][boardCenter].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0};
         this.boardArray[row-4][boardCenter + 1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0};
@@ -231,7 +228,7 @@ let gameBoard = {
                               {i: row-1, j: boardCenter+1, team: 'Green Team'},
                               {i: boardCenter+1, j: 0, team: 'Blue Team'}]
 
-        // function picks a tile form the resource deck and checks polayer does not already have this Resource allocated
+        // function picks a tile form the resource deck and checks player does not already have this Resource allocated
         function completeAllocatedTile(locali, localj, localTeam) {
             stockDashboard.stockTake();
             //keep for debugging -  console.log(stockDashboard.pieceTotals);
@@ -241,7 +238,7 @@ let gameBoard = {
                 var deckCard = resourceManagement.pickFromResourceDeck();
                 //keep for debugging - console.log(deckCard.type);
             }
-            while (stockDashboard.pieceTotals[pieceTotalsTeamPosition].pieces[deckCard.type] > 0)
+            while (stockDashboard.pieceTotals[pieceTotalsTeamPosition].pieces[deckCard.type].quantity > 0)
 
             gameBoard.boardArray[locali][localj].pieces = {populatedSquare: true, category: 'Resources', type: deckCard.type, direction: '0', used: 'unused', damageStatus: 5, team: localTeam, goods: deckCard.goods, stock: 0};
         }

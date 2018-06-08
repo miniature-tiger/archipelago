@@ -10,14 +10,14 @@ let stockDashboard = {
     // Array to hold list of all piece types
     // -------------------------------------
     // Pieces must be added in the order: Settlements, Transport, Resources
-    pieceTypes: [ {type: 'fort', category: 'Settlements', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 0, deckNumber: 0},
-                  {type: 'catamaran', category: 'Transport', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 5, deckNumber: 0},
-                  {type: 'warship', category: 'Transport', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 4, deckNumber: 0},
-                  {type: 'cargo ship', category: 'Transport', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 3, deckNumber: 0},
-                  {type: 'forest', category: 'Resources', maxNo: 1, goods: 'wood', maxProduction: 2, maxMove: 0, deckNumber: 4},
-                  {type: 'ironworks', category: 'Resources', maxNo: 1, goods: 'iron', maxProduction: 2, maxMove: 0, deckNumber: 4},
-                  {type: 'quarry', category: 'Resources', maxNo: 1, goods: 'stone', maxProduction: 2, maxMove: 0, deckNumber: 4},
-                  {type: 'plantation', category: 'Resources', maxNo: 1, goods: 'coffee', maxProduction: 2, maxMove: 0, deckNumber: 4}
+    pieceTypes: [ {type: 'fort', category: 'Settlements', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 0, maxHold: 20, deckNumber: 0},
+                  {type: 'catamaran', category: 'Transport', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 5, maxHold: 5, deckNumber: 0},
+                  {type: 'warship', category: 'Transport', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 4, maxHold: 10, deckNumber: 0},
+                  {type: 'cargo ship', category: 'Transport', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 3, maxHold: 20, deckNumber: 0},
+                  {type: 'forest', category: 'Resources', maxNo: 1, goods: 'wood', maxProduction: 2, maxMove: 0, maxHold: 20, deckNumber: 4},
+                  {type: 'ironworks', category: 'Resources', maxNo: 1, goods: 'iron', maxProduction: 2, maxMove: 0, maxHold: 20, deckNumber: 4},
+                  {type: 'quarry', category: 'Resources', maxNo: 1, goods: 'stone', maxProduction: 2, maxMove: 0, maxHold: 20, deckNumber: 4},
+                  {type: 'plantation', category: 'Resources', maxNo: 1, goods: 'coffee', maxProduction: 2, maxMove: 0, maxHold: 20, deckNumber: 4}
                 ],
 
 
@@ -28,36 +28,41 @@ let stockDashboard = {
 
     stockTake: function() {
         let counter = 0;
+        let piecesGoods = 'none';
+        let piecesStock = 0;
+
         for (var h = 0; h < gameManagement.teamArray.length; h++) {
             //console.log(gameManagement.teamArray[h]);
             stockDashboard.pieceTotals[h] = {team: gameManagement.teamArray[h], pieces: {}};
             for (var k = 0; k < stockDashboard.pieceTypes.length; k++) {
                 //console.log(stockDashboard.pieceTypes[k].type);
-                stockDashboard.pieceTotals[h].pieces[stockDashboard.pieceTypes[k].type] = 0;
+                stockDashboard.pieceTotals[h].pieces[stockDashboard.pieceTypes[k].type] = {};
                 counter = 0;
+                piecesGoods = 'none';
+                piecesStock = 0;
                 for (var i = 0; i < gameBoard.boardArray.length; i++) {
                     for (var j = 0; j < gameBoard.boardArray[i].length; j++) {
                         if(gameBoard.boardArray[i][j].pieces.populatedSquare) {
                             if(gameBoard.boardArray[i][j].pieces.team == gameManagement.teamArray[h]) {
                                 if(gameBoard.boardArray[i][j].pieces.type == stockDashboard.pieceTypes[k].type) {
                                     counter += 1;
+                                    piecesGoods = gameBoard.boardArray[i][j].pieces.goods;
+                                    piecesStock = gameBoard.boardArray[i][j].pieces.stock;
                                 }
                             }
                         }
                     }
                 }
-                stockDashboard.pieceTotals[h].pieces[stockDashboard.pieceTypes[k].type] = counter;
+                stockDashboard.pieceTotals[h].pieces[stockDashboard.pieceTypes[k].type] = {quantity: counter, goods: piecesGoods, stock: piecesStock};
             }
         }
-          //console.log(stockDashboard.pieceTotals);
+          console.log('pieceTotals', stockDashboard.pieceTotals);
     },
 
     // Method to populate stock dashboard on left-hand panel
     // -----------------------------------------------------
 
-    drawStock : function() {
-        // Finds the stockDashboard holder in the left hand panel
-        let stockDashboardNode = document.querySelector('div.stockDashboard');
+    drawStock: function() {
 
         // Any existing dashboard is deleted
         while (stockDashboardNode.firstChild) {
@@ -71,7 +76,7 @@ let stockDashboard = {
             let rotateIcon = 0;
             let xPosition = 0;
 
-            // Loops through all the piece types
+            // Loops through all the piece types in pieceTypes array - dashboard is created one piece type at a time - k is each piece type
             for (var k = 0; k < this.pieceTypes.length; k++) {
                 //Sets counter to zero
                 let counter = 0;
@@ -95,7 +100,7 @@ let stockDashboard = {
                     divCat.appendChild(divCatTitle);
                 }
 
-                // Loop through boardArray
+                // Loop through boardArray - looks for pieces for current turn team and piece type k
                 for (var i = 0; i < gameBoard.boardArray.length; i++) {
                     for (var j = 0; j < gameBoard.boardArray[i].length; j++) {
                         if(gameBoard.boardArray[i][j].pieces.team == gameManagement.turn) {
@@ -113,6 +118,7 @@ let stockDashboard = {
                                 divType.appendChild(divForText);
 
                                 //let divTypeTitle = document.createTextNode(' ' + this.pieceTypes[i].type + ': ' + this.pieceTotals[0].pieces[this.pieceTypes[i].type]);
+                                // Adds x2 (or equivalent) indicator if production greater than 1
                                 if (this.pieceTypes[k].category == 'Resources' && gameBoard.boardArray[i][j].pieces.production > 1) {
                                     let divTypeTitle = document.createTextNode('x' + gameBoard.boardArray[i][j].pieces.production);
                                     divForText.style.fontWeight = 'bold';
@@ -122,16 +128,15 @@ let stockDashboard = {
                                     divForText.appendChild(divTypeTitle);
                                 }
 
-
                                 let divForStock = document.createElement('div');
                                 divForStock.setAttribute('class', 'stock_item_holder');
-                                divCat.appendChild(divForStock);
+                                divType.appendChild(divForStock);
 
                                 if (this.pieceTypes[k].category != 'Resources' && gameBoard.boardArray[i][j].pieces.stock == 0) {
                                     let divStockTitle = document.createTextNode('no cargo');
                                     divForStock.appendChild(divStockTitle);
                                 } else {
-                                    let divStockTitle = document.createTextNode(gameBoard.boardArray[i][j].pieces.goods + ': ' + gameBoard.boardArray[i][j].pieces.stock);
+                                    let divStockTitle = document.createTextNode(gameBoard.boardArray[i][j].pieces.goods + ': ' + gameBoard.boardArray[i][j].pieces.stock + '/' + this.pieceTypes[k].maxHold);
                                     divForStock.appendChild(divStockTitle);
                                 }
                                 counter += 1;
@@ -139,17 +144,30 @@ let stockDashboard = {
                         }
                     }
                 }
+                // If no pieces of type k found:
                 if (counter == 0) {
+                    let additionalClass = '';
+                    if (this.pieceTypes[k].type == 'cargo ship') {
+                        additionalClass = 'buildcargo';
+                    } else if (this.pieceTypes[k].category == 'Transport') {
+                        additionalClass = 'build' + this.pieceTypes[k].type;
+                    }
+
                     // Div to hold piece type is created and icon added
                     let divType = document.createElement('div');
-                    divType.setAttribute('class', 'inner_item_holder');
+                    divType.setAttribute('class', 'inner_item_holder ' + additionalClass);
                     divCat.appendChild(divType);
                     // Icon added
                     let divTypeIcon = gameBoard.createActionTile(0, 0, this.pieceTypes[k].type, 'Unclaimed', 'dash_' + this.pieceTypes[k].type, 2, xPosition, 1.5, rotateIcon);
+                    if (this.pieceTypes[k].category == 'Transport') {
+                        //divTypeIcon.setAttribute('class', additionalClass);
+                        divTypeIcon.classList.add(additionalClass);
+                        console.log(divTypeIcon.classList);
+                    }
                     divType.appendChild(divTypeIcon);
 
                     let divForText = document.createElement('div');
-                    divForText.setAttribute('class', 'dashboard_text');
+                    divForText.setAttribute('class', 'dashboard_text ' + additionalClass);
                     divType.appendChild(divForText);
 
                     //let divTypeTitle = document.createTextNode(' ' + this.pieceTypes[i].type + ': ' + this.pieceTotals[0].pieces[this.pieceTypes[i].type]);
@@ -157,12 +175,16 @@ let stockDashboard = {
                     divForText.appendChild(divTypeTitle);
 
                     let divForStock = document.createElement('div');
-                    divForStock.setAttribute('class', 'stock_item_holder');
-                    divCat.appendChild(divForStock);
+                    divForStock.setAttribute('class', 'stock_item_holder ' + additionalClass);
+                    divType.appendChild(divForStock);
 
-                    //let arrayPosition = this.pieceTypes.findIndex(fI => fI.type == gameManagement.turn);
-                    let divStockTitle = document.createTextNode('no ' + this.pieceTypes[k].goods);
-                    divForStock.appendChild(divStockTitle);
+                    if (this.pieceTypes[k].category == 'Resources') {
+                        let divStockTitle = document.createTextNode('no ' + this.pieceTypes[k].goods);
+                        divForStock.appendChild(divStockTitle);
+                    } else if (this.pieceTypes[k].category == 'Transport') {
+                        let divStockTitle = document.createTextNode('build');
+                        divForStock.appendChild(divStockTitle);
+                    }
                 }
             }
         }
@@ -173,31 +195,43 @@ let stockDashboard = {
 
     populateGoodsTotals: function () {
         for (var h = 0; h < gameManagement.teamArray.length; h++) {
-            this.goodsTotals.push({team: gameManagement.teamArray[h], goods: {wood: 0, iron: 0, stone: 0}});
+            this.goodsTotals.push({team: gameManagement.teamArray[h], land: {wood: 0, iron: 0, stone: 0}, sea: {wood: 0, iron: 0, stone: 0}, total: {wood: 0, iron: 0, stone: 0}});
         }
+        console.log(this.goodsTotals);
+        console.log(this.pieceTypes[0].goods);
+        console.log(this.goodsTotals[0].land[this.pieceTypes[0].goods]);
     },
 
     goodsStockTake: function() {
         let counter = 0;
         for (var h = 0; h < gameManagement.teamArray.length; h++) {
             //console.log(gameManagement.teamArray[h]);
-            this.goodsTotals[h] = {team: gameManagement.teamArray[h], goods: {}};
+            this.goodsTotals[h] = {team: gameManagement.teamArray[h], land: {wood: 0, iron: 0, stone: 0}, sea: {wood: 0, iron: 0, stone: 0}, total: {wood: 0, iron: 0, stone: 0}};
             for (var k = 0; k < this.pieceTypes.length; k++) {
                 //console.log(stockDashboard.pieceTypes[k].type);
-                this.goodsTotals[h].goods[this.pieceTypes[k].goods] = 0;
-                counter = 0;
+                this.goodsTotals[h].land[this.pieceTypes[k].goods] = 0;
+                this.goodsTotals[h].sea[this.pieceTypes[k].goods] = 0;
+                this.goodsTotals[h].total[this.pieceTypes[k].goods] = 0;
+                counterLand = 0;
+                counterSea = 0;
                 for (var i = 0; i < gameBoard.boardArray.length; i++) {
                     for (var j = 0; j < gameBoard.boardArray[i].length; j++) {
                         if(gameBoard.boardArray[i][j].pieces.populatedSquare) {
                             if(gameBoard.boardArray[i][j].pieces.team == gameManagement.teamArray[h]) {
                                 if(gameBoard.boardArray[i][j].pieces.goods == this.pieceTypes[k].goods) {
-                                    counter += gameBoard.boardArray[i][j].pieces.stock;
+                                    if (gameBoard.boardArray[i][j].terrain == 'land') {
+                                        counterLand += gameBoard.boardArray[i][j].pieces.stock;
+                                    } else if (gameBoard.boardArray[i][j].terrain == 'sea') {
+                                        counterSea += gameBoard.boardArray[i][j].pieces.stock;
+                                    }
                                 }
                             }
                         }
                     }
                 }
-                this.goodsTotals[h].goods[this.pieceTypes[k].goods] = counter;
+                this.goodsTotals[h].land[this.pieceTypes[k].goods] = counterLand;
+                this.goodsTotals[h].sea[this.pieceTypes[k].goods] = counterSea;
+                this.goodsTotals[h].total[this.pieceTypes[k].goods] = counterLand + counterSea;
             }
         }
     },

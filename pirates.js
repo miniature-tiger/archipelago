@@ -120,6 +120,8 @@ let pirates = {
         if (pirates.pirateCount == -1) {
             // Generate array of all pirate ships to be moved
             this.populatePirateShipsArray();
+            stockDashboard.drawStock();
+            tradeContracts.drawContracts();
         }
         // Moves on to next ship
         pirates.pirateCount +=1;
@@ -143,6 +145,7 @@ let pirates = {
             pirates.pirateCount = -1;
             endTurn.addEventListener('click', nextTurn);
             boardMarkNode.addEventListener('click', boardHandler);
+            stockDashboardNode.addEventListener('click', buildItem.clickStock);
         }
 
     },
@@ -264,12 +267,14 @@ let pirates = {
         for (var i = 0; i < row; i++) {
             for (var j = 0; j < col; j++) {
                 if (gameBoard.boardArray[i][j].pieces.type == 'fort') {
+                    let fortTeam = gameBoard.boardArray[i][j].pieces.team;
                     for (var k = -1; k <= 1; k++) {
                         for (var l = -1; l <= 1; l++) {
                             if ((i+k >= 0) && (i+k < row)) {
                                 if ((j+l >= 0) && (j+l < col)) {
                                     if (gameBoard.boardArray[i+k][j+l].terrain == 'sea') {
                                         gameBoard.boardArray[i+k][j+l].subTerrain = 'harbour';
+                                        gameBoard.boardArray[i+k][j+l].pieces.team = fortTeam;
                                     }
                                 }
                             }

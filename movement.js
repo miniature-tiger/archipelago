@@ -414,6 +414,7 @@ let pieceMovement = {
             startEnd = 'start';
             endTurn.addEventListener('click', nextTurn);
             boardMarkNode.addEventListener('click', boardHandler);
+            stockDashboardNode.addEventListener('click', buildItem.clickStock);
         } else if (gameManagement.turn == 'Pirate') {
 
             // Resetting movement array once second click has been made (if move valid)

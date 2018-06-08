@@ -55,7 +55,7 @@ for (var a = 0; a < sideCollection.length; a++) {
   sideCollection[a].style.fontSize = (0.6 * screenReduction) + 'em';
 }
 
-let headFootCollection = document.querySelectorAll(' .the_header, .the_footer, .commentary');
+let headFootCollection = document.querySelectorAll(' .the_header, .the_footer, .commentary, .building');
 
 for (var c = 0; c < headFootCollection.length; c++) {
 
@@ -88,6 +88,9 @@ boardMarkNode.appendChild(tradeRouteLayer);
 // SVG layer for moon and time set up (same height and width as board)
 let moonLayer = gameBoard.createNewLayer('moonLayer');
 boardMarkNode.appendChild(moonLayer);
+
+// Finds the stockDashboard holder in the left hand panel
+let stockDashboardNode = document.querySelector('div.stockDashboard');
 
 // Function to set up board and resource deck and allocate resources
 function boardSetUp(row, col, gridSize, boardShape) {
@@ -129,33 +132,6 @@ let gameSpeedRef = gameManagement.optionsArray[0].options.findIndex(item => item
 let gameSpeed = gameManagement.optionsArray[0].options[gameSpeedRef].constant;
 
 
-// board size button handler
-/*var elSize = document.querySelector('.boardSizeSelect');
-elSize.addEventListener('click', function(element) {
-    if(element.target.classList.contains('boardSizeSelect_31')) {
-        row = 31;
-        col = 31;
-        boardSetUp(row, col, gridSize, boardShape);
-    } else if (element.target.classList.contains('boardSizeSelect_40')) {
-        row = 40;
-        col = 40;
-        boardSetUp(row, col, gridSize, boardShape);
-    }
-});
-
-// board shape button handler
-var elShape = document.querySelector('.boardShapeSelect');
-elShape.addEventListener('click', function(element) {
-    if(element.target.classList.contains('boardShapeSelect_octagon')) {
-        boardShape = 'octagon';
-        boardSetUp(row, col, gridSize, boardShape);
-    } else if (element.target.classList.contains('boardShapeSelect_square')) {
-        boardShape = 'square';
-        boardSetUp(row, col, gridSize, boardShape);
-    }
-});*/
-
-
 // ------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------
 // SET UP THE SURROUND
@@ -183,11 +159,12 @@ stockDashboard.drawStock();
 tradeContracts.populateContracts();
 tradeContracts.drawContracts();
 
+
 // Set up of goods dashboard
 // -------------------------
 
 
-stockDashboard.goodsStockTake();
+//stockDashboard.goodsStockTake();
 
   //console.log(gameBoard.boardArray);
 
@@ -222,6 +199,8 @@ function nextTurn() {
     commentary.removeEventListener('click', clickGoods);
     clearCommentary();
 
+    buildItem.clearBuilding();
+
     // Resetting used pieces
     pieceMovement.usedPiecesReset();
 
@@ -239,8 +218,10 @@ function nextTurn() {
     needleDirection = compass.directionArray[windDirection].needle;
     needle.style.transform = 'rotate(' + needleDirection + 'deg)';
 
-    // Comment bar reset
+    // Comment and building bars reset
     commentary.style.bottom = '-10%';
+    building.style.bottom = '-15%';
+
     // End turn button colour is changed
     endTurn.setAttribute('class', gameManagement.turn + ' team_fill team_stroke');
 
@@ -273,7 +254,7 @@ function nextTurn() {
         tradeContracts.drawContracts();
 
         // Update the goods dashboard
-        stockDashboard.goodsStockTake();
+        //stockDashboard.goodsStockTake();
     }
 }
 
@@ -320,6 +301,23 @@ function popRunClose(e) {
     }
 };
 
+// Set up of building event listener
+// ------------------------------
+
+// building slider set up
+let building = document.querySelector('.building');
+let firstBuildLine = document.querySelector('#firstBuildLine');
+let secondBuildLine = document.querySelector('#secondBuildLine');
+let thirdBuildLine = document.querySelector('#thirdBuildLine');
+
+firstBuildLine.style.left = '7%';
+secondBuildLine.style.left = '7%';
+thirdBuildLine.style.left = '7%';
+
+// Event listener added to stock dashboard
+stockDashboardNode.addEventListener('click', buildItem.clickStock);
+
+
 // ------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------
 // PIECE MOVEMENT
@@ -342,7 +340,7 @@ let startEnd = 'start';
 let chosenSquare = {start: '', end: ''};
 let chosenHolding = {start: '', end: ''};
 
-// commentary box - Future work: develop into illustrated commentary by side of board (with flags and pieces)
+// commentary box set up
 let commentary = document.querySelector('.commentary');
 let firstLineComment = document.querySelector('#firstLine');
 let secondLineComment = document.querySelector('#secondLine');
@@ -363,6 +361,10 @@ function clearCommentary() {
         }
     }
 }
+
+
+
+
 
 // Function for goods quantity selection
 // ------------------------------------
@@ -476,6 +478,7 @@ function boardHandler(event) {
             if (pieceMovement.movementArray[startEnd].pieces.stock > 0) {
                 firstLineComment.insertAdjacentText('beforeend', ' - ' + pieceMovement.movementArray[startEnd].pieces.goods + ": " + pieceMovement.movementArray[startEnd].pieces.stock);
             }
+            building.style.bottom = '-15%';
             commentary.style.bottom = 0;
 
             // commentary event handler for goods
@@ -490,7 +493,7 @@ function boardHandler(event) {
                 if (pieceMovement.movementArray[startEnd].pieces.category == 'Resources' && pieceMovement.movementArray[startEnd].pieces.type != 'desert' && pieceMovement.movementArray[startEnd].pieces.team == 'Unclaimed') {
                     // Check that this resource type is not already held by player
                     let pieceTotalsTeamPosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == gameManagement.turn);
-                    if(stockDashboard.pieceTotals[pieceTotalsTeamPosition].pieces[pieceMovement.movementArray.start.pieces.type] == 0) {
+                    if(stockDashboard.pieceTotals[pieceTotalsTeamPosition].pieces[pieceMovement.movementArray.start.pieces.type].quantity == 0) {
                         if (pieceMovement.shipAvailable('crew') == 'crew') {
                             // TO ADD - Check that ship has not previously landed crew somewhere
                             secondLineComment.innerText = 'Click ship to land team and claim resource';
@@ -563,8 +566,10 @@ function boardHandler(event) {
         // Once "start" piece has been selected second click needs to be to an active "end" square
         // Piece move is then made
         } else if (startEnd == 'end') {
-            // Removing commentary
+            // Removing commentary / building slider
             commentary.style.bottom = '-10%';
+            building.style.bottom = '-15%';
+
             if (pieceMovement.movementArray.end.activeStatus == 'active') {
                 // Claiming of unclaimed resources
                 if (pieceMovement.movementArray.end.pieces.category == 'Transport' && pieceMovement.movementArray.start.pieces.type != 'desert' && pieceMovement.movementArray.start.pieces.team == 'Unclaimed') {
@@ -583,6 +588,8 @@ function boardHandler(event) {
                     pieceMovement.deactivateTiles(1);
                     gameBoard.drawActiveTiles();
                     //loadingStock = gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.stock;
+                    let arrayPosition = stockDashboard.pieceTypes.findIndex(k => k.type == pieceMovement.movementArray.end.pieces.type);
+                    loadingStock = Math.min(loadingStock, stockDashboard.pieceTypes[arrayPosition].maxHold - pieceMovement.movementArray.end.pieces.stock);
                     loadingGoods = gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.goods;
                     gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.stock -= loadingStock;
                     if (gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.category == 'Settlements') {
@@ -615,11 +622,25 @@ function boardHandler(event) {
                     gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces.stock += loadingStock;
                     gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces.goods = loadingGoods;
                     loadingStock = 0;
-
+                // Building new ship
+              } else if (pieceMovement.movementArray.start.pieces.category == 'Building') {
+                    pieceMovement.deactivateTiles(1);
+                    gameBoard.drawActiveTiles();
+                    let newShip = boardMarkNode.appendChild(gameBoard.createActionTile(pieceMovement.movementArray.end.row, pieceMovement.movementArray.end.col, pieceMovement.movementArray.start.pieces.type, gameManagement.turn,
+                      'tile' + Number((pieceMovement.movementArray.end.row)*1000 + (pieceMovement.movementArray.end.col)), boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * (pieceMovement.movementArray.end.row), boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * (pieceMovement.movementArray.end.col), 1, pieceMovement.movementArray.end.pieces.direction));
+                    if (pieceMovement.movementArray.start.pieces.type == 'cargo ship') {
+                        gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces = {populatedSquare: true, category: 'Transport', type: pieceMovement.movementArray.start.pieces.type, direction: '0', used: 'unused', damageStatus: 1, team: gameManagement.turn, goods: 'none', stock: 0, production: 0};
+                        gameBoard.repairShip(newShip, gameManagement.turn, pieceMovement.movementArray.start.pieces.type, 1);
+                    } else if (pieceMovement.movementArray.start.pieces.type == 'warship') {
+                        gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces = {populatedSquare: true, category: 'Transport', type: pieceMovement.movementArray.start.pieces.type, direction: '0', used: 'unused', damageStatus: 3, team: gameManagement.turn, goods: 'none', stock: 0, production: 0};
+                        gameBoard.repairShip(newShip, gameManagement.turn, pieceMovement.movementArray.start.pieces.type, 3);
+                    }
+                    buildItem.constructionPayment(pieceMovement.movementArray.start.pieces.type);
                 // Piece movement
               } else if (pieceMovement.movementArray.start.pieces.category == 'Transport') {
                     endTurn.removeEventListener('click', nextTurn);
                     boardMarkNode.removeEventListener('click', boardHandler);
+                    stockDashboardNode.removeEventListener('click', buildItem.clickStock);
                     pieceMovement.deactivateTiles(maxMove);
                     // Redraw active tile layer after deactivation to remove activated tiles
                     gameBoard.drawActiveTiles();
@@ -628,16 +649,7 @@ function boardHandler(event) {
                 }
             } else {
                 // Resetting if second click is not valid
-                pieceMovement.deactivateTiles(maxMove);
-                gameBoard.drawActiveTiles();
-
-                // Resetting movement array once second click has been made (if invalid)
-                pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
-                startEnd = 'start';
-
-                // Removing commentary goods event handler
-                commentary.removeEventListener('click', clickGoods);
-                clearCommentary();
+                resetMove();
             }
 
             // Update the stock dashboard
@@ -645,6 +657,19 @@ function boardHandler(event) {
             stockDashboard.drawStock();
         }
     }
+}
+
+function resetMove() {
+    pieceMovement.deactivateTiles(maxMove);
+    gameBoard.drawActiveTiles();
+
+    // Resetting movement array once second click has been made (if invalid)
+    pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
+    startEnd = 'start';
+
+    // Removing commentary goods event handler
+    commentary.removeEventListener('click', clickGoods);
+    clearCommentary();
 }
 
 // boardMarkNode is board holder in document
