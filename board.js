@@ -201,7 +201,10 @@ let gameBoard = {
 
         // TEST AREA
 
-    /*  
+    /*
+        // Flax
+        //this.boardArray[row-3][boardCenter] = {xpos: row-3, ypos: boardCenter, terrain: 'land', subTerrain: 'none', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Resources', type: 'flax', direction: '0', used: 'unused', damageStatus: 5, team: 'Unclaimed', goods: 'cloth', stock: 18, production: 1}};
+
         // Battle Royale
         this.boardArray[row-4][boardCenter].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0};
         this.boardArray[row-4][boardCenter + 1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0};
@@ -365,6 +368,8 @@ let gameBoard = {
             this.createDesertTile(actionTile, localTeam);
         } else if (localType == 'plantation') {
             this.createPlantationTile(actionTile, localTeam);
+        } else if (localType == 'flax') {
+            this.createFlaxTile(actionTile, localTeam);
         }
 
         // tile is returned to drawBoard
@@ -396,6 +401,8 @@ let gameBoard = {
             this.createIronIcon(goodsIcon);
         } else if (localGoods == 'wood') {
             this.createWoodIcon(goodsIcon);
+        } else if (localGoods == 'cloth') {
+            this.createClothIcon(goodsIcon);
         }
 
         // tile is returned to drawBoard
@@ -946,6 +953,65 @@ let gameBoard = {
         return actionTile;
     },
 
+    // Method to create plantation tile
+    // --------------------------------
+    createFlaxTile: function(actionTile, localTeam) {
+
+        function createPetal(centerX, centerY, rotatePetal, size, teamColour) {
+        // petal
+            let petal = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            if (teamColour == true) {
+                petal.setAttribute('class', localTeam + ' team_fill team_stroke');
+                petal.setAttribute('fill', 'rgb(213, 191, 163)');
+            } else {
+                petal.setAttribute('class', localTeam);
+                petal.setAttribute('fill', 'white');
+            }
+            petal.setAttribute('d', 'M ' + (centerX - 1.5) + ' ' + (centerY - 1.5) + ' A ' + size + ' ' + size + ' 0 1 0 '+ (centerX - 1.5) + ' ' +  (centerY + 1.5) + ' L ' + centerX + ' ' + centerY + ' Z');
+            petal.setAttribute('stroke','rgb(138, 87, 50)');
+
+            petal.setAttribute('stroke-linecap', 'round');
+            petal.setAttribute('transform', 'scale(0.9, 0.9), translate(1.38, 1.38), rotate(' + rotatePetal + ', ' + centerX + ', ' + centerY + ')');
+            return petal
+        }
+
+        let petal1 = createPetal(11.65, 6.65, 45, 2.75, true);
+        let petal2 = createPetal(13.35, 8.35, 225, 2.75, true);
+        let petal3 = createPetal(11.65, 8.35, 315, 2.75, true);
+        let petal4 = createPetal(13.35, 6.65, 135, 2.75, true);
+        let bud1 = createPetal(3.5, 13.5, 250, 2, false);
+        let bud2 = createPetal(21.5, 13.5, 290, 2, false);
+
+        // branch
+        let flaxBranch = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        flaxBranch.setAttribute('class', localTeam);
+        flaxBranch.setAttribute('d', 'M 6 18.75 A 6 2 0 1 0 19 18.75');
+        flaxBranch.setAttribute('stroke','rgb(138, 87, 50)');
+        flaxBranch.setAttribute('fill', 'none');
+        flaxBranch.setAttribute('stroke-linecap', 'round');
+
+        // stalk
+        let flaxStalk = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        flaxStalk.setAttribute('class', localTeam + ' team_stroke');
+        flaxStalk.setAttribute('d', 'M 12.5 13.5 L 12.5 22');
+        flaxStalk.setAttribute('stroke','rgb(138, 87, 50)');
+        flaxStalk.setAttribute('fill', 'none');
+        flaxStalk.setAttribute('stroke-linecap', 'round');
+
+        // Building the tile
+        actionTile.appendChild(petal1);
+        actionTile.appendChild(petal2);
+        actionTile.appendChild(petal3);
+        actionTile.appendChild(petal4);
+        actionTile.appendChild(bud1);
+        actionTile.appendChild(bud2);
+        actionTile.appendChild(flaxBranch);
+        actionTile.appendChild(flaxStalk);
+
+
+        return actionTile;
+    },
+
     // Method to create coffee bean goods icon
     // ----------------------------------------
     createCoffeeIcon: function(goodsIcon) {
@@ -1064,7 +1130,7 @@ let gameBoard = {
     createIronIcon: function(goodsIcon) {
         // Front end of joist
         let frontEnd = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        frontEnd.setAttribute('d','M 5 10 L 13 10 L 13 13 L 10.5 13 L 10.5 18 L 13 18 L 13 21 L 5 21 L 5 18 L 7.5 18 L 7.5 13 L 5 13 Z');
+        //frontEnd.setAttribute('d','M 5 10 L 13 10 L 13 13 L 10.5 13 L 10.5 18 L 13 18 L 13 21 L 5 21 L 5 18 L 7.5 18 L 7.5 13 L 5 13 Z');
         frontEnd.setAttribute('d','M 5 5 L 20 5 L 20 8 L 14 8 L 14 17 L 20 17 L 20 20 L 5 20 L 5 17 L 11 17 L 11 8 L 5 8 Z');
         frontEnd.setAttribute('stroke','rgb(89, 53, 20)');
         frontEnd.setAttribute('stroke','black');
@@ -1074,6 +1140,23 @@ let gameBoard = {
         frontEnd.style.strokeWidth = '1px';
 
         goodsIcon.appendChild(frontEnd);
+        return(goodsIcon);
+    },
+
+    // Method to create iron goods icon
+    // ----------------------------------------
+    createClothIcon: function(goodsIcon) {
+        // Front end of joist
+        let sailCloth = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        sailCloth.setAttribute('d','M 5 20 A 15 15 1 0 0 12 3 A 15 15 1 0 1 18 20 Z');
+        sailCloth.setAttribute('stroke','rgb(89, 53, 20)');
+        sailCloth.setAttribute('stroke','rgb(89, 53, 20)');
+        sailCloth.setAttribute('fill', 'white');
+        sailCloth.setAttribute('stroke-linecap', 'round');
+        sailCloth.setAttribute('stroke-linejoin', 'round');
+        sailCloth.style.strokeWidth = '1px';
+
+        goodsIcon.appendChild(sailCloth);
         return(goodsIcon);
     },
 

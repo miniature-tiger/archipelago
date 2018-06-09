@@ -129,6 +129,16 @@
     z-index: 10;
 }
 
+/* Flax */
+.flax {
+    position: absolute;
+    background-color: transparent;
+    z-index: 10;
+}
+
+
+
+
 .goodsGroup {
     position: absolute;
     background-color: transparent;
