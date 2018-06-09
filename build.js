@@ -4,8 +4,8 @@ let buildItem = {
     // Array to hold building recipes
     // -------------------------------
     buildRecipe: [
-                  {type: 'warship', recipe: [{goods: 'wood', quantity: 8}, {goods: 'iron', quantity: 12}, {goods: 'stone', quantity: 8}]},
-                  {type: 'cargo ship', recipe: [{goods: 'wood', quantity: 10}, {goods: 'iron', quantity: 10}, {goods: 'stone', quantity: 8}]},
+                  {type: 'warship', recipe: [{goods: 'wood', quantity: 10}, {goods: 'iron', quantity: 15}, {goods: 'cloth', quantity: 4}]},
+                  {type: 'cargo ship', recipe: [{goods: 'wood', quantity: 15}, {goods: 'iron', quantity: 10}, {goods: 'cloth', quantity: 8}]},
                   ],
 
     // Method to handle clicks on stock dashboard
