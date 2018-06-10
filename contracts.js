@@ -50,10 +50,15 @@ let tradeContracts = {
                 while (this.contractsArray[settlementNumber].contracts[resourceType].struck != 'unopen')
 
                 // Picks a random initial amount for delivery plus a recurring weekly amount
-                let initialAmount = Math.floor(Math.random() * (resourceManagement.resourcePieces[resourceNumber].maxProduction * 4)) + 5;
+                let initialAmount = 0;
+                if (gameManagement.gameDate <= 8) {
+                    initialAmount = Math.floor(Math.random() * (resourceManagement.resourcePieces[resourceNumber].maxProduction * 2)) + 3;
+                } else if (gameManagement.gameDate > 8 && gameManagement.gameDate <= 16) {
+                    initialAmount = Math.floor(Math.random() * (resourceManagement.resourcePieces[resourceNumber].maxProduction * 4)) + 5;
+                } else {
+                    initialAmount = Math.floor(Math.random() * (resourceManagement.resourcePieces[resourceNumber].maxProduction * 4)) + 10;
+                }
                 let renewalAmount = 1;
-                //let renewalAmount = Math.floor(Math.random() * (resourceManagement.resourcePieces[resourceNumber].maxProduction)) + 1;
-
 
                 // Put into array as open contract and updates totals
                 this.contractsArray[settlementNumber].totalOpen += 1;

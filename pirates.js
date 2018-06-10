@@ -3,10 +3,10 @@
 let pirates = {
 
     pirateShips: [
-                  {manifest: {ref: 0, homeRow: 4, homeCol: 6, returnRow: 11, returnCol: 11}, start: {row: '', col: ''}, end: {row: '', col: ''}},
-                  {manifest: {ref: 1, homeRow: 24, homeCol: 4, returnRow: 19, returnCol: 11}, start: {row: '', col: ''}, end: {row: '', col: ''}},
-                  {manifest: {ref: 2, homeRow: 26, homeCol: 24, returnRow: 19, returnCol: 19}, start: {row: '', col: ''}, end: {row: '', col: ''}},
-                  {manifest: {ref: 3, homeRow: 6, homeCol: 26, returnRow: 11, returnCol: 19}, start: {row: '', col: ''}, end: {row: '', col: ''}},
+                  {manifest: {ref: 0, homeRow: 5, homeCol: 5, returnRow: 11, returnCol: 11}, start: {row: '', col: ''}, end: {row: '', col: ''}},
+                  {manifest: {ref: 1, homeRow: 25, homeCol: 5, returnRow: 19, returnCol: 11}, start: {row: '', col: ''}, end: {row: '', col: ''}},
+                  {manifest: {ref: 2, homeRow: 25, homeCol: 25, returnRow: 19, returnCol: 19}, start: {row: '', col: ''}, end: {row: '', col: ''}},
+                  {manifest: {ref: 3, homeRow: 5, homeCol: 25, returnRow: 11, returnCol: 19}, start: {row: '', col: ''}, end: {row: '', col: ''}},
     ],
 
     pirateCount: -1,

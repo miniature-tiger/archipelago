@@ -10,15 +10,15 @@ let stockDashboard = {
     // Array to hold list of all piece types
     // -------------------------------------
     // Pieces must be added in the order: Settlements, Transport, Resources
-    pieceTypes: [ {type: 'fort', category: 'Settlements', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 0, maxHold: 20, deckNumber: 0},
-                  {type: 'catamaran', category: 'Transport', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 5, maxHold: 5, deckNumber: 0},
-                  {type: 'warship', category: 'Transport', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 4, maxHold: 10, deckNumber: 0},
-                  {type: 'cargo ship', category: 'Transport', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 3, maxHold: 20, deckNumber: 0},
-                  {type: 'forest', category: 'Resources', maxNo: 1, goods: 'wood', maxProduction: 2, maxMove: 0, maxHold: 20, deckNumber: 4},
-                  {type: 'ironworks', category: 'Resources', maxNo: 1, goods: 'iron', maxProduction: 2, maxMove: 0, maxHold: 20, deckNumber: 4},
-                  {type: 'quarry', category: 'Resources', maxNo: 1, goods: 'stone', maxProduction: 2, maxMove: 0, maxHold: 20, deckNumber: 4},
-                  {type: 'plantation', category: 'Resources', maxNo: 1, goods: 'coffee', maxProduction: 2, maxMove: 0, maxHold: 20, deckNumber: 4},
-                  {type: 'flax', category: 'Resources', maxNo: 1, goods: 'cloth', maxProduction: 2, maxMove: 0, maxHold: 20, deckNumber: 4},
+    pieceTypes: [ {type: 'fort', category: 'Settlements', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 0, maxHold: 20, battlePerc: 0, deckNumber: 0},
+                  {type: 'catamaran', category: 'Transport', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 5, maxHold: 5, battlePerc: 0.1, deckNumber: 0},
+                  {type: 'warship', category: 'Transport', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 4, maxHold: 10, battlePerc: 0.5, deckNumber: 0},
+                  {type: 'cargo ship', category: 'Transport', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 3, maxHold: 20, battlePerc: 0.25, deckNumber: 0},
+                  {type: 'forest', category: 'Resources', maxNo: 1, goods: 'wood', maxProduction: 2, maxMove: 0, maxHold: 20, battlePerc: 0, deckNumber: 4},
+                  {type: 'ironworks', category: 'Resources', maxNo: 1, goods: 'iron', maxProduction: 2, maxMove: 0, maxHold: 20, battlePerc: 0, deckNumber: 4},
+                  {type: 'quarry', category: 'Resources', maxNo: 1, goods: 'stone', maxProduction: 2, maxMove: 0, maxHold: 20, battlePerc: 0, deckNumber: 4},
+                  {type: 'plantation', category: 'Resources', maxNo: 1, goods: 'coffee', maxProduction: 2, maxMove: 0, maxHold: 20, battlePerc: 0, deckNumber: 4},
+                  {type: 'flax', category: 'Resources', maxNo: 1, goods: 'cloth', maxProduction: 2, maxMove: 0, maxHold: 20, battlePerc: 0, deckNumber: 4},
                 ],
 
 
