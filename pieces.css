@@ -136,6 +136,13 @@
     z-index: 10;
 }
 
+/* Clay */
+.clay {
+    position: absolute;
+    background-color: transparent;
+    z-index: 10;
+}
+
 
 
 

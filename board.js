@@ -221,10 +221,11 @@ let gameBoard = {
 
         // Creation of plantation
         this.boardArray[boardCenter][boardCenter+1].pieces = {populatedSquare: true, category: 'Resources', type: 'plantation', direction: '0', used: 'unused', damageStatus: 5, team: 'Kingdom', goods: 'coffee', stock: 0, production: 2};
+      
+    /*  // TEST AREA
+        // Clay
+        this.boardArray[row-3][boardCenter+1] = {xpos: row-3, ypos: boardCenter+1, terrain: 'land', subTerrain: 'none', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Resources', type: 'clay', direction: '0', used: 'unused', damageStatus: 5, team: 'Unclaimed', goods: 'pottery', stock: 18, production: 1}};
 
-        // TEST AREA
-
-    /*
         // Flax
         //this.boardArray[row-3][boardCenter] = {xpos: row-3, ypos: boardCenter, terrain: 'land', subTerrain: 'none', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Resources', type: 'flax', direction: '0', used: 'unused', damageStatus: 5, team: 'Unclaimed', goods: 'cloth', stock: 18, production: 1}};
 
@@ -393,6 +394,8 @@ let gameBoard = {
             this.createPlantationTile(actionTile, localTeam);
         } else if (localType == 'flax') {
             this.createFlaxTile(actionTile, localTeam);
+        } else if (localType == 'clay') {
+            this.createClayTile(actionTile, localTeam);
         }
 
         // tile is returned to drawBoard
@@ -426,6 +429,8 @@ let gameBoard = {
             this.createWoodIcon(goodsIcon);
         } else if (localGoods == 'cloth') {
             this.createClothIcon(goodsIcon);
+        } else if (localGoods == 'pottery') {
+            this.createPotteryIcon(goodsIcon);
         }
 
         // tile is returned to drawBoard
@@ -1034,6 +1039,57 @@ let gameBoard = {
         actionTile.appendChild(flaxBranch);
         actionTile.appendChild(flaxStalk);
 
+        return actionTile;
+    },
+
+    // Method to create clay (kiln) tile
+    // --------------------------------
+    createClayTile: function(actionTile, localTeam) {
+
+        let kilnOuter = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        kilnOuter.setAttribute('d', 'M 5 11.5 L 5 18.5 L 20 18.5 L 20 11.5 A 4.5 5 1 0 0 5 11.5');
+        kilnOuter.setAttribute('stroke-linecap', 'round');
+        kilnOuter.setAttribute('class', localTeam + ' team_fill team_stroke');
+        kilnOuter.style.strokeWidth = '1px';
+
+        let kilnDoor = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        kilnDoor.setAttribute('class', localTeam + ' team_stroke');
+        kilnDoor.setAttribute('d', 'M 7.5 10 L 7.5 12.5 L 17.5 12.5 L 17.5 10 A 2.5 2.5 1 0 0 7.5 10');
+        kilnDoor.setAttribute('stroke-linecap', 'round');
+        kilnDoor.setAttribute('stroke','rgb(138, 87, 50)');
+        kilnDoor.setAttribute('fill', 'white');
+        kilnDoor.style.strokeWidth = '1px';
+
+        let kilnFlame1 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        kilnFlame1.setAttribute('class', localTeam + ' team_stroke');
+        kilnFlame1.setAttribute('d', 'M 10 11.5 A 1 2.5 2.5 0 0 10 7.5 A 1 2.5 2.5 0 0 10 11.5');
+        kilnFlame1.setAttribute('stroke-linecap', 'round');
+        kilnFlame1.setAttribute('stroke','silver');
+        kilnFlame1.setAttribute('fill', 'silver');
+        kilnFlame1.style.strokeWidth = '0.5px';
+
+        let kilnFlame2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        kilnFlame2.setAttribute('class', localTeam + ' team_stroke');
+        kilnFlame2.setAttribute('d', 'M 12.5 11.5 A 1 2.5 2.5 0 0 12.5 7.5 A 1 2.5 2.5 0 0 12.5 11.5');
+        kilnFlame2.setAttribute('stroke-linecap', 'round');
+        kilnFlame2.setAttribute('stroke','silver');
+        kilnFlame2.setAttribute('fill', 'silver');
+        kilnFlame2.style.strokeWidth = '0.5px';
+
+        let kilnFlame3 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        kilnFlame3.setAttribute('class', localTeam + ' team_stroke');
+        kilnFlame3.setAttribute('d', 'M 15 11.5 A 1 2.5 2.5 0 0 15 7.5 A 1 2.5 2.5 0 0 15 11.5');
+        kilnFlame3.setAttribute('stroke-linecap', 'round');
+        kilnFlame3.setAttribute('stroke','silver');
+        kilnFlame3.setAttribute('fill', 'silver');
+        kilnFlame3.style.strokeWidth = '0.5px';
+
+        // Building the tile
+        actionTile.appendChild(kilnOuter);
+        actionTile.appendChild(kilnDoor);
+        actionTile.appendChild(kilnFlame1);
+        actionTile.appendChild(kilnFlame2);
+        actionTile.appendChild(kilnFlame3);
 
         return actionTile;
     },
@@ -1186,8 +1242,22 @@ let gameBoard = {
         return(goodsIcon);
     },
 
+    // Method to create pottery goods icon
+    // ----------------------------------------
+    createPotteryIcon: function(goodsIcon) {
+        // Pot icon
+        let potteryPot = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        potteryPot.setAttribute('d','M 15 4 L 10 4 A 2 3 1 0 1 10 8 A 2 5 0 0 0 11 20 L 14 20 A 2 5 0 0 0 15 8 A 2 3 1 0 1 15 4');
+        potteryPot.setAttribute('stroke','rgb(89, 53, 20)');
+        potteryPot.setAttribute('stroke','rgb(89, 53, 20)');
+        potteryPot.setAttribute('fill', 'rgb(213, 191, 163)');
+        potteryPot.setAttribute('stroke-linecap', 'round');
+        potteryPot.setAttribute('stroke-linejoin', 'round');
+        potteryPot.style.strokeWidth = '1px';
 
-
+        goodsIcon.appendChild(potteryPot);
+        return(goodsIcon);
+    },
 
 
     // Method allows "non-specific" action tile to be created without reference to the boardArray

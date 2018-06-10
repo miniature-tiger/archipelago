@@ -19,6 +19,7 @@ let stockDashboard = {
                   {type: 'quarry', category: 'Resources', maxNo: 1, goods: 'stone', maxProduction: 2, maxMove: 0, maxHold: 20, battlePerc: 0, deckNumber: 4},
                   {type: 'plantation', category: 'Resources', maxNo: 1, goods: 'coffee', maxProduction: 2, maxMove: 0, maxHold: 20, battlePerc: 0, deckNumber: 4},
                   {type: 'flax', category: 'Resources', maxNo: 1, goods: 'cloth', maxProduction: 2, maxMove: 0, maxHold: 20, battlePerc: 0, deckNumber: 4},
+                  {type: 'clay', category: 'Resources', maxNo: 1, goods: 'pottery', maxProduction: 2, maxMove: 0, maxHold: 20, battlePerc: 0, deckNumber: 4},
                 ],
 
 
