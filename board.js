@@ -83,19 +83,32 @@ let gameBoard = {
         // Creation of outlying islands
         this.boardArray[(row-1)/3][2].terrain = 'land';
         this.boardArray[2][(col-1)/3].terrain = 'land';
-        this.boardArray[5][5].terrain = 'land';
+        this.boardArray[4][6].terrain = 'land';
+        this.boardArray[6][4].terrain = 'land';
+        this.boardArray[5][6].terrain = 'sea';
+        this.boardArray[6][5].terrain = 'sea';
+
 
         this.boardArray[row-3][2*((col-1)/3)].terrain = 'land';
         this.boardArray[2*((row-1)/3)][col-3].terrain = 'land';
-        this.boardArray[row-6][col-6].terrain = 'land';
+        this.boardArray[row-7][col-5].terrain = 'land';
+        this.boardArray[row-5][col-7].terrain = 'land';
+        this.boardArray[row-6][col-7].terrain = 'sea';
+        this.boardArray[row-7][col-6].terrain = 'sea';
 
         this.boardArray[2][2*((col-1)/3)].terrain = 'land';
         this.boardArray[(row-1)/3][col-3].terrain = 'land';
-        this.boardArray[row-6][5].terrain = 'land';
+        this.boardArray[row-7][4].terrain = 'land';
+        this.boardArray[row-7][5].terrain = 'sea';
+        this.boardArray[row-5][6].terrain = 'land';
+        this.boardArray[row-6][6].terrain = 'sea';
 
         this.boardArray[2*((row-1)/3)][2].terrain = 'land';
         this.boardArray[row-3][(col-1)/3].terrain = 'land';
-        this.boardArray[5][col-6].terrain = 'land';
+        this.boardArray[4][col-7].terrain = 'land';
+        this.boardArray[6][col-5].terrain = 'land';
+        this.boardArray[6][col-6].terrain = 'sea';
+        this.boardArray[5][col-7].terrain = 'sea';
 
         // Creation of central volcanic shaped island for trading post
         this.overlayTiles(boardCenter-1, boardCenter+1, boardCenter-1, boardCenter+1, 'land');
@@ -103,6 +116,16 @@ let gameBoard = {
         this.boardArray[boardCenter-1][boardCenter-1].terrain = 'sea';
         this.boardArray[boardCenter+1][boardCenter+1].terrain = 'sea';
         this.boardArray[boardCenter+1][boardCenter-1].terrain = 'sea';
+
+        // Inner circle of islands
+        this.boardArray[boardCenter][boardCenter+4].terrain = 'land';
+        this.boardArray[boardCenter][boardCenter-4].terrain = 'land';
+        this.boardArray[boardCenter+4][boardCenter].terrain = 'land';
+        this.boardArray[boardCenter-4][boardCenter].terrain = 'land';
+        this.boardArray[boardCenter-3][boardCenter-3].terrain = 'land';
+        this.boardArray[boardCenter+3][boardCenter+3].terrain = 'land';
+        this.boardArray[boardCenter-3][boardCenter+3].terrain = 'land';
+        this.boardArray[boardCenter+3][boardCenter-3].terrain = 'land';
 
         // Creation of bay shaped islands
         this.overlayTiles(boardCenter-1, boardCenter+1, 2*((row-1)/3)+4, 2*((row-1)/3)+4, 'land');
@@ -171,19 +194,19 @@ let gameBoard = {
         this.boardArray[boardCenter+1][0].pieces = {populatedSquare: true, category: 'Transport', type: 'catamaran', direction: '90', used: 'unused', damageStatus: 5, team: 'Blue Team', goods: 'none', stock: 0, production: 0, homeRow: boardCenter+1, homeCol: 0};
 
         // Creation of pirate ships and pirate harbours
-        this.boardArray[4][6] = {xpos: 4, ypos: 6, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'warship', direction: '135', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0, ref: 0}};
+        this.boardArray[5][5] = {xpos: 5, ypos: 5, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'warship', direction: '135', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0, ref: 0}};
         //this.boardArray[4][6].terrain = 'sea';
         //this.boardArray[4][6].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '135', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0};
 
-        this.boardArray[row-7][4] = {xpos: row-7, ypos: 4, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'warship', direction: '45', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0, ref: 1}};
+        this.boardArray[row-6][5] = {xpos: row-6, ypos: 5, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'warship', direction: '45', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0, ref: 1}};
         //this.boardArray[row-7][4].terrain = 'sea';
         //this.boardArray[row-7][4].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0};
 
-        this.boardArray[row-5][col-7] = {xpos: row-5, ypos: col-7, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'warship', direction: '-45', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0, ref: 2}};
+        this.boardArray[row-6][col-6] = {xpos: row-5, ypos: col-7, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'warship', direction: '-45', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0, ref: 2}};
         //this.boardArray[row-5][col-7].terrain = 'sea';
         //this.boardArray[row-5][col-7].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-45', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0};
 
-        this.boardArray[6][col-5] = {xpos: 6, ypos: col-5, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'warship', direction: '-135', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0, ref: 3}};
+        this.boardArray[5][col-6] = {xpos: 6, ypos: col-5, terrain: 'sea', subTerrain: 'pirateHarbour', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'warship', direction: '-135', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0, ref: 3}};
         //this.boardArray[6][col-5].terrain = 'sea';
         //this.boardArray[6][col-5].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-135', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0};
 
@@ -953,7 +976,7 @@ let gameBoard = {
         return actionTile;
     },
 
-    // Method to create plantation tile
+    // Method to create flax tile
     // --------------------------------
     createFlaxTile: function(actionTile, localTeam) {
 
@@ -972,6 +995,7 @@ let gameBoard = {
 
             petal.setAttribute('stroke-linecap', 'round');
             petal.setAttribute('transform', 'scale(0.9, 0.9), translate(1.38, 1.38), rotate(' + rotatePetal + ', ' + centerX + ', ' + centerY + ')');
+            petal.style.strokeWidth = '1.1px';
             return petal
         }
 
@@ -989,6 +1013,7 @@ let gameBoard = {
         flaxBranch.setAttribute('stroke','rgb(138, 87, 50)');
         flaxBranch.setAttribute('fill', 'none');
         flaxBranch.setAttribute('stroke-linecap', 'round');
+        flaxBranch.style.strokeWidth = '1px';
 
         // stalk
         let flaxStalk = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -997,6 +1022,7 @@ let gameBoard = {
         flaxStalk.setAttribute('stroke','rgb(138, 87, 50)');
         flaxStalk.setAttribute('fill', 'none');
         flaxStalk.setAttribute('stroke-linecap', 'round');
+        flaxStalk.style.strokeWidth = '1px';
 
         // Building the tile
         actionTile.appendChild(petal1);
@@ -1143,7 +1169,7 @@ let gameBoard = {
         return(goodsIcon);
     },
 
-    // Method to create iron goods icon
+    // Method to create cloth goods icon
     // ----------------------------------------
     createClothIcon: function(goodsIcon) {
         // Front end of joist

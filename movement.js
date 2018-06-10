@@ -611,8 +611,9 @@ let pieceMovement = {
                 } else {
                     if(workFlow == 1) {console.log('Conflict transition ended - decide winner and update board array: ' + (Date.now() - launchTime)); }
                     //console.log(pirates.conflictArray);
-                    // Calculates winner of sea battle  - 50% chance of each ship winning battle
-                    if (Math.random()>0.5) {
+                    // Calculates winner of sea battle  - battlePerc% gives chance of team ship type winning battle
+                    let arrayPosition = stockDashboard.pieceTypes.findIndex(fI => fI.type == gameBoard.boardArray[pirates.conflictArray.ship.row][pirates.conflictArray.ship.col].pieces.type);
+                    if (Math.random()>stockDashboard.pieceTypes[arrayPosition].battlePerc) {
                         // Pirate ship wins battle and team ship is damaged
                         if (gameBoard.boardArray[pirates.conflictArray.ship.row][pirates.conflictArray.ship.col].pieces.type == 'cargo ship') {
                             gameBoard.boardArray[pirates.conflictArray.ship.row][pirates.conflictArray.ship.col].pieces.damageStatus = 0;
