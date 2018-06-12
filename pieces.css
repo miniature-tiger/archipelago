@@ -402,6 +402,7 @@
 }
 
 .Blue.team_stroke {
+    color: #0099cc;
     stroke: #00394d;
 }
 
@@ -416,6 +417,7 @@
 }
 
 .Orange.team_stroke {
+    color: #bd5d0f;
     stroke: #472306;
 }
 
@@ -429,6 +431,7 @@
 }
 
 .Red.team_stroke {
+    color: #a52746;
     stroke: #3e0f1a;
 }
 
@@ -442,6 +445,7 @@
 }
 
 .Green.team_stroke {
+    color: #34987d;
     stroke: #14392f;
 }
 

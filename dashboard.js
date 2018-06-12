@@ -58,7 +58,7 @@ let stockDashboard = {
                 stockDashboard.pieceTotals[h].pieces[stockDashboard.pieceTypes[k].type] = {quantity: counter, goods: piecesGoods, stock: piecesStock};
             }
         }
-          console.log('pieceTotals', stockDashboard.pieceTotals);
+          //console.log('pieceTotals', stockDashboard.pieceTotals);
     },
 
     // Method to populate stock dashboard on left-hand panel
@@ -164,7 +164,6 @@ let stockDashboard = {
                     if (this.pieceTypes[k].category == 'Transport') {
                         //divTypeIcon.setAttribute('class', additionalClass);
                         divTypeIcon.classList.add(additionalClass);
-                        console.log(divTypeIcon.classList);
                     }
                     divType.appendChild(divTypeIcon);
 
@@ -199,9 +198,6 @@ let stockDashboard = {
         for (var h = 0; h < gameManagement.teamArray.length; h++) {
             this.goodsTotals.push({team: gameManagement.teamArray[h], land: {wood: 0, iron: 0, stone: 0}, sea: {wood: 0, iron: 0, stone: 0}, total: {wood: 0, iron: 0, stone: 0}});
         }
-        console.log(this.goodsTotals);
-        console.log(this.pieceTypes[0].goods);
-        console.log(this.goodsTotals[0].land[this.pieceTypes[0].goods]);
     },
 
     goodsStockTake: function() {

@@ -24,14 +24,17 @@ html {
 
  /* style for the header */
 .the_header {
-    font-size: 1.5em;
+    position: fixed;
     text-align: center;
+    vertical-align: center;
     top: 0%;
     left: 6%;
     margin: 0%;
     padding: 0%;
     width: 88%;
-    height: 8%;
+    height: 12.5%;
+    background-color: rgba(138, 87, 50, 0.1);
+    transition: top 0.2s ease-in-out;
 
 }
 
@@ -39,15 +42,12 @@ html {
 .the_footer {
     text-align: right;
     display: block;
-
     bottom: 0%;
     left: 6%;
     margin: 0%;
     padding: 0%;
     width: 88%;
     height: 8%;
-
-
 }
 
 /* style to fix the header and footer and prevent scrolling */
@@ -66,8 +66,6 @@ html {
 /* style for the frame sidebars */
 .sidebar {
     position: fixed;
-    background-color: rgb(251, 242, 234);
-    background-color: transparent;
     top: 0%;
     margin: 0%;
     padding: 0%;
@@ -94,13 +92,6 @@ html {
     bottom: 0%;
 }
 
-.left.sidebar {
-
-}
-
-.right.sidebar {
-
-}
 
 .title_box {
     position: relative;
@@ -134,7 +125,7 @@ html {
     line-height: 140%;
     z-index: 15;
     background-color: rgba(138, 87, 50, 0.1);
-    transition: bottom 0.2s ease-in-out
+    transition: bottom 0.2s ease-in-out;
 }
 
 /* commentary box */
@@ -156,6 +147,74 @@ html {
 
 #firstBuildLine, #secondBuildLine, #thirdBuildLine {
     position: relative;
+}
+
+/* Header slider commentator holder formats*/
+.commentator_holder {
+    position: relative;
+    padding: 0%;
+    margin: 0.5% 2% 0.5% 2%;
+    width: 20%;
+    height: 10%;
+    display: inline-block;
+    text-align: left;
+    vertical-align: top;
+    font-style: italic;
+}
+
+/* Header slider score holder formats*/
+.contest_holder {
+    position: relative;
+    padding: 0%;
+    margin: 0.5% 2% 0.5% 2%;
+    width: 10%;
+    display: inline-block;
+    text-align: left;
+    vertical-align: center;
+    /*border: 1px solid black;*/
+}
+
+.contest_inner {
+    position: relative;
+    display: block;
+    padding: 1%;
+    margin: 0%;
+    width: 100%;
+    text-align: center;
+    vertical-align: center;
+    /*border: 1px solid black;*/
+}
+
+/* Header slider score holder formats*/
+.team_name {
+    position: relative;
+    display: inline-block;
+
+    padding: 1%;
+    margin: 0%;
+    width: 73%;
+
+    text-align: left;
+    vertical-align: center;
+    font-weight: normal;
+    font-size: 80%;
+    /*border: 1px solid black;*/
+}
+
+/* Header slider score holder formats*/
+.team_score {
+    position: relative;
+    display: inline-block;
+
+    padding: 1%;
+    margin: 0%;
+    width: 20%;
+
+    text-align: center;
+    vertical-align: center;
+    font-weight: normal;
+    font-size: 80%;
+    /*border: 1px solid black;*/
 }
 
 /* Side bar item holders and inner item formats*/
