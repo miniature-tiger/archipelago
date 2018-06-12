@@ -67,7 +67,6 @@ let pieceMovement = {
         //if (displayActive) {
         //    gameBoard.boardArray[localStartRow][localStartCol].activeStatus = 'inactive';
         //}
-        console.log('completed find path slice', this.findPath.slice(0));
     },
 
     initialisefindPath: function(localStartRow, localStartCol) {
@@ -460,10 +459,9 @@ let pieceMovement = {
                             if(gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].terrain == 'land' && !gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].pieces.populatedSquare) {
                                 // If so - picks a reource card type using resourceManagement.pickFromResourceDeck() and updates boardArray to this tile tile with unoccupied team
                                 deckCard = resourceManagement.pickFromResourceDeck();
-                                console.log(deckCard);
                                 //randomProduction = Math.floor(Math.random() * (deckCard.maxProduction)) + 1;
-                                gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].pieces = {populatedSquare: true, category: 'Resources', type: deckCard.type, direction: '0', used: 'unused', damageStatus: 5, team: 'Unclaimed', goods: deckCard.goods, stock: 0, production: deckCard.production};
-                                console.log(gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j]);
+                                let randomStock = Math.floor(Math.random() * 3);
+                                gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].pieces = {populatedSquare: true, category: 'Resources', type: deckCard.type, direction: '0', used: 'unused', damageStatus: 5, team: 'Unclaimed', goods: deckCard.goods, stock: randomStock, production: deckCard.production};
                                 // and then creates an SVG resource tile for the land space
                                 boardMarkNode.appendChild(gameBoard.createActionTile(this.movementArray.end.row+i, this.movementArray.end.col+j, gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].pieces.type, gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].pieces.team,
                                   'tile' + Number((this.movementArray.end.row+i)*1000 + (this.movementArray.end.col+j)), boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * (this.movementArray.end.row+i), boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * (this.movementArray.end.col+j), 1, gameBoard.boardArray[this.movementArray.end.row+i][(this.movementArray.end.col+j)].pieces.direction));

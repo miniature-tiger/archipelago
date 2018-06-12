@@ -123,6 +123,7 @@ let tradeContracts = {
         this.contractsArray[chosenFort].contracts[deliveryGoods].team = gameManagement.turn;
         this.contractsArray[chosenFort].totalOpen -=1;
         this.contractsArray[chosenFort].totalActive +=1;
+
     },
 
     // Method to track continuance and countdown of contract
@@ -143,6 +144,9 @@ let tradeContracts = {
                             IDtradeRoute = resourceManagement.resourcePieces[l].goods + '_' + k;
                             let closedTradeRoute = document.getElementById(IDtradeRoute);
                             closedTradeRoute.remove();
+                            // Remove score from team
+                            gameScore.workScores('Trading', gameManagement.turn, this.contractsArray[k].name, ((this.contractsArray[k].contracts[resourceManagement.resourcePieces[l].goods].contractPath.length - 1) * -1) );
+                            // Reset contractsArray
                             this.contractsArray[k].contracts[resourceManagement.resourcePieces[l].goods] = {created: false, struck: 'unopen', team: 'none', initial: 0, renewal: 0, timeRemaining: 0};
                             this.contractsArray[k].totalActive -=1;
                             this.contractsArray[k].totalUnopen +=1;
@@ -285,11 +289,12 @@ let tradeContracts = {
         this.contractsArray[chosenFort].contracts[localGoods].resourceRow = localStartRow;
         this.contractsArray[chosenFort].contracts[localGoods].resourceCol = localStartCol;
         this.contractsArray[chosenFort].contracts[localGoods].contractPath = localPath;
-        console.log(this.contractsArray[chosenFort]);
 
         // creates the SVG path for the trade route
         gameBoard.tradeRoute(localPath, gameManagement.turn, chosenFort, localGoods);
 
+        // Processes the score (all the information is in this method)
+        gameScore.workScores('Trading', gameManagement.turn, this.contractsArray[chosenFort].name, this.tradePath[harbour.harbourEndRow][harbour.harbourEndCol].distance);
     },
 
     // Method to seacrh for route around obstacles
@@ -447,7 +452,6 @@ let tradeContracts = {
 // ---------------------------------------------------------
 
     drawContracts: function() {
-        console.log(this.contractsArray);
         if(workFlow == 1) {console.log('Contracts (right) dashboard drawn: ' + (Date.now() - launchTime)); }
         // Finds the stockDashboard holder in the left hand panel
         let contractDashboardNode = document.querySelector('div.contractDashboard');
@@ -477,7 +481,6 @@ let tradeContracts = {
                 } else {
 
                     for (var j = 0; j < resourceManagement.resourcePieces.length; j++) {
-                        //console.log(this.contractsArray[i].contracts[resourceManagement.resourcePieces[j].goods].created);
                         if(this.contractsArray[i].contracts[resourceManagement.resourcePieces[j].goods].created) {
 
                             // Div to hold contract is created and icon added
@@ -525,6 +528,7 @@ let tradeContracts = {
                 }
             }
         }
+        console.log(this.contractsArray);
     },
 
 

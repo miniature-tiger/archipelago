@@ -55,14 +55,17 @@ for (var a = 0; a < sideCollection.length; a++) {
   sideCollection[a].style.fontSize = (0.6 * screenReduction) + 'em';
 }
 
-let headFootCollection = document.querySelectorAll(' .the_header, .the_footer, .commentary, .building');
-
+let headFootCollection = document.querySelectorAll('.the_header, .the_footer, .commentary, .building');
 for (var c = 0; c < headFootCollection.length; c++) {
 
     headFootCollection[c].style.width = (screenWidth - 2*surroundSize) + 'px';
     headFootCollection[c].style.left = surroundSize + 'px';
     headFootCollection[c].style.fontSize = (0.8 * screenReduction) + 'em';
 }
+
+let scoreHeader = document.querySelector('.the_header');
+scoreHeader.style.fontSize = (0.6 * screenReduction) + 'em';
+scoreHeader.style.top = '-15%';
 
 // Setting up game layers
 
@@ -91,6 +94,9 @@ boardMarkNode.appendChild(moonLayer);
 
 // Finds the stockDashboard holder in the left hand panel
 let stockDashboardNode = document.querySelector('div.stockDashboard');
+
+// Finds the stockDashboard holder in the left hand panel
+let scoreBoardNode = document.querySelector('div.scoreBoard');
 
 // Function to set up board and resource deck and allocate resources
 function boardSetUp(row, col, gridSize, boardShape) {
@@ -218,9 +224,10 @@ function nextTurn() {
     needleDirection = compass.directionArray[windDirection].needle;
     needle.style.transform = 'rotate(' + needleDirection + 'deg)';
 
-    // Comment and building bars reset
+    // Comment and building and scoreboard bars reset
     commentary.style.bottom = '-10%';
     building.style.bottom = '-15%';
+    scoreHeader.style.top = '-15%';
 
     // End turn button colour is changed
     endTurn.setAttribute('class', gameManagement.turn + ' team_fill team_stroke');
@@ -479,6 +486,7 @@ function boardHandler(event) {
                 firstLineComment.insertAdjacentText('beforeend', ' - ' + pieceMovement.movementArray[startEnd].pieces.goods + ": " + pieceMovement.movementArray[startEnd].pieces.stock);
             }
             building.style.bottom = '-15%';
+            scoreHeader.style.top = '-15%';
             commentary.style.bottom = 0;
 
             // commentary event handler for goods
@@ -582,6 +590,7 @@ function boardHandler(event) {
                     boardMarkNode.appendChild(gameBoard.createActionTile(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.type, gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.team,
                       'tile' + Number((pieceMovement.movementArray.start.row)*1000 + (pieceMovement.movementArray.start.col)), boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * pieceMovement.movementArray.start.row, boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * pieceMovement.movementArray.start.col, 1, gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.direction));
                     startEnd = 'start';
+                    gameScore.workScores('Exploring', gameManagement.turn, pieceMovement.movementArray.start.pieces.type);
 
                 // Loading of goods
               } else if ((pieceMovement.movementArray.start.pieces.category == 'Resources' || pieceMovement.movementArray.start.pieces.category == 'Settlements') && pieceMovement.movementArray.end.pieces.category == 'Transport') {
@@ -636,6 +645,7 @@ function boardHandler(event) {
                         gameBoard.repairShip(newShip, gameManagement.turn, pieceMovement.movementArray.start.pieces.type, 3);
                     }
                     buildItem.constructionPayment(pieceMovement.movementArray.start.pieces.type);
+                    gameScore.workScores('Building', gameManagement.turn, pieceMovement.movementArray.start.pieces.type);
                 // Piece movement
               } else if (pieceMovement.movementArray.start.pieces.category == 'Transport') {
                     endTurn.removeEventListener('click', nextTurn);

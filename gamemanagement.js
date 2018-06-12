@@ -1,5 +1,4 @@
 // Game management object
-// A very basic starting point just allowing simple rotation of turns
 
 let gameManagement = {
 
@@ -62,7 +61,7 @@ let gameManagement = {
     // --------------------
     optionsArray: [
                   { variable: 'speed', active: 'fast', options: [{text: 'slow', active: false, constant: 1.5}, {text: 'medium', active: false, constant: 1}, {text: 'fast', active: true, constant: 0.6}] },
-                  { variable: 'dev', options: [{text: 'workflow', active: true}, {text: 'transitions', active: false}] },
+                  { variable: 'dev', options: [{text: 'workflow', active: false}, {text: 'transitions', active: false}] },
                   ],
 
 

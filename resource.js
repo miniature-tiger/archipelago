@@ -37,13 +37,10 @@ let resourceManagement = {
         }
 
         let numberDesert = unoccupiedIslands - unDesertCount;
-        //console.log(numberDesert);
 
         for (var j = 0; j < numberDesert; j++) {
             this.resourceDeck.push({type: 'desert', goods: 'none'});
         }
-        console.log(this.resourceDeck);
-
     },
 
     // Method to find total number of unoccupied land tiles on board at start
