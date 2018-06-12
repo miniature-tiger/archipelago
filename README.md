@@ -54,6 +54,7 @@ Contracts for delivery:
 * Continuance of contracts over time - COMPLETE
 * Breaking of contracts due to interference - COMPLETE
 * Re-work resource and contract surrounds to prevent overrun
+* Only allow one contract to be made with each island
 
 Building:
 * New ship designs - Catamaran, warship, cargo ship - COMPLETE
@@ -63,7 +64,7 @@ Building:
 Scoring: 
 * Work out scoring mechanism - COMPLETE
 * Add score dashboard - COMPLETE
-* Game ending - reduction in players as time passes and how to end the game
+* Game ending - reduction in players as time passes and how to end the game (contracts to all islands or eight moons of time)
 
 # Phase 3 - Conflicts 
 
