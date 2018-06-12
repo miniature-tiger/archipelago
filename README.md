@@ -31,7 +31,7 @@ https://miniature-tiger.github.io/archipelago/
 # Phase 2 - Resources, Goods, Building and Trade Contracts 
 
 Resources
-* Add Resource tiles (forest, ironworks, flax, gold etc) - in progress: forest, ironworks, quarry, plantation added
+* Add Resource tiles - COMPLETE
 * Discovery of resource tiles - COMPLETE
 * Claiming of resource tiles - COMPLETE
 * Dashboard of player pieces - COMPLETE
@@ -53,6 +53,7 @@ Contracts for delivery:
 * Graphics of trade routes - COMPLETE
 * Continuance of contracts over time - COMPLETE
 * Breaking of contracts due to interference - COMPLETE
+* Re-work resource and contract surrounds to prevent overrun
 
 Building:
 * New ship designs - Catamaran, warship, cargo ship - COMPLETE
@@ -60,8 +61,9 @@ Building:
 * Ability to construct new ships - COMPLETE
 
 Scoring: 
-* Work out scoring mechanism (linked to contracts)
-* Add score dashboard
+* Work out scoring mechanism - COMPLETE
+* Add score dashboard - COMPLETE
+* Game ending - reduction in players as time passes and how to end the game
 
 # Phase 3 - Conflicts 
 
@@ -69,7 +71,7 @@ Pirates
 * Add pirate ships - COMPLETE
 * Automate pirate ship movements (basic movement with wind and search for cargo ships) - COMPLETE
 * Search - telescope range of 5 tiles for stronger search for ships - COMPLETE
-* Separate ship types for teams - Need to consider whether all ships can defend themselves
+* Separate ship types for teams - COMPLETE
 
 Forts
 * Add fort icons - COMPLETE
