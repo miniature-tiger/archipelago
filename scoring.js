@@ -124,12 +124,12 @@ let gameScore = {
                 this.scoreArray[teamPosition].Trading[subContest] += scoreDetail;
                 this.scoreArray[teamPosition].Trading.total += scoreDetail;
                 this.scoreArray[teamPosition].Total.total += scoreDetail;
-                buildComment[0] = gameManagement.turn + ':' + scoreDetail + ' points for trade route to ' + subContest + ' island.';
+                buildComment[0] = gameManagement.turn + ': ' + scoreDetail + ' points for trade route to ' + subContest + ' island.';
             } else {
                 this.scoreArray[teamPosition].Trading[subContest] += (5 + scoreDetail);
                 this.scoreArray[teamPosition].Trading.total += (5 + scoreDetail);
                 this.scoreArray[teamPosition].Total.total += (5 + scoreDetail);
-                buildComment[0] = gameManagement.turn + ':' + scoreDetail + ' points for trade route.';
+                buildComment[0] = gameManagement.turn + ': ' + scoreDetail + ' points for trade route.';
                 buildComment[1] = 'Bonus 5 points for first trade route to ' + subContest + ' island.';
             }
         }

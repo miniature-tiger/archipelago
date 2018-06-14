@@ -55,7 +55,7 @@ for (var a = 0; a < sideCollection.length; a++) {
   sideCollection[a].style.fontSize = (0.6 * screenReduction) + 'em';
 }
 
-let headFootCollection = document.querySelectorAll('.the_header, .the_footer, .commentary, .building');
+let headFootCollection = document.querySelectorAll('.the_header, .score_header, .the_footer, .commentary, .building');
 for (var c = 0; c < headFootCollection.length; c++) {
 
     headFootCollection[c].style.width = (screenWidth - 2*surroundSize) + 'px';
@@ -63,9 +63,19 @@ for (var c = 0; c < headFootCollection.length; c++) {
     headFootCollection[c].style.fontSize = (0.8 * screenReduction) + 'em';
 }
 
-let scoreHeader = document.querySelector('.the_header');
+let scoreHeader = document.querySelector('.score_header');
 scoreHeader.style.fontSize = (0.6 * screenReduction) + 'em';
 scoreHeader.style.top = '-15%';
+
+let theHeader = document.querySelector('.the_header');
+theHeader.addEventListener('mouseenter', function() {
+    scoreHeader.style.top = '0%';
+});
+
+theHeader.addEventListener('mouseleave', function() {
+    scoreHeader.style.top = '-15%';
+});
+
 
 // Setting up game layers
 
@@ -164,15 +174,7 @@ stockDashboard.stockTake();
 stockDashboard.drawStock();
 tradeContracts.populateContracts();
 tradeContracts.drawContracts();
-
-
-// Set up of goods dashboard
-// -------------------------
-
-
-//stockDashboard.goodsStockTake();
-
-  //console.log(gameBoard.boardArray);
+gameScore.workScores('none');
 
 
 // Set up of compass

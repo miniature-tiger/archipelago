@@ -22,8 +22,21 @@ html {
     vertical-align: bottom;
 }
 
- /* style for the header */
+/* style for the header */
 .the_header {
+   position: fixed;
+   text-align: center;
+   vertical-align: center;
+   top: 0%;
+   margin: 0%;
+   padding: 0%;
+   height: 5%;
+   background-color: transparent;
+   z-index: 40;
+}
+
+ /* style for the header */
+.score_header {
     position: fixed;
     text-align: center;
     vertical-align: center;
@@ -35,7 +48,7 @@ html {
     height: 12.5%;
     background-color: rgba(138, 87, 50, 0.1);
     transition: top 0.2s ease-in-out;
-
+    z-index: 10;
 }
 
 /* style for the footer */
