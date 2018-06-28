@@ -87,22 +87,13 @@ let gameScore = {
             if (subContest == 'cargo ship') {
                 subContest = 'cargo';
             }
-            let alreadyBuilt = false;
+            let alreadyBuilt = 0;
             for (var j = 0; j < this.scoreArray.length; j++) {
                 if (this.scoreArray[j].Building[subContest] > 0) {
-                    alreadyBuilt = true;
+                    alreadyBuilt += 1;
                 }
             }
-            if (alreadyBuilt == true) {
-                this.scoreArray[teamPosition].Building[subContest] = 2;
-                this.scoreArray[teamPosition].Building.total += 2;
-                this.scoreArray[teamPosition].Total.total += 2;
-                if (subContest == 'cargo') {
-                    buildComment[0] = gameManagement.turn + ': 2 points for building ' + subContest + ' ship.';
-                } else {
-                    buildComment[0] = gameManagement.turn + ': 2 points for building ' + subContest + '.';
-                }
-            } else {
+            if (alreadyBuilt == 0) {
                 this.scoreArray[teamPosition].Building[subContest] = 10;
                 this.scoreArray[teamPosition].Building.total += 10;
                 this.scoreArray[teamPosition].Total.total += 10;
@@ -110,6 +101,24 @@ let gameScore = {
                     buildComment[0] = gameManagement.turn + ': 10 point reward for first player to build ' + subContest + ' ship.';
                 } else {
                     buildComment[0] = gameManagement.turn + ': 10 point reward for first player to build ' + subContest + '.';
+                }
+            } else if (alreadyBuilt == 1) {
+                this.scoreArray[teamPosition].Building[subContest] = 5;
+                this.scoreArray[teamPosition].Building.total += 5;
+                this.scoreArray[teamPosition].Total.total += 5;
+                if (subContest == 'cargo') {
+                    buildComment[0] = gameManagement.turn + ': 5 point reward for second player to build ' + subContest + ' ship.';
+                } else {
+                    buildComment[0] = gameManagement.turn + ': 5 point reward for second player to build ' + subContest + '.';
+                }
+            } else {
+                this.scoreArray[teamPosition].Building[subContest] = 2;
+                this.scoreArray[teamPosition].Building.total += 2;
+                this.scoreArray[teamPosition].Total.total += 2;
+                if (subContest == 'cargo') {
+                    buildComment[0] = gameManagement.turn + ': 2 points for building ' + subContest + ' ship.';
+                } else {
+                    buildComment[0] = gameManagement.turn + ': 2 points for building ' + subContest + '.';
                 }
             }
 

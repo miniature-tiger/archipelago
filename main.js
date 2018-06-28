@@ -76,8 +76,15 @@ theHeader.addEventListener('mouseleave', function() {
     scoreHeader.style.top = '-15%';
 });
 
+// ------------------------------------------------------------------------------------
+// INTRODUCTION AND PLAYER / TEAM SET UP
 
-// Setting up game layers
+gameManagement.teamArraySetUp();
+
+
+
+// ------------------------------------------------------------------------------------
+// SETTING UP GAME LAYERS
 
 // boardMarkNode is board holder in document
 let boardMarkNode = document.querySelector('div.boardmark');
@@ -108,6 +115,10 @@ let stockDashboardNode = document.querySelector('div.stockDashboard');
 // Finds the stockDashboard holder in the left hand panel
 let scoreBoardNode = document.querySelector('div.scoreBoard');
 
+
+
+
+
 // Function to set up board and resource deck and allocate resources
 function boardSetUp(row, col, gridSize, boardShape) {
     gameBoard.populateBoardArray(row, col, boardShape);
@@ -137,11 +148,8 @@ boardSetUp(row, col, gridSize, boardShape);
 
 
 
-// Some button handlers
-// --------------------
-// These buttons are unlikely to be part of the final gameBoard
-// But it is useful to allow the board to be varied dynamically while game play is being developed
-
+// Picking up the default game settings
+// ------------------------------------
 // Game speed (0.6, 1, 1.5)
 
 let gameSpeedRef = gameManagement.optionsArray[0].options.findIndex(item => item.active == true);

@@ -51,9 +51,9 @@ let tradeContracts = {
 
                 // Picks a random initial amount for delivery plus a recurring weekly amount
                 let initialAmount = 0;
-                if (gameManagement.gameDate <= 8) {
+                if (gameManagement.gameDate <= 16) {
                     initialAmount = Math.floor(Math.random() * (resourceManagement.resourcePieces[resourceNumber].maxProduction * 2)) + 3;
-                } else if (gameManagement.gameDate > 8 && gameManagement.gameDate <= 16) {
+                } else if (gameManagement.gameDate > 16 && gameManagement.gameDate <= 32) {
                     initialAmount = Math.floor(Math.random() * (resourceManagement.resourcePieces[resourceNumber].maxProduction * 4)) + 5;
                 } else {
                     initialAmount = Math.floor(Math.random() * (resourceManagement.resourcePieces[resourceNumber].maxProduction * 4)) + 10;
