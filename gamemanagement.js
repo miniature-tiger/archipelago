@@ -6,20 +6,43 @@ let gameManagement = {
     // ---------
     octagonAngle: (2 * Math.PI) / 8,
 
+    // Player object
+    // -------------
+    // Future update: set up based on user inputs for player names
+    playerListing: [  {teamColour: 'Green Team', status: 'human', teamNumber: 1},
+                      {teamColour: 'Blue Team', status: 'human', teamNumber: 2 },
+                      {teamColour: 'Red Team', status: 'human', teamNumber: 3 },
+                      {teamColour: 'Orange Team', status: 'human', teamNumber: 4}, ],
+
     // List of teams
     // -------------
-    // Future update: set up based on user inputs for number of players and player names
-    teamArray: ['Green Team', 'Blue Team', 'Red Team', 'Orange Team', 'Pirate'],
+
+    teamArray: [],
+    //['Green Team', 'Blue Team', 'Red Team', 'Orange Team', 'Pirate'],
     //teamArray: ['Green Team', 'Blue Team', 'Red Team', 'Orange Team'],
 
     // Current turn
     // ------------
-    // Future update: initialise first go randomly
     turn: 'Green Team',
 
     // Current game date
     // -----------------
     gameDate: 1,
+
+    // Method to set up team order
+    // ---------------------------
+    teamArraySetUp: function() {
+        teamNumberArray = [1,2,3,4];
+        for (var i = teamNumberArray.length; i > 0; i--) {
+            let chosenTeam = teamNumberArray.splice(Math.floor(Math.random() * i), 1);
+            index = this.playerListing.findIndex(fI => fI.teamNumber == chosenTeam);
+            this.teamArray.push(gameManagement.playerListing[index].teamColour);
+        }
+        this.teamArray.push('Pirate');
+        this.turn = this.teamArray[0];
+    },
+
+
 
     // Method to activate next turn
     // ----------------------------
