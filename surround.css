@@ -392,7 +392,7 @@ html {
 }
 
 /* Transparent covering for full screen when settings panel is called up */
-.settings_popup {
+.settings_popup, .scroll_popup {
     display: none;
     position: fixed;
     left: 0px;

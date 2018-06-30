@@ -34,7 +34,7 @@ let tradeContracts = {
     newContract: function() {
         if(workFlow == 1) {console.log('New contract issuance assessed: ' + (Date.now() - launchTime)); }
         // x% chance that a new contract is generated
-        if (Math.random() > 0.75) {
+        if (Math.random() > 0.75 && gameManagement.gameDate >= 8) {
             // Chooses a kingdom settlement at random
             let settlementNumber = Math.floor((Math.random() * this.contractsArray.length));
             let contractIsland = this.contractsArray[settlementNumber];
@@ -51,12 +51,12 @@ let tradeContracts = {
 
                 // Picks a random initial amount for delivery plus a recurring weekly amount
                 let initialAmount = 0;
-                if (gameManagement.gameDate <= 16) {
-                    initialAmount = Math.floor(Math.random() * (resourceManagement.resourcePieces[resourceNumber].maxProduction * 2)) + 3;
-                } else if (gameManagement.gameDate > 16 && gameManagement.gameDate <= 32) {
-                    initialAmount = Math.floor(Math.random() * (resourceManagement.resourcePieces[resourceNumber].maxProduction * 4)) + 5;
+                if (gameManagement.gameDate <= 24) {
+                    initialAmount = Math.floor(Math.random() * (resourceManagement.resourcePieces[resourceNumber].maxProduction * 2)) + 1 + 2;
+                } else if (gameManagement.gameDate > 24 && gameManagement.gameDate <= 40) {
+                    initialAmount = Math.floor(Math.random() * (resourceManagement.resourcePieces[resourceNumber].maxProduction * 4)) + 1 + 2;
                 } else {
-                    initialAmount = Math.floor(Math.random() * (resourceManagement.resourcePieces[resourceNumber].maxProduction * 4)) + 10;
+                    initialAmount = Math.floor(Math.random() * (resourceManagement.resourcePieces[resourceNumber].maxProduction * 6)) + 1 + 4;
                 }
                 let renewalAmount = 1;
 

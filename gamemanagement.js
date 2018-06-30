@@ -27,41 +27,141 @@ let gameManagement = {
 
     // Current game date
     // -----------------
-    gameDate: 1,
+    gameDate: 0,
+
+
+    // ------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------
+    // GAME TIMINGS AND TURNS
 
     // Method to set up team order
     // ---------------------------
     teamArraySetUp: function() {
+        this.teamArray.push('Pirate');
         teamNumberArray = [1,2,3,4];
         for (var i = teamNumberArray.length; i > 0; i--) {
             let chosenTeam = teamNumberArray.splice(Math.floor(Math.random() * i), 1);
             index = this.playerListing.findIndex(fI => fI.teamNumber == chosenTeam);
             this.teamArray.push(gameManagement.playerListing[index].teamColour);
         }
-        this.teamArray.push('Pirate');
         this.turn = this.teamArray[0];
     },
 
-
-
-    // Method to activate next turn
-    // ----------------------------
+    // Method to activate next turn - up to moon change
+    // ------------------------------------------------
     nextTurn: function() {
+        // Used pieces are resert to unused
+        if(workFlow == 1) {console.log(' ------ Next turn: ---------: ' + (Date.now() - launchTime)); }
+
+        // Removing the next turn event listener whilst the next turn functions are run
+        endTurn.removeEventListener('click', gameManagement.nextTurn);
+
+        // Resetting if second click not applied
+        pieceMovement.deactivateTiles(maxMove);
+        gameBoard.drawActiveTiles();
+
+        // Resetting movement array in case second click has not been made
+        pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
+        startEnd = 'start';
+
+        // Removing commentary goods event handler
+        commentary.removeEventListener('click', clickGoods);
+        clearCommentary();
+
+        buildItem.clearBuilding();
+
+        // Resetting used pieces
+        pieceMovement.usedPiecesReset();
+
+        // Comment and building and scoreboard bars reset
+        commentary.style.bottom = '-10%';
+        building.style.bottom = '-15%';
+        scoreHeader.style.top = '-15%';
+
         // Game date updated after all players have moved
-        if (this.turn == 'Pirate') {
-            this.gameDate += 1;
+        if (gameManagement.turn == 'Pirate') {
+            gameManagement.gameDate += 1;
         }
-        this.turn = this.teamArray[(this.teamArray.indexOf(this.turn)+1) % (this.teamArray.length)];
+        // Team is changed
+        gameManagement.turn = gameManagement.teamArray[(gameManagement.teamArray.indexOf(gameManagement.turn)+1) % (gameManagement.teamArray.length)];
+
+        if(workFlow == 1) {console.log('Turn changed to ' + gameManagement.turn + ' : ' + (Date.now() - launchTime)); }
+        if(gameBoardTrack == 1) {console.log(gameBoard.boardArray); }
+
+        // Moon is redrawn for next turn
+        gameBoard.drawMoonLayer();
+
+        // Intro scroll pop up
+        if (gameManagement.moonDate(gameManagement.gameDate).moonPhase == 1 && gameManagement.turn == gameManagement.teamArray[1]) {
+
+            // Displays intro / moon scroll and adds text
+            [scrollPanel.children[1].textContent, scrollPanel.children[2].textContent, scrollPanel.children[3].textContent] = gameManagement.scrollText();
+            scrollPopup.style.display = "block";
+
+            // Sets up event listener to close when screen (or cross) is clicked
+            scrollPopup.addEventListener('click', gameManagement.scrollClose);
+        } else {
+            // Second half of next turn functionality called if scroll is not activated (here) or once scroll is clicked to close (scrollClose)
+            gameManagement.afterNextTurn();
+        }
+
     },
+
+
+    // Next turn - after moon change
+    // ----------------------------
+    afterNextTurn: function() {
+
+        // Wind direction is set for next turn
+        windDirection = compass.newWindDirection(windDirection);
+        needleDirection = compass.directionArray[windDirection].needle;
+        needle.style.transform = 'rotate(' + needleDirection + 'deg)';
+
+        // End turn button colour is changed
+        endTurn.setAttribute('class', gameManagement.turn + ' team_fill team_stroke');
+
+        // Repair ships
+        pieceMovement.harbourRepair();
+
+        // Re-establish next turn listener
+        endTurn.addEventListener('click', gameManagement.nextTurn);
+
+        // Automated movement for pirates
+        if (gameManagement.turn == 'Pirate') {
+            pirates.automatePirates();
+        } else {
+            // Chance of new trade contract
+            // TO ADD - turn counter - only have contracts issued after a certain number of turns
+            if(workFlow == 1) {console.log('Checking for new trade contracts: ' + (Date.now() - launchTime)); }
+            tradeContracts.newContract();
+
+            // Manage goods
+            if(workFlow == 1) {console.log('Adding new goods production: ' + (Date.now() - launchTime)); }
+            stockDashboard.newTurnGoods();
+
+            // Manage on-going contracts
+            if(workFlow == 1) {console.log('Managing active contracts: ' + (Date.now() - launchTime)); }
+            tradeContracts.contractContinuance();
+
+            // Update the stock dashboard
+            if(workFlow == 1) {console.log('Updating stock dashboard and contracts dashboard: ' + (Date.now() - launchTime)); }
+            stockDashboard.stockTake();
+            stockDashboard.drawStock();
+
+            // Update the contracts dashboard
+            tradeContracts.drawContracts();
+        }
+    },
+
 
     // Method to calculate moon phases from date
     // -----------------------------------------
     moonDate: function(localDate) {
-        let moonPhase = localDate % 8;
+        let moonPhase = localDate % 8; // 8
         if (moonPhase == 0) {
-            moonPhase = 8;
+            moonPhase = 8; // 8
         }
-        let moonMonth = (localDate - moonPhase) / 8 + 1;
+        let moonMonth = (localDate - moonPhase) / 8 + 1; // ) / 8
 
         function ordinalNumber(cardinalNumber) {
             if (cardinalNumber % 10 == 1) {
@@ -80,11 +180,117 @@ let gameManagement = {
     },
 
 
-    // Settings and options
-    // --------------------
+    // Method to draw scroll on the board
+    // -----------------------------------------
+    createScroll: function(localScale, localTop, localLeft, localNode) {
+        let viewportSize = 100 * localScale;
+
+        // SVG holder
+        let scrollSheet = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        scrollSheet.setAttribute('width', 100 * localScale);
+        scrollSheet.setAttribute('height', 100 * localScale);
+        scrollSheet.style.top = localTop + 'px';
+        scrollSheet.style.left = localLeft + 'px';
+        scrollSheet.setAttribute('viewBox', '0, 0, ' + viewportSize + ' ' + viewportSize);
+
+        // Backing rectangle
+        let scrollOutline = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        scrollOutline.setAttribute('width',  50 * localScale);
+        scrollOutline.setAttribute('height', 70 * localScale);
+        scrollOutline.setAttribute('x', 25 * localScale);
+        scrollOutline.setAttribute('y', 10 * localScale);
+        scrollOutline.setAttribute('rx', '2');
+        scrollOutline.setAttribute('ry', '2');
+        scrollOutline.setAttribute('fill', 'rgb(246, 232, 206)');
+        scrollOutline.setAttribute('stroke','rgb(137, 113, 82)');
+        scrollOutline.style.strokeWidth = localScale + 'px';
+        scrollOutline.style.strokeLinecap = 'round';
+
+        // Text title
+        let scrollTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        scrollTitle.textContent = ('');
+        scrollTitle.setAttribute('font-size', 16 * screenReduction);
+        scrollTitle.setAttribute('fill', 'rgb(179, 156, 128)');
+        scrollTitle.setAttribute('x', 50 * localScale);
+        scrollTitle.setAttribute('y', 38 * localScale);
+        scrollTitle.setAttribute('text-anchor', 'middle');
+        scrollTitle.setAttribute('font-weight', 'bold');
+
+        // Text - first line
+        let scrollText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        scrollText.textContent = ('');
+        scrollText.setAttribute('font-size', 16 * screenReduction);
+        scrollText.setAttribute('fill', 'rgb(179, 156, 128)');
+        scrollText.setAttribute('x', 50 * localScale);
+        scrollText.setAttribute('y', 45 * localScale);
+        scrollText.setAttribute('text-anchor', 'middle');
+        scrollText.setAttribute('font-style', 'italic');
+
+        // Text - second line
+        let scrollText2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        scrollText2.textContent = ('bat cat dat');
+        scrollText2.setAttribute('font-size', 16 * screenReduction);
+        scrollText2.setAttribute('fill', 'rgb(179, 156, 128)');
+        scrollText2.setAttribute('x', 50 * localScale);
+        scrollText2.setAttribute('y', 50 * localScale);
+        scrollText2.setAttribute('text-anchor', 'middle');
+        scrollText2.setAttribute('font-style', 'italic');
+
+        // Components add to svg holder
+        scrollSheet.appendChild(scrollOutline);
+        scrollSheet.appendChild(scrollTitle);
+        scrollSheet.appendChild(scrollText);
+        scrollSheet.appendChild(scrollText2);
+
+        return scrollSheet;
+    },
+
+    // Array to hold first and second lines of scroll text
+    // Scrolls appear at start of each of eight moons
+    // -----------------------------------------
+    scrollTextArray: [
+      ['The game commences!', 'Seek out goods and resources.'],
+      ['Trading activated!', 'Deliver goods to islands for rewards.'],
+      ['Bigger contracts coming soon!', 'Build bigger ships to meet demand.'],
+      ['At the next new moon ...', ' ... the last player will be eliminated!'],
+      ['Trading post is open', 'OK, I still need to develop this bit.'],
+      ['At the next new moon ...', ' ... the last player will be eliminated!'],
+      ['Head to head!', 'Down to the final two.'],
+      ['The last moon!', 'To the winner the spoils!'],
+    ],
+
+    // Method to update title and text of scroll
+    // -----------------------------------------
+    scrollText: function() {
+        let dateInputs = this.moonDate(this.gameDate);
+        return [dateInputs.moonMonthOrd + ' moon', this.scrollTextArray[dateInputs.moonMonth - 1][0], this.scrollTextArray[dateInputs.moonMonth - 1][1]];
+    },
+
+    // Method to close scroll
+    // ----------------------
+    scrollClose: function(e) {
+        if (e.target == scrollPopup) {
+            // Included to potentially allow future actions to be taken using buttons in scroll
+            scrollPopup.style.display = "none";
+            if(workFlow == 1) {console.log('Scroll Close event listener removed ' + gameManagement.turn + ' : ' + (Date.now() - launchTime)); }
+            scrollPopup.removeEventListener('click', this.scrollClose);
+            gameManagement.afterNextTurn();
+        } else {
+            scrollPopup.style.display = "none";
+            if(workFlow == 1) {console.log('Scroll Close event listener removed ' + gameManagement.turn + ' : ' + (Date.now() - launchTime)); }
+            scrollPopup.removeEventListener('click', this.scrollClose);
+            gameManagement.afterNextTurn();
+        }
+    },
+
+
+    // ------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------
+    // SETTINGS AND OPTIONS
+
     optionsArray: [
                   { variable: 'speed', active: 'fast', options: [{text: 'slow', active: false, constant: 1.5}, {text: 'medium', active: false, constant: 1}, {text: 'fast', active: true, constant: 0.6}] },
-                  { variable: 'dev', options: [{text: 'workflow', active: false}, {text: 'transitions', active: false}] },
+                  { variable: 'dev', options: [{text: 'workflow', active: true}, {text: 'transitions', active: false}] },
                   ],
 
 
