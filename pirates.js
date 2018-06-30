@@ -115,7 +115,7 @@ let pirates = {
     // Method to manage automated movement of pirate ship moves
     automatePirates: function() {
         if(workFlow == 1) {console.log('Automate pirates - ship to move or completion: ' + (Date.now() - launchTime)); }
-        endTurn.removeEventListener('click', nextTurn);
+        endTurn.removeEventListener('click', gameManagement.nextTurn);
         boardMarkNode.removeEventListener('click', boardHandler);
         if (pirates.pirateCount == -1) {
             // Generate array of all pirate ships to be moved
@@ -143,7 +143,7 @@ let pirates = {
                 this.pirateShips[i].end = {row: '', col: ''};
             }
             pirates.pirateCount = -1;
-            endTurn.addEventListener('click', nextTurn);
+            endTurn.addEventListener('click', gameManagement.nextTurn);
             boardMarkNode.addEventListener('click', boardHandler);
             stockDashboardNode.addEventListener('click', buildItem.clickStock);
         }

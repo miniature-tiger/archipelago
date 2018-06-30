@@ -221,7 +221,7 @@ let gameBoard = {
 
         // Creation of plantation
         this.boardArray[boardCenter][boardCenter+1].pieces = {populatedSquare: true, category: 'Resources', type: 'plantation', direction: '0', used: 'unused', damageStatus: 5, team: 'Kingdom', goods: 'coffee', stock: 0, production: 2};
-      
+
     /*  // TEST AREA
         // Clay
         this.boardArray[row-3][boardCenter+1] = {xpos: row-3, ypos: boardCenter+1, terrain: 'land', subTerrain: 'none', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Resources', type: 'clay', direction: '0', used: 'unused', damageStatus: 5, team: 'Unclaimed', goods: 'pottery', stock: 18, production: 1}};
@@ -1692,7 +1692,7 @@ let gameBoard = {
 
     },
 
-    // Method to draw moon and time on the board
+    // Method to add moon and time to the board
     // -----------------------------------------
     drawMoonLayer: function() {
 
@@ -1705,19 +1705,42 @@ let gameBoard = {
         let moonCentreX = (gridSize + tileBorder * 2) * (col - 3) + (gridSize/2 + boardSurround + tileBorder);
         let moonCentreY = boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * 2;
 
+        // Obtaining date inputs (moonPhase and moonMonth plus ordinals)
+        let dateInputs = gameManagement.moonDate(gameManagement.gameDate);
+
+        moonLayer.appendChild(this.drawMoon(moonCentreX, moonCentreY, moonRadius, dateInputs.moonPhase));
+
+        // Text under the moon
+        let timeText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        timeText.textContent = (dateInputs.moonPhaseOrd + ' phase of ' + dateInputs.moonMonthOrd + ' moon');
+        timeText.setAttribute('font-size', 14 * screenReduction);
+        timeText.setAttribute('stroke', 'rgb(179, 156, 128)');
+        timeText.setAttribute('fill', 'rgb(179, 156, 128)');
+        timeText.setAttribute('x', moonCentreX);
+        timeText.setAttribute('y', moonCentreY + moonRadius + 14 * screenReduction + tileBorder);
+        timeText.setAttribute('text-anchor', 'middle');
+        timeText.setAttribute('font-style', 'italic');
+        moonLayer.appendChild(timeText);
+
+    },
+
+    // Method to draw moon
+    // -------------------
+    drawMoon: function(localX, localY, localRadius, localMoonPhase) {
+
+        // Group holder for moon
+        let moonGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
         // Backing circle of moon
         let moonCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        moonCircle.setAttribute('cx', moonCentreX);
-        moonCircle.setAttribute('cy', moonCentreY);
-        moonCircle.setAttribute('r', moonRadius);
+        moonCircle.setAttribute('cx', localX);
+        moonCircle.setAttribute('cy', localY);
+        moonCircle.setAttribute('r', localRadius);
         moonCircle.setAttribute('fill', 'rgb(233, 211, 183)');
         moonCircle.setAttribute('stroke', 'rgb(233, 211, 183)');
         moonCircle.style.strokeWidth = '1px';
         moonCircle.style.strokeLinecap = 'round';
-        moonLayer.appendChild(moonCircle);
-
-        // Obtaining date inputs (moonPhase and moonMonth plus ordinals)
-        let dateInputs = gameManagement.moonDate(gameManagement.gameDate);
+        moonGroup.appendChild(moonCircle);
 
         // Inputs for drawing moon arcs
         let nearSide = [1, 1, 1, 1, 0.5, 0, 0.5];
@@ -1726,35 +1749,23 @@ let gameBoard = {
         let farSideArc = [0, 0, 1, 1, 1, 1, 1];
 
         // Lighter moon overlay uses two arcs to give shape of moon - not added in 8th phase (new moon)
-        if(dateInputs.moonPhase < 8) {
+        if(localMoonPhase < 8) {
 
             let moonArc = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             moonArc.setAttribute('d',
-            'M ' + (moonCentreX)  + ' ' + (moonCentreY - moonRadius) +
-            ' A ' + (moonRadius*farSide[dateInputs.moonPhase-1]) + ' ' + moonRadius + ' 0 0 ' + farSideArc[dateInputs.moonPhase-1] + ' ' + (moonCentreX)  + ' ' + (moonCentreY + moonRadius) +
-            ' A ' + (moonRadius*nearSide[dateInputs.moonPhase-1]) + ' ' + moonRadius + ' 0 0 ' + nearSideArc[dateInputs.moonPhase-1] + ' ' + (moonCentreX)  + ' ' + (moonCentreY - moonRadius)
+            'M ' + (localX)  + ' ' + (localY - localRadius) +
+            ' A ' + (localRadius*farSide[localMoonPhase-1]) + ' ' + localRadius + ' 0 0 ' + farSideArc[localMoonPhase-1] + ' ' + (localX)  + ' ' + (localY + localRadius) +
+            ' A ' + (localRadius*nearSide[localMoonPhase-1]) + ' ' + localRadius + ' 0 0 ' + nearSideArc[localMoonPhase-1] + ' ' + (localX)  + ' ' + (localY - localRadius)
            );
             moonArc.setAttribute('fill', 'rgb(249, 240, 223)');
             moonArc.setAttribute('stroke', 'rgb(213, 191, 163)');
             moonArc.setAttribute('stroke-linecap', 'round');
             moonArc.setAttribute('stroke-linejoin', 'round');
             moonArc.style.strokeWidth = '1px';
-            moonLayer.appendChild(moonArc);
+            moonGroup.appendChild(moonArc);
         }
 
-        // Text under the moon
-        let timeText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        let text = document.createTextNode(dateInputs.moonPhaseOrd + ' phase of ' + dateInputs.moonMonthOrd + ' moon');
-        timeText.setAttribute('font-size', 14 * screenReduction);
-        timeText.setAttribute('stroke', 'rgb(179, 156, 128)');
-        timeText.setAttribute('fill', 'rgb(179, 156, 128)');
-        timeText.setAttribute('x', moonCentreX);
-        timeText.setAttribute('y', moonCentreY + moonRadius + 14 * screenReduction + tileBorder);
-        timeText.setAttribute('text-anchor', 'middle');
-        timeText.setAttribute('font-style', 'italic');
-        timeText.appendChild(text);
-        moonLayer.appendChild(timeText);
-
+        return moonGroup;
     },
 
 // LAST BRACKET OF OBJECT

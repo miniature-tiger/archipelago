@@ -14,7 +14,7 @@ let gameScore = {
 
     scoreSummary: {Exploring: [], Building: [], Trading: [], Gifts: [], Total: [],},
 
-    // Method to organise scoe updates
+    // Method to organise score updates
     // ------------------------------------------------
     workScores: function(contest, localTeam, subContest, scoreDetail) {
         let scoreComments = this.addScore(contest, localTeam, subContest, scoreDetail);

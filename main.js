@@ -109,6 +109,19 @@ boardMarkNode.appendChild(tradeRouteLayer);
 let moonLayer = gameBoard.createNewLayer('moonLayer');
 boardMarkNode.appendChild(moonLayer);
 
+// Setting up next turn icon
+
+var endTurn = document.querySelector('.endturnmark');
+endTurn.setAttribute('class', gameManagement.turn + ' team_fill team_stroke');
+gameManagement.createTurnCircle(false, 0.7*surroundSize/100, -20*screenReduction, 0.15*surroundSize, endTurn, 'icon_holder');
+
+// Finds the scroll popup holder for the intro and gameManagement scrolls
+let scrollPopup = document.querySelector('.scroll_popup');
+let scrollPanel = gameManagement.createScroll(screenWidth*(12/2000), -50*screenReduction, (screenWidth*4/20), scrollPopup);
+scrollPopup.appendChild(scrollPanel);
+scrollPanel.appendChild(gameBoard.drawMoon((screenWidth*4.2/20), 150*screenReduction, 50*screenReduction, 1));
+scrollPanel.appendChild(gameBoard.drawMoon((screenWidth*7.8/20), 540*screenReduction, 50*screenReduction, 7));
+
 // Finds the stockDashboard holder in the left hand panel
 let stockDashboardNode = document.querySelector('div.stockDashboard');
 
@@ -197,89 +210,6 @@ let needle = document.getElementById('needle2');
 needle.style.transform = 'rotate(' + needleDirection + 'deg)';
 
 
-// Next turn functionality
-// -----------------------
-
-function nextTurn() {
-    // Used pieces are resert to unused
-    if(workFlow == 1) {console.log(' ------ Next turn: ---------: ' + (Date.now() - launchTime)); }
-    // Resetting if second click not applied
-    pieceMovement.deactivateTiles(maxMove);
-    gameBoard.drawActiveTiles();
-
-    // Resetting movement array in case second click has not been made
-    pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
-    startEnd = 'start';
-
-    // Removing commentary goods event handler
-    commentary.removeEventListener('click', clickGoods);
-    clearCommentary();
-
-    buildItem.clearBuilding();
-
-    // Resetting used pieces
-    pieceMovement.usedPiecesReset();
-
-    // Team is changed
-    gameManagement.nextTurn();
-
-    if(workFlow == 1) {console.log('Turn changed to ' + gameManagement.turn + ' : ' + (Date.now() - launchTime)); }
-    if(gameBoardTrack == 1) {console.log(gameBoard.boardArray); }
-
-    // Moon is redrawn for next turn
-    gameBoard.drawMoonLayer();
-
-    // Wind direction is set for next turn
-    windDirection = compass.newWindDirection(windDirection);
-    needleDirection = compass.directionArray[windDirection].needle;
-    needle.style.transform = 'rotate(' + needleDirection + 'deg)';
-
-    // Comment and building and scoreboard bars reset
-    commentary.style.bottom = '-10%';
-    building.style.bottom = '-15%';
-    scoreHeader.style.top = '-15%';
-
-    // End turn button colour is changed
-    endTurn.setAttribute('class', gameManagement.turn + ' team_fill team_stroke');
-
-    // Repair ships
-    pieceMovement.harbourRepair();
-
-    // Automated movement for pirates
-    if (gameManagement.turn == 'Pirate') {
-        pirates.automatePirates();
-    } else {
-        // Chance of new trade contract
-        // TO ADD - turn counter - only have contracts issued after a certain number of turns
-        if(workFlow == 1) {console.log('Checking for new trade contracts: ' + (Date.now() - launchTime)); }
-        tradeContracts.newContract();
-
-        // Manage goods
-        if(workFlow == 1) {console.log('Adding new goods production: ' + (Date.now() - launchTime)); }
-        stockDashboard.newTurnGoods();
-
-        // Manage on-going contracts
-        if(workFlow == 1) {console.log('Managing active contracts: ' + (Date.now() - launchTime)); }
-        tradeContracts.contractContinuance();
-
-        // Update the stock dashboard
-        if(workFlow == 1) {console.log('Updating stock dashboard and contracts dashboard: ' + (Date.now() - launchTime)); }
-        stockDashboard.stockTake();
-        stockDashboard.drawStock();
-
-        // Update the contracts dashboard
-        tradeContracts.drawContracts();
-
-        // Update the goods dashboard
-        //stockDashboard.goodsStockTake();
-    }
-}
-
-var endTurn = document.querySelector('.endturnmark');
-endTurn.setAttribute('class', gameManagement.turn + ' team_fill team_stroke');
-gameManagement.createTurnCircle(false, 0.7*surroundSize/100, -20*screenReduction, 0.15*surroundSize, endTurn, 'icon_holder');
-endTurn.addEventListener('click', nextTurn);
-
 
 // Settings pop-up box
 // --------------------
@@ -318,6 +248,12 @@ function popRunClose(e) {
     }
 };
 
+
+// Switching of next turn listener
+// -------------------------------
+endTurn.addEventListener('click', gameManagement.nextTurn);
+
+
 // Set up of building event listener
 // ------------------------------
 
@@ -333,6 +269,8 @@ thirdBuildLine.style.left = '7%';
 
 // Event listener added to stock dashboard
 stockDashboardNode.addEventListener('click', buildItem.clickStock);
+
+
 
 
 // ------------------------------------------------------------------------------------
@@ -378,9 +316,6 @@ function clearCommentary() {
         }
     }
 }
-
-
-
 
 
 // Function for goods quantity selection
@@ -658,7 +593,7 @@ function boardHandler(event) {
                     gameScore.workScores('Building', gameManagement.turn, pieceMovement.movementArray.start.pieces.type);
                 // Piece movement
               } else if (pieceMovement.movementArray.start.pieces.category == 'Transport') {
-                    endTurn.removeEventListener('click', nextTurn);
+                    endTurn.removeEventListener('click', gameManagement.nextTurn);
                     boardMarkNode.removeEventListener('click', boardHandler);
                     stockDashboardNode.removeEventListener('click', buildItem.clickStock);
                     pieceMovement.deactivateTiles(maxMove);
@@ -696,6 +631,5 @@ function resetMove() {
 let boardMarkLeft = boardMarkNode.offsetLeft;
 let boardMarkTop = boardMarkNode.offsetTop;
 
-//console.log('here', boardMarkLeft, boardMarkTop);
-
+gameManagement.nextTurn();
 boardMarkNode.addEventListener('click', boardHandler);
