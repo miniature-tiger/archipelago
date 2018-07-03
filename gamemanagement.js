@@ -5,14 +5,15 @@ let gameManagement = {
     // Constants
     // ---------
     octagonAngle: (2 * Math.PI) / 8,
+    phaseCount: 8,
 
     // Player object
     // -------------
     // Future update: set up based on user inputs for player names
-    playerListing: [  {teamColour: 'Green Team', status: 'human', teamNumber: 1},
-                      {teamColour: 'Blue Team', status: 'human', teamNumber: 2 },
-                      {teamColour: 'Red Team', status: 'human', teamNumber: 3 },
-                      {teamColour: 'Orange Team', status: 'human', teamNumber: 4}, ],
+    playerListing: [  {teamColour: 'Green Team', type: 'human', status: 'competing', teamNumber: 1},
+                      {teamColour: 'Blue Team', type: 'human', status: 'competing', teamNumber: 2 },
+                      {teamColour: 'Red Team', type: 'human', status: 'competing', teamNumber: 3 },
+                      {teamColour: 'Orange Team', type: 'human', status: 'competing', teamNumber: 4}, ],
 
     // List of teams
     // -------------
@@ -82,6 +83,7 @@ let gameManagement = {
         if (gameManagement.turn == 'Pirate') {
             gameManagement.gameDate += 1;
         }
+
         // Team is changed
         gameManagement.turn = gameManagement.teamArray[(gameManagement.teamArray.indexOf(gameManagement.turn)+1) % (gameManagement.teamArray.length)];
 
@@ -91,11 +93,16 @@ let gameManagement = {
         // Moon is redrawn for next turn
         gameBoard.drawMoonLayer();
 
+        // Players eliminated at the end of moon 4 / start of moon 5 and end of moon 6 / start of moon 7
+        if ((gameManagement.gameDate == (4 * gameManagement.phaseCount + 1) || gameManagement.gameDate == (6 * gameManagement.phaseCount + 1)) && gameManagement.turn == gameManagement.teamArray[1]) {
+            gameManagement.eliminatePlayer(gameManagement.lastPlayer());
+        }
+
         // Intro scroll pop up
         if (gameManagement.moonDate(gameManagement.gameDate).moonPhase == 1 && gameManagement.turn == gameManagement.teamArray[1]) {
 
             // Displays intro / moon scroll and adds text
-            [scrollPanel.children[1].textContent, scrollPanel.children[2].textContent, scrollPanel.children[3].textContent] = gameManagement.scrollText();
+            [scrollPanel.children[1].textContent, scrollPanel.children[2].textContent, scrollPanel.children[3].textContent, scrollPanel.children[4].textContent] = gameManagement.scrollText();
             scrollPopup.style.display = "block";
 
             // Sets up event listener to close when screen (or cross) is clicked
@@ -131,7 +138,6 @@ let gameManagement = {
             pirates.automatePirates();
         } else {
             // Chance of new trade contract
-            // TO ADD - turn counter - only have contracts issued after a certain number of turns
             if(workFlow == 1) {console.log('Checking for new trade contracts: ' + (Date.now() - launchTime)); }
             tradeContracts.newContract();
 
@@ -157,11 +163,11 @@ let gameManagement = {
     // Method to calculate moon phases from date
     // -----------------------------------------
     moonDate: function(localDate) {
-        let moonPhase = localDate % 8; // 8
+        let moonPhase = localDate % this.phaseCount; // 8
         if (moonPhase == 0) {
-            moonPhase = 8; // 8
+            moonPhase = this.phaseCount; // 8
         }
-        let moonMonth = (localDate - moonPhase) / 8 + 1; // ) / 8
+        let moonMonth = (localDate - moonPhase) / this.phaseCount + 1; // ) / 8
 
         function ordinalNumber(cardinalNumber) {
             if (cardinalNumber % 10 == 1) {
@@ -179,6 +185,78 @@ let gameManagement = {
         return ({moonPhase: moonPhase, moonMonth: moonMonth, moonPhaseOrd: moonPhaseOrd, moonMonthOrd: moonMonthOrd})
     },
 
+    // ------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------
+    // PLAYER ELIMINATION AND GAME ENDING
+
+    // Method to determine player to eliminate
+    // ---------------------------------------
+    lastPlayer: function() {
+        let lastPlayerArray = [];
+        let lowestScore = 10000;
+        // Loops through all players, building an array of competing players with the lowest score
+        for (var i = 0; i < this.playerListing.length; i++) {
+            if (this.playerListing[i].status == 'competing') {
+                index = gameScore.scoreSummary.Total.findIndex(fI => fI.team == this.playerListing[i].teamColour);
+                if (gameScore.scoreSummary.Total[index].score == lowestScore) {
+                    lastPlayerArray.push([this.playerListing[i].teamColour, gameScore.scoreSummary.Total[index].score]);
+                } else if (gameScore.scoreSummary.Total[index].score < lowestScore) {
+                    lastPlayerArray = [];
+                    lastPlayerArray.push([this.playerListing[i].teamColour, gameScore.scoreSummary.Total[index].score]);
+                    lowestScore = gameScore.scoreSummary.Total[index].score;
+                }
+            }
+        }
+
+        // Picks a player at random if more than one player have the lowest score
+        let eliminatedPlayer = lastPlayerArray.splice(Math.floor(Math.random() * lastPlayerArray.length), 1)[0][0];
+        return eliminatedPlayer;
+
+    },
+
+    // Method to remove a player's pieces from the game on elimination
+    // ---------------------------------------------------------------
+    eliminatePlayer: function(localTeam) {
+        if(workFlow == 1) {console.log('Eliminating player: ' + localTeam + ' : ' + (Date.now() - launchTime)); }
+        for (var i = 0; i < gameBoard.boardArray.length; i++) {
+            // Loop through all board tiles
+            for (var j = 0; j < gameBoard.boardArray[i].length; j++) {
+                if (gameBoard.boardArray[i][j].pieces.team == localTeam) {
+                    let IDPiece = 'tile' + Number(i*1000 + j);
+                    document.getElementById(IDPiece).remove();
+                    // Remove all transport ships
+                    if (gameBoard.boardArray[i][j].pieces.category == 'Transport') {
+                        gameBoard.boardArray[i][j].pieces = {populatedSquare: false, category: '', type: 'no piece', direction: '', used: 'unused', damageStatus: 5, team: '', goods: 'none', stock: 0, production: 0};
+                    // Turn all land tiles grey by changing to team "deserted"
+                    } else {
+                        gameBoard.boardArray[i][j].pieces.team = 'Deserted';
+                        boardMarkNode.appendChild(gameBoard.createActionTile(i, j, gameBoard.boardArray[i][j].pieces.type, gameBoard.boardArray[i][j].pieces.team,
+                          'tile' + Number(i*1000 + j), boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * i, boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * j, 1, gameBoard.boardArray[i][j].pieces.direction));
+                    }
+                }
+            }
+        }
+
+        // Update marker for competing player / eliminated player in player listing
+        index = this.playerListing.findIndex(fI => fI.teamColour == localTeam);
+        this.playerListing[index].status = 'eliminated';
+
+        // Remove player from teamArray
+        let index2 = this.teamArray.indexOf(localTeam);
+        if (index2 != -1) {
+            this.teamArray.splice(index2, 1);
+        }
+
+        // Update scrollTextArray
+        let eliminationDate = this.moonDate(this.gameDate).moonMonth;
+        this.scrollTextArray[eliminationDate-1][0] = this.playerListing[index].teamColour + ' has been eliminated.'
+        console.log(eliminationDate);
+
+    },
+
+    // ------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------
+    // SCROLL METHODS
 
     // Method to draw scroll on the board
     // -----------------------------------------
@@ -228,7 +306,7 @@ let gameManagement = {
 
         // Text - second line
         let scrollText2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        scrollText2.textContent = ('bat cat dat');
+        scrollText2.textContent = ('');
         scrollText2.setAttribute('font-size', 16 * screenReduction);
         scrollText2.setAttribute('fill', 'rgb(179, 156, 128)');
         scrollText2.setAttribute('x', 50 * localScale);
@@ -236,11 +314,22 @@ let gameManagement = {
         scrollText2.setAttribute('text-anchor', 'middle');
         scrollText2.setAttribute('font-style', 'italic');
 
+        // Text - third line
+        let scrollText3 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        scrollText3.textContent = ('');
+        scrollText3.setAttribute('font-size', 16 * screenReduction);
+        scrollText3.setAttribute('fill', 'rgb(179, 156, 128)');
+        scrollText3.setAttribute('x', 50 * localScale);
+        scrollText3.setAttribute('y', 55 * localScale);
+        scrollText3.setAttribute('text-anchor', 'middle');
+        scrollText3.setAttribute('font-style', 'italic');
+
         // Components add to svg holder
         scrollSheet.appendChild(scrollOutline);
         scrollSheet.appendChild(scrollTitle);
         scrollSheet.appendChild(scrollText);
         scrollSheet.appendChild(scrollText2);
+        scrollSheet.appendChild(scrollText3);
 
         return scrollSheet;
     },
@@ -249,21 +338,21 @@ let gameManagement = {
     // Scrolls appear at start of each of eight moons
     // -----------------------------------------
     scrollTextArray: [
-      ['The game commences!', 'Seek out goods and resources.'],
-      ['Trading activated!', 'Deliver goods to islands for rewards.'],
-      ['Bigger contracts coming soon!', 'Build bigger ships to meet demand.'],
-      ['At the next new moon ...', ' ... the last player will be eliminated!'],
-      ['Trading post is open', 'OK, I still need to develop this bit.'],
-      ['At the next new moon ...', ' ... the last player will be eliminated!'],
-      ['Head to head!', 'Down to the final two.'],
-      ['The last moon!', 'To the winner the spoils!'],
+      ['The game commences!', 'Seek out goods and resources.', ''],
+      ['Trading activated!', 'Deliver goods to islands for rewards.', ''],
+      ['Bigger contracts coming soon!', 'Build bigger ships to meet demand.', ''],
+      ['At the next new moon ...', ' ... the last player will be eliminated!', ''],
+      ['', 'Trading post is open', 'OK, I still need to develop this bit.'],
+      ['At the next new moon ...', ' ... the last player will be eliminated!', ''],
+      ['', 'Head to head!', 'Down to the final two.'],
+      ['The last moon!', 'To the winner the spoils!', ''],
     ],
 
     // Method to update title and text of scroll
     // -----------------------------------------
     scrollText: function() {
         let dateInputs = this.moonDate(this.gameDate);
-        return [dateInputs.moonMonthOrd + ' moon', this.scrollTextArray[dateInputs.moonMonth - 1][0], this.scrollTextArray[dateInputs.moonMonth - 1][1]];
+        return [dateInputs.moonMonthOrd + ' moon', this.scrollTextArray[dateInputs.moonMonth - 1][0], this.scrollTextArray[dateInputs.moonMonth - 1][1], this.scrollTextArray[dateInputs.moonMonth - 1][2]];
     },
 
     // Method to close scroll
@@ -290,7 +379,7 @@ let gameManagement = {
 
     optionsArray: [
                   { variable: 'speed', active: 'fast', options: [{text: 'slow', active: false, constant: 1.5}, {text: 'medium', active: false, constant: 1}, {text: 'fast', active: true, constant: 0.6}] },
-                  { variable: 'dev', options: [{text: 'workflow', active: true}, {text: 'transitions', active: false}] },
+                  { variable: 'dev', options: [{text: 'workflow', active: false}, {text: 'transitions', active: false}] },
                   ],
 
 
