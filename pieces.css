@@ -479,6 +479,14 @@
     fill: rgb(235, 215, 195);
 }
 
+.Deserted.team_stroke {
+    stroke: grey;
+}
+
+.Deserted.team_fill {
+    fill: grey;
+}
+
 .deg90 {
     transform: rotate(90deg);
     transition: transform 1s;
