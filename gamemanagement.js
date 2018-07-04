@@ -222,13 +222,16 @@ let gameManagement = {
             // Loop through all board tiles
             for (var j = 0; j < gameBoard.boardArray[i].length; j++) {
                 if (gameBoard.boardArray[i][j].pieces.team == localTeam) {
-                    let IDPiece = 'tile' + Number(i*1000 + j);
-                    document.getElementById(IDPiece).remove();
+
                     // Remove all transport ships
                     if (gameBoard.boardArray[i][j].pieces.category == 'Transport') {
+                        let IDPiece = 'tile' + Number(i*1000 + j);
+                        document.getElementById(IDPiece).remove();
                         gameBoard.boardArray[i][j].pieces = {populatedSquare: false, category: '', type: 'no piece', direction: '', used: 'unused', damageStatus: 5, team: '', goods: 'none', stock: 0, production: 0};
                     // Turn all land tiles grey by changing to team "deserted"
-                    } else {
+                    } else if (gameBoard.boardArray[i][j].pieces.category == 'Resources' || gameBoard.boardArray[i][j].pieces.category == 'Settlements') {
+                        let IDPiece = 'tile' + Number(i*1000 + j);
+                        document.getElementById(IDPiece).remove();
                         gameBoard.boardArray[i][j].pieces.team = 'Deserted';
                         boardMarkNode.appendChild(gameBoard.createActionTile(i, j, gameBoard.boardArray[i][j].pieces.type, gameBoard.boardArray[i][j].pieces.team,
                           'tile' + Number(i*1000 + j), boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * i, boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * j, 1, gameBoard.boardArray[i][j].pieces.direction));
