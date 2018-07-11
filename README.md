@@ -64,7 +64,9 @@ Building:
 Scoring: 
 * Work out scoring mechanism - COMPLETE
 * Add score dashboard - COMPLETE
-* Game ending - reduction in players as time passes and how to end the game (contracts to all islands or eight moons of time)
+* Breaking of game into stages - COMPLETE
+* Reduction in players as time passes - COMPLETE
+* Game ending - how to end the game (contracts to all islands or eight moons of time)
 
 # Phase 3 - Conflicts 
 
