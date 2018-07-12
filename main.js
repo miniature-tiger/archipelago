@@ -119,8 +119,8 @@ gameManagement.createTurnCircle(false, 0.7*surroundSize/100, -20*screenReduction
 let scrollPopup = document.querySelector('.scroll_popup');
 let scrollPanel = gameManagement.createScroll(screenWidth*(12/2000), -50*screenReduction, (screenWidth*4/20), scrollPopup);
 scrollPopup.appendChild(scrollPanel);
-scrollPanel.appendChild(gameBoard.drawMoon((screenWidth*4.2/20), 150*screenReduction, 50*screenReduction, 1));
-scrollPanel.appendChild(gameBoard.drawMoon((screenWidth*7.8/20), 540*screenReduction, 50*screenReduction, 7));
+scrollPanel.appendChild(gameBoard.drawMoon((screenWidth*4.2/20), 175*screenReduction, 50*screenReduction, 1));
+scrollPanel.appendChild(gameBoard.drawMoon((screenWidth*7.8/20), 565*screenReduction, 50*screenReduction, 7));
 
 // Finds the stockDashboard holder in the left hand panel
 let stockDashboardNode = document.querySelector('div.stockDashboard');
