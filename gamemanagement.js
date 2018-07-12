@@ -385,7 +385,11 @@ let gameManagement = {
     // -----------------------------------------
     scrollText: function() {
         let dateInputs = this.moonDate(this.gameDate);
-        return [dateInputs.moonMonthOrd + ' moon', this.scrollTextArray[dateInputs.moonMonth - 1][0], this.scrollTextArray[dateInputs.moonMonth - 1][1], this.scrollTextArray[dateInputs.moonMonth - 1][2]];
+        if (dateInputs.moonMonth == 9) {
+            return ['Game Over', this.scrollTextArray[dateInputs.moonMonth - 1][0], this.scrollTextArray[dateInputs.moonMonth - 1][1], this.scrollTextArray[dateInputs.moonMonth - 1][2]];
+        } else {
+            return [dateInputs.moonMonthOrd + ' moon', this.scrollTextArray[dateInputs.moonMonth - 1][0], this.scrollTextArray[dateInputs.moonMonth - 1][1], this.scrollTextArray[dateInputs.moonMonth - 1][2]];
+        }
     },
 
     // Method to close scroll
