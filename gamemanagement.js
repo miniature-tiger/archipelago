@@ -95,7 +95,12 @@ let gameManagement = {
 
         // Players eliminated at the end of moon 4 / start of moon 5 and end of moon 6 / start of moon 7
         if ((gameManagement.gameDate == (4 * gameManagement.phaseCount + 1) || gameManagement.gameDate == (6 * gameManagement.phaseCount + 1)) && gameManagement.turn == gameManagement.teamArray[1]) {
-            gameManagement.eliminatePlayer(gameManagement.lastPlayer());
+            gameManagement.eliminatePlayer(gameManagement.firstLastPlayer());
+        }
+
+        // Winner for intro scroll
+        if (gameManagement.gameDate == (8 * gameManagement.phaseCount + 1)) {
+            gameManagement.presentWinner(gameManagement.firstLastPlayer());
         }
 
         // Intro scroll pop up
@@ -105,20 +110,23 @@ let gameManagement = {
             [scrollPanel.children[1].textContent, scrollPanel.children[2].textContent, scrollPanel.children[3].textContent, scrollPanel.children[4].textContent] = gameManagement.scrollText();
             scrollPopup.style.display = "block";
 
-            // Sets up event listener to close when screen (or cross) is clicked
-            scrollPopup.addEventListener('click', gameManagement.scrollClose);
+            if (gameManagement.gameDate < (8 * gameManagement.phaseCount + 1)) {
+                // Sets up event listener to close when screen (or cross) is clicked
+                scrollPopup.addEventListener('click', gameManagement.scrollClose);
+            } else {
+                  console.log('game over');
+                // Game Over
+            }
         } else {
             // Second half of next turn functionality called if scroll is not activated (here) or once scroll is clicked to close (scrollClose)
             gameManagement.afterNextTurn();
         }
-
     },
 
 
     // Next turn - after moon change
     // ----------------------------
     afterNextTurn: function() {
-
         // Wind direction is set for next turn
         windDirection = compass.newWindDirection(windDirection);
         needleDirection = compass.directionArray[windDirection].needle;
@@ -191,9 +199,11 @@ let gameManagement = {
 
     // Method to determine player to eliminate
     // ---------------------------------------
-    lastPlayer: function() {
+    firstLastPlayer: function() {
         let lastPlayerArray = [];
+        let firstPlayerArray = [];
         let lowestScore = 10000;
+        let highestScore = 0;
         // Loops through all players, building an array of competing players with the lowest score
         for (var i = 0; i < this.playerListing.length; i++) {
             if (this.playerListing[i].status == 'competing') {
@@ -205,23 +215,31 @@ let gameManagement = {
                     lastPlayerArray.push([this.playerListing[i].teamColour, gameScore.scoreSummary.Total[index].score]);
                     lowestScore = gameScore.scoreSummary.Total[index].score;
                 }
+                if (gameScore.scoreSummary.Total[index].score == highestScore) {
+                    firstPlayerArray.push([this.playerListing[i].teamColour, gameScore.scoreSummary.Total[index].score]);
+                } else if (gameScore.scoreSummary.Total[index].score > highestScore) {
+                    firstPlayerArray = [];
+                    firstPlayerArray.push([this.playerListing[i].teamColour, gameScore.scoreSummary.Total[index].score]);
+                    highestScore = gameScore.scoreSummary.Total[index].score;
+                }
             }
         }
 
         // Picks a player at random if more than one player have the lowest score
-        let eliminatedPlayer = lastPlayerArray.splice(Math.floor(Math.random() * lastPlayerArray.length), 1)[0][0];
-        return eliminatedPlayer;
+        let lastPlayer = lastPlayerArray.splice(Math.floor(Math.random() * lastPlayerArray.length), 1)[0][0];
+        let firstPlayer = firstPlayerArray.splice(Math.floor(Math.random() * firstPlayerArray.length), 1)[0][0];
+        return [firstPlayer, lastPlayer];
 
     },
 
     // Method to remove a player's pieces from the game on elimination
     // ---------------------------------------------------------------
-    eliminatePlayer: function(localTeam) {
+    eliminatePlayer: function(localFirstLast) {
         if(workFlow == 1) {console.log('Eliminating player: ' + localTeam + ' : ' + (Date.now() - launchTime)); }
         for (var i = 0; i < gameBoard.boardArray.length; i++) {
             // Loop through all board tiles
             for (var j = 0; j < gameBoard.boardArray[i].length; j++) {
-                if (gameBoard.boardArray[i][j].pieces.team == localTeam) {
+                if (gameBoard.boardArray[i][j].pieces.team == localFirstLast[1]) {
 
                     // Remove all transport ships
                     if (gameBoard.boardArray[i][j].pieces.category == 'Transport') {
@@ -241,11 +259,11 @@ let gameManagement = {
         }
 
         // Update marker for competing player / eliminated player in player listing
-        index = this.playerListing.findIndex(fI => fI.teamColour == localTeam);
+        index = this.playerListing.findIndex(fI => fI.teamColour == localFirstLast[1]);
         this.playerListing[index].status = 'eliminated';
 
         // Remove player from teamArray
-        let index2 = this.teamArray.indexOf(localTeam);
+        let index2 = this.teamArray.indexOf(localFirstLast[1]);
         if (index2 != -1) {
             this.teamArray.splice(index2, 1);
         }
@@ -253,8 +271,19 @@ let gameManagement = {
         // Update scrollTextArray
         let eliminationDate = this.moonDate(this.gameDate).moonMonth;
         this.scrollTextArray[eliminationDate-1][0] = this.playerListing[index].teamColour + ' has been eliminated.'
-        console.log(eliminationDate);
+    },
 
+
+    presentWinner: function(localFirstLast) {
+        if(workFlow == 1) {console.log('Determining winner: ' + localTeam + ' : ' + (Date.now() - launchTime)); }
+
+        // Show scoreboard
+        scoreHeader.style.top = '0%';
+
+        // Update scrollTextArray
+        index = this.playerListing.findIndex(fI => fI.teamColour == localFirstLast[0]);
+        let winnerDate = this.moonDate(this.gameDate).moonMonth;
+        this.scrollTextArray[winnerDate-1][0] = this.playerListing[index].teamColour + ' is the winner!'
     },
 
     // ------------------------------------------------------------------------------------
@@ -279,7 +308,7 @@ let gameManagement = {
         scrollOutline.setAttribute('width',  50 * localScale);
         scrollOutline.setAttribute('height', 70 * localScale);
         scrollOutline.setAttribute('x', 25 * localScale);
-        scrollOutline.setAttribute('y', 10 * localScale);
+        scrollOutline.setAttribute('y', 13 * localScale);
         scrollOutline.setAttribute('rx', '2');
         scrollOutline.setAttribute('ry', '2');
         scrollOutline.setAttribute('fill', 'rgb(246, 232, 206)');
@@ -293,7 +322,7 @@ let gameManagement = {
         scrollTitle.setAttribute('font-size', 16 * screenReduction);
         scrollTitle.setAttribute('fill', 'rgb(179, 156, 128)');
         scrollTitle.setAttribute('x', 50 * localScale);
-        scrollTitle.setAttribute('y', 38 * localScale);
+        scrollTitle.setAttribute('y', 41 * localScale);
         scrollTitle.setAttribute('text-anchor', 'middle');
         scrollTitle.setAttribute('font-weight', 'bold');
 
@@ -303,7 +332,7 @@ let gameManagement = {
         scrollText.setAttribute('font-size', 16 * screenReduction);
         scrollText.setAttribute('fill', 'rgb(179, 156, 128)');
         scrollText.setAttribute('x', 50 * localScale);
-        scrollText.setAttribute('y', 45 * localScale);
+        scrollText.setAttribute('y', 48 * localScale);
         scrollText.setAttribute('text-anchor', 'middle');
         scrollText.setAttribute('font-style', 'italic');
 
@@ -313,7 +342,7 @@ let gameManagement = {
         scrollText2.setAttribute('font-size', 16 * screenReduction);
         scrollText2.setAttribute('fill', 'rgb(179, 156, 128)');
         scrollText2.setAttribute('x', 50 * localScale);
-        scrollText2.setAttribute('y', 50 * localScale);
+        scrollText2.setAttribute('y', 53 * localScale);
         scrollText2.setAttribute('text-anchor', 'middle');
         scrollText2.setAttribute('font-style', 'italic');
 
@@ -323,7 +352,7 @@ let gameManagement = {
         scrollText3.setAttribute('font-size', 16 * screenReduction);
         scrollText3.setAttribute('fill', 'rgb(179, 156, 128)');
         scrollText3.setAttribute('x', 50 * localScale);
-        scrollText3.setAttribute('y', 55 * localScale);
+        scrollText3.setAttribute('y', 58 * localScale);
         scrollText3.setAttribute('text-anchor', 'middle');
         scrollText3.setAttribute('font-style', 'italic');
 
@@ -349,6 +378,7 @@ let gameManagement = {
       ['At the next new moon ...', ' ... the last player will be eliminated!', ''],
       ['', 'Head to head!', 'Down to the final two.'],
       ['The last moon!', 'To the winner the spoils!', ''],
+      ['', 'Thanks for playing!', ''],
     ],
 
     // Method to update title and text of scroll
@@ -365,12 +395,12 @@ let gameManagement = {
             // Included to potentially allow future actions to be taken using buttons in scroll
             scrollPopup.style.display = "none";
             if(workFlow == 1) {console.log('Scroll Close event listener removed ' + gameManagement.turn + ' : ' + (Date.now() - launchTime)); }
-            scrollPopup.removeEventListener('click', this.scrollClose);
+            scrollPopup.removeEventListener('click', gameManagement.scrollClose);
             gameManagement.afterNextTurn();
         } else {
             scrollPopup.style.display = "none";
             if(workFlow == 1) {console.log('Scroll Close event listener removed ' + gameManagement.turn + ' : ' + (Date.now() - launchTime)); }
-            scrollPopup.removeEventListener('click', this.scrollClose);
+            scrollPopup.removeEventListener('click', gameManagement.scrollClose);
             gameManagement.afterNextTurn();
         }
     },

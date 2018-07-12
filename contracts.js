@@ -52,7 +52,7 @@ let tradeContracts = {
                 // Picks a random initial amount for delivery plus a recurring weekly amount
                 let initialAmount = 0;
                 if (gameManagement.gameDate <= 24) {
-                    initialAmount = Math.floor(Math.random() * (resourceManagement.resourcePieces[resourceNumber].maxProduction * 2)) + 1 + 2;
+                    initialAmount = Math.floor(Math.random() * (resourceManagement.resourcePieces[resourceNumber].maxProduction * 2)) + 1 + 1;
                 } else if (gameManagement.gameDate > 24 && gameManagement.gameDate <= 40) {
                     initialAmount = Math.floor(Math.random() * (resourceManagement.resourcePieces[resourceNumber].maxProduction * 4)) + 1 + 2;
                 } else {
@@ -528,7 +528,7 @@ let tradeContracts = {
                 }
             }
         }
-        console.log(this.contractsArray);
+        //console.log(this.contractsArray);
     },
 
 

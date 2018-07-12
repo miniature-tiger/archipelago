@@ -26,7 +26,7 @@ let gameScore = {
     // Method to check if score is to be added for move
     // ------------------------------------------------
     addScore: function(contest, localTeam, subContest, scoreDetail) {
-        console.log(contest, localTeam, subContest, scoreDetail);
+        //console.log(contest, localTeam, subContest, scoreDetail);
 
         // Finds array position in score array of current team
         let teamPosition = this.scoreArray.findIndex(fI => fI.team == localTeam);
