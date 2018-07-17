@@ -58,7 +58,6 @@ let gameScore = {
             let countExplored = [0, 0, 0, 0];
             let scoreSubCategories = Object.keys(this.scoreArray[0].Exploring);
             scoreSubCategories.splice(6, 3);
-            console.log(scoreSubCategories);
             for (var i = 0; i < scoreSubCategories.length; i++) {
                 // Loop of each team to count number of previously found resources
                 for (var j = 0; j < this.scoreArray.length; j++) {
