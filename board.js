@@ -229,6 +229,11 @@ let gameBoard = {
 
         // Flax
         this.boardArray[row-3][boardCenter] = {xpos: row-3, ypos: boardCenter, terrain: 'land', subTerrain: 'none', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Resources', type: 'flax', direction: '0', used: 'unused', damageStatus: 5, team: 'Unclaimed', goods: 'cloth', stock: 18, production: 1}};
+
+        // Iron
+        this.boardArray[6][boardCenter] = {xpos: row-3, ypos: boardCenter, terrain: 'land', subTerrain: 'none', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Resources', type: 'ironworks', direction: '0', used: 'unused', damageStatus: 5, team: 'Unclaimed', goods: 'iron', stock: 18, production: 1}};
+
+        this.boardArray[5][boardCenter].pieces = {populatedSquare: true, category: 'Transport', type: 'catamaran', direction: '45', used: 'unused', damageStatus: 5, team: 'Green Team', goods: 'none', stock: 0};
 /*
         // Battle Royale
         this.boardArray[row-4][boardCenter].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0};
