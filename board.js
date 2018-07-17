@@ -1652,7 +1652,6 @@ let gameBoard = {
     // -----------------------------------------
     // Local path is an array of objects of the form {fromRow: 15, fromCol: 4}
     tradeRoute: function(localPath, localTeam, localFort, localGoods) {
-
         let pathGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         tradeRouteLayer.appendChild(pathGroup);
         pathGroup.id = localGoods + '_' + localFort;
@@ -1696,6 +1695,23 @@ let gameBoard = {
         //endCircle.setAttribute('fill', 'none');
         pathGroup.appendChild(endCircle);
 
+    },
+
+    // Method to add mark to harbour to show team has completed contract with that island
+    // ----------------------------------------------------------------------------------
+    closedRouteMark: function(localRow, localCol, localTeam, localFort) {
+        let islandTeamHarbour = {'Green Team': [1,0], 'Blue Team': [0,-1], 'Red Team': [-1,0], 'Orange Team': [0,1]}
+
+        let closedMark = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        closedMark.id = localTeam + '_' + localFort;
+        closedMark.setAttribute('class', localTeam + ' team_route');
+        closedMark.setAttribute('cx', (boardSurround + tileBorder + gridSize/2 + (gridSize + tileBorder * 2) * (localCol + islandTeamHarbour[localTeam][1])));
+        closedMark.setAttribute('cy', (boardSurround + tileBorder + gridSize/2 + (gridSize + tileBorder * 2) * (localRow + islandTeamHarbour[localTeam][0])));
+        closedMark.setAttribute('r', '7');
+        closedMark.setAttribute('fill', 'none');
+        closedMark.style.strokeWidth = '2px';
+        closedMark.style.strokeLinecap = 'round';
+        tradeRouteLayer.appendChild(closedMark);
     },
 
     // Method to add moon and time to the board

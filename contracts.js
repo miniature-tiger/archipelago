@@ -26,11 +26,11 @@ let tradeContracts = {
             let teamContracts = {};
             for (var j = 0; j < resourceManagement.resourcePieces.length; j++) {
                 // TESTING teamContracts[resourceManagement.resourcePieces[j].goods] = {created: false, struck: 'unopen', team: 'none', initial: 0, renewal: 0, timeRemaining: 0};
-                teamContracts[resourceManagement.resourcePieces[j].goods] = {created: true, struck: 'open', team: 'none', initial: 3, renewal: 1, timeRemaining: 8};
+                teamContracts[resourceManagement.resourcePieces[j].goods] = {created: true, struck: 'open', team: 'none', initial: 3, renewal: 1, timeRemaining: 1};
             }
             this.contractsArray[i].contracts = teamContracts;
         }
-        console.log(this.contractsArray);
+        //console.log(this.contractsArray);
     },
 
     // Method to randomly generate new contract
@@ -181,10 +181,11 @@ let tradeContracts = {
                                 this.contractsArray[k].contracts[resourceManagement.resourcePieces[l].goods].struck = 'closed';
                                 this.contractsArray[k].totalActive -=1;
                                 this.contractsArray[k].totalClosed +=1;
-                                console.log(resourceManagement.resourcePieces[l].goods + '_' + k);
                                 IDtradeRoute = resourceManagement.resourcePieces[l].goods + '_' + k;
                                 let closedTradeRoute = document.getElementById(IDtradeRoute);
                                 closedTradeRoute.remove();
+                                // creates the SVG marker for the closed trade route
+                                gameBoard.closedRouteMark(this.contractsArray[k].row, this.contractsArray[k].col, gameManagement.turn, k);
                             }
                         }
                     }
@@ -225,8 +226,8 @@ let tradeContracts = {
         }
     },
 
-    // Method to find path for ship to move
-    // ------------------------------------
+    // Method to find path for trade route
+    // -----------------------------------
     discoverPath: function(localEndRow, localEndCol, localGoods) {
         // Finds current team resource in boardArray for start of path
         let localStartRow = 0;
