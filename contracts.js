@@ -85,19 +85,38 @@ let tradeContracts = {
 
     // Method to check possible delivery to fulfil open contract
     // ---------------------------------------------------------
-    checkDelivery : function(locali, localj, searchType, localStock) {
+    checkDelivery : function(locali, localj, searchType, localStock, localTeam) {
+        let delivery = false;
+
         // Determines which fort is being delivered to
         let chosenFort = -1;
-        let delivery = false;
-        for (var k = 0; k < this.contractsArray.length; k++) {
+        for (var k = 0; k < this.contractsArray.length; k+=1) {
             if(this.contractsArray[k].row == locali && this.contractsArray[k].col == localj) {
                 chosenFort = k;
             }
         }
 
+        // Determines whether a team already has a contract with that island (only one contract per island is allowed)
+        let checkTeam = false;
+        for (var contractGood in this.contractsArray[chosenFort].contracts) {
+            if(this.contractsArray[chosenFort].contracts[contractGood].team == localTeam) {
+                  checkTeam = true;
+            }
+        }
+
         // Determines whether ship cargo meets criteria for delivery
-        if(this.contractsArray[chosenFort].contracts[searchType].struck == 'open' && this.contractsArray[chosenFort].contracts[searchType].initial <= localStock) {
-            delivery = true;
+        if(this.contractsArray[chosenFort].contracts[searchType].struck == 'open') {
+            if(this.contractsArray[chosenFort].contracts[searchType].initial <= localStock) {
+                if(checkTeam == false ) {
+                    delivery = true;
+                } else {
+                    secondLineComment.innerText = localTeam + ' already has a contract with this island.';
+                }
+            } else {
+                secondLineComment.innerText = 'Insufficient goods to comeplete contract.';
+            }
+        } else {
+            secondLineComment.innerText = 'No open contract for these goods.';
         }
 
         return delivery;
@@ -181,9 +200,9 @@ let tradeContracts = {
         for (var i = 0; i < tradePath.length; i++) {
             if(gameBoard.boardArray[tradePath[i].fromRow][tradePath[i].fromCol].pieces.team == 'Pirate') {
                 obstacle = true;
-                console.log(tradePath[i], 'Pirate');
+                //console.log(tradePath[i], 'Pirate');
             } else {
-                console.log(tradePath[i], 'clear');
+                //console.log(tradePath[i], 'clear');
             }
         }
         return obstacle;
@@ -499,17 +518,17 @@ let tradeContracts = {
 
                             // Icon added
                             if (this.contractsArray[i].contracts[resourceManagement.resourcePieces[j].goods].struck == 'open') {
-                                console.log('open');
+                                //console.log('open');
                                 let divTypeIcon = gameBoard.createActionTile(0, 0, resourceManagement.resourcePieces[j].type, 'Unclaimed', 'dash_' + resourceManagement.resourcePieces[j].type, 2, 0, 1.5, 0);
                                 divType.appendChild(divTypeIcon);
                                 divForText.innerHTML = this.contractsArray[i].contracts[resourceManagement.resourcePieces[j].goods].struck;
                             } else if (this.contractsArray[i].contracts[resourceManagement.resourcePieces[j].goods].struck == 'active') {
-                                console.log('active', this.contractsArray[i].contracts[resourceManagement.resourcePieces[j].goods].struck);
+                                //console.log('active', this.contractsArray[i].contracts[resourceManagement.resourcePieces[j].goods].struck);
                                 let divTypeIcon = gameBoard.createActionTile(0, 0, resourceManagement.resourcePieces[j].type, this.contractsArray[i].contracts[resourceManagement.resourcePieces[j].goods].team, 'dash_' + resourceManagement.resourcePieces[j].type, 2, 0, 1.5, 0);
                                 divType.appendChild(divTypeIcon);
                                 divForText.innerHTML = 'active';
                             } else if (this.contractsArray[i].contracts[resourceManagement.resourcePieces[j].goods].struck == 'closed') {
-                                console.log('closed');
+                                //console.log('closed');
                                 let divTypeIcon = gameBoard.createActionTile(0, 0, resourceManagement.resourcePieces[j].type, this.contractsArray[i].contracts[resourceManagement.resourcePieces[j].goods].team, 'dash_' + resourceManagement.resourcePieces[j].type, 2, 0, 1.5, 0);
                                 divType.appendChild(divTypeIcon);
                                 divForText.innerHTML = 'closed';

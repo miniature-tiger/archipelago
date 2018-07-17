@@ -517,13 +517,12 @@ let pieceMovement = {
             if(this.movementArray.start.row+i >=0 && this.movementArray.start.row+i <row) {
                 for (var j = -searchDistance; j < searchDistance + 1; j++) {
                     if(this.movementArray.start.col+j >=0 && this.movementArray.start.col+j <col) {
-                        // Reduces seacrh to exclude diagonals
+                        // Reduces search to exclude diagonals
                         if((i == 0 || j == 0) && i != j) {
                             // Checks if tile meets criteria
                             //console.log('here', gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.type, gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.team);
                             if (gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.type == 'fort' && gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].pieces.team == 'Kingdom') {
-                                //console.log('kingdom, fort');
-                                if(tradeContracts.checkDelivery(this.movementArray.start.row+i, this.movementArray.start.col+j, searchType, gameBoard.boardArray[this.movementArray.start.row][this.movementArray.start.col].pieces.stock) == true) {
+                                if(tradeContracts.checkDelivery(this.movementArray.start.row+i, this.movementArray.start.col+j, searchType, gameBoard.boardArray[this.movementArray.start.row][this.movementArray.start.col].pieces.stock, gameBoard.boardArray[this.movementArray.start.row][this.movementArray.start.col].pieces.team) == true) {
                                     //console.log('delivery');
                                     result.push('fort delivery');
                                     gameBoard.boardArray[this.movementArray.start.row+i][this.movementArray.start.col+j].activeStatus = 'active';
