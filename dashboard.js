@@ -11,7 +11,7 @@ let stockDashboard = {
     // -------------------------------------
     // Pieces must be added in the order: Settlements, Transport, Resources
     pieceTypes: [ {type: 'fort', category: 'Settlements', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 0, maxHold: 20, battlePerc: 0, deckNumber: 0},
-                  {type: 'catamaran', category: 'Transport', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 5, maxHold: 5, battlePerc: 0.1, deckNumber: 0},
+                  {type: 'catamaran', category: 'Transport', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 20, maxHold: 5, battlePerc: 0.1, deckNumber: 0},
                   {type: 'warship', category: 'Transport', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 4, maxHold: 10, battlePerc: 0.5, deckNumber: 0},
                   {type: 'cargo ship', category: 'Transport', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 3, maxHold: 20, battlePerc: 0.25, deckNumber: 0},
                   {type: 'forest', category: 'Resources', maxNo: 1, goods: 'wood', maxProduction: 2, maxMove: 0, maxHold: 20, battlePerc: 0, deckNumber: 4},
@@ -22,6 +22,7 @@ let stockDashboard = {
                   {type: 'clay', category: 'Resources', maxNo: 1, goods: 'pottery', maxProduction: 2, maxMove: 0, maxHold: 20, battlePerc: 0, deckNumber: 4},
                 ],
 
+    // TESTING     {type: 'catamaran', category: 'Transport', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 5, maxHold: 5, battlePerc: 0.1, deckNumber: 0},
 
 
 
