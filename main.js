@@ -557,7 +557,7 @@ function boardHandler(event) {
 
                 // Delivery of goods for contract
               } else if (pieceMovement.movementArray.start.pieces.category == 'Transport' && pieceMovement.movementArray.end.pieces.team == 'Kingdom' && pieceMovement.movementArray.end.pieces.type == 'fort') {
-                    pieceMovement.deactivateTiles(1);
+                    pieceMovement.deactivateTiles(maxMove);
                     gameBoard.drawActiveTiles();
                     tradeContracts.discoverPath(pieceMovement.movementArray.end.row, pieceMovement.movementArray.end.col, pieceMovement.movementArray.start.pieces.goods);
                     tradeContracts.fulfilDelivery();
