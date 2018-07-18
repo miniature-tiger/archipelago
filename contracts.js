@@ -472,9 +472,28 @@ let tradeContracts = {
         return moveCostResult;
     },
 
-// Method to populate contract dashboard on right-hand panel
-// ---------------------------------------------------------
+    // Method to count number of closed contracts per team
+    // ---------------------------------------------------
+    countClosed: function() {
+        let countClosedTotal = {'Green Team': 0, 'Blue Team': 0, 'Red Team': 0, 'Orange Team': 0, maxTotal: 0, maxTeam: 'none'}
+        for (var i = 0; i < this.contractsArray.length; i+=1) {
+            for (var contractGood in this.contractsArray[i].contracts) {
+                if(this.contractsArray[i].contracts[contractGood].struck == 'closed') {
+                    countClosedTotal[this.contractsArray[i].contracts[contractGood].team] += 1;
+                    if(countClosedTotal[this.contractsArray[i].contracts[contractGood].team] > countClosedTotal.maxTotal) {
+                        countClosedTotal.maxTotal = countClosedTotal[this.contractsArray[i].contracts[contractGood].team];
+                        countClosedTotal.maxTeam = this.contractsArray[i].contracts[contractGood].team;
+                    }
+                }
+            }
+        }
+        return countClosedTotal;
+    },
 
+
+
+    // Method to populate contract dashboard on right-hand panel
+    // ---------------------------------------------------------
     drawContracts: function() {
         if(workFlow == 1) {console.log('Contracts (right) dashboard drawn: ' + (Date.now() - launchTime)); }
         // Finds the stockDashboard holder in the left hand panel
