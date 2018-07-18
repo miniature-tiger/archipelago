@@ -7,6 +7,10 @@ let gameManagement = {
     octagonAngle: (2 * Math.PI) / 8,
     phaseCount: 8,
 
+    // Markers
+    // ---------
+    gameEnd: false,
+
     // Player object
     // -------------
     // Future update: set up based on user inputs for player names
@@ -98,25 +102,35 @@ let gameManagement = {
             gameManagement.eliminatePlayer(gameManagement.firstLastPlayer());
         }
 
+        // Check whether player has completed all tasks necessary to end game
+        let countClosedContracts = tradeContracts.countClosed();
+        if (countClosedContracts.maxTotal == 4) {
+            gameManagement.gameEnd = true;
+            gameManagement.presentWinner(gameManagement.firstLastPlayer(), 'contracts', countClosedContracts.maxTeam);
+        }
+
         // Winner for intro scroll
         if (gameManagement.gameDate == (8 * gameManagement.phaseCount + 1)) {
-            gameManagement.presentWinner(gameManagement.firstLastPlayer());
+            gameManagement.gameEnd = true;
+            gameManagement.presentWinner(gameManagement.firstLastPlayer(), 'time');
+        }
+
+        // End scroll pop up
+        if (gameManagement.gameEnd == true) {
+            // Displays end moon scroll and adds text
+            [scrollPanel.children[1].textContent, scrollPanel.children[2].textContent, scrollPanel.children[3].textContent, scrollPanel.children[4].textContent] = gameManagement.scrollText();
+            scrollPopup.style.display = "block";
+            console.log('game over');
         }
 
         // Intro scroll pop up
-        if (gameManagement.moonDate(gameManagement.gameDate).moonPhase == 1 && gameManagement.turn == gameManagement.teamArray[1]) {
+        if (gameManagement.gameEnd == false && gameManagement.moonDate(gameManagement.gameDate).moonPhase == 1 && gameManagement.turn == gameManagement.teamArray[1]) {
 
             // Displays intro / moon scroll and adds text
             [scrollPanel.children[1].textContent, scrollPanel.children[2].textContent, scrollPanel.children[3].textContent, scrollPanel.children[4].textContent] = gameManagement.scrollText();
             scrollPopup.style.display = "block";
+            scrollPopup.addEventListener('click', gameManagement.scrollClose);
 
-            if (gameManagement.gameDate < (8 * gameManagement.phaseCount + 1)) {
-                // Sets up event listener to close when screen (or cross) is clicked
-                scrollPopup.addEventListener('click', gameManagement.scrollClose);
-            } else {
-                  console.log('game over');
-                // Game Over
-            }
         } else {
             // Second half of next turn functionality called if scroll is not activated (here) or once scroll is clicked to close (scrollClose)
             gameManagement.afterNextTurn();
@@ -274,7 +288,7 @@ let gameManagement = {
     },
 
 
-    presentWinner: function(localFirstLast) {
+    presentWinner: function(localFirstLast, endReason, endTeam) {
         if(workFlow == 1) {console.log('Determining winner: ' + localTeam + ' : ' + (Date.now() - launchTime)); }
 
         // Show scoreboard
@@ -282,8 +296,13 @@ let gameManagement = {
 
         // Update scrollTextArray
         index = this.playerListing.findIndex(fI => fI.teamColour == localFirstLast[0]);
-        let winnerDate = this.moonDate(this.gameDate).moonMonth;
-        this.scrollTextArray[winnerDate-1][0] = this.playerListing[index].teamColour + ' is the winner!'
+        //let winnerDate = this.moonDate(this.gameDate).moonMonth;
+        if (endReason == 'contracts') {
+            this.scrollTextWinner[0] = endTeam + ' has completed the contracts task.'
+        } else {
+            this.scrollTextWinner[0] = 'Eight moons have turned and your quest ends.'
+        }
+        this.scrollTextWinner[1] = this.playerListing[index].teamColour + ' is the winner!'
     },
 
     // ------------------------------------------------------------------------------------
@@ -378,15 +397,17 @@ let gameManagement = {
       ['At the next new moon ...', ' ... the last player will be eliminated!', ''],
       ['', 'Head to head!', 'Down to the final two.'],
       ['The last moon!', 'To the winner the spoils!', ''],
-      ['', 'Thanks for playing!', ''],
     ],
+
+    scrollTextWinner: ['', '', 'Thanks for playing.'],
 
     // Method to update title and text of scroll
     // -----------------------------------------
     scrollText: function() {
         let dateInputs = this.moonDate(this.gameDate);
-        if (dateInputs.moonMonth == 9) {
-            return ['Game Over', this.scrollTextArray[dateInputs.moonMonth - 1][0], this.scrollTextArray[dateInputs.moonMonth - 1][1], this.scrollTextArray[dateInputs.moonMonth - 1][2]];
+
+        if (this.gameEnd == true) {
+            return ['Game Over', this.scrollTextWinner[0], this.scrollTextWinner[1], this.scrollTextWinner[2]];
         } else {
             return [dateInputs.moonMonthOrd + ' moon', this.scrollTextArray[dateInputs.moonMonth - 1][0], this.scrollTextArray[dateInputs.moonMonth - 1][1], this.scrollTextArray[dateInputs.moonMonth - 1][2]];
         }
