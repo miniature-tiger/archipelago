@@ -1342,7 +1342,7 @@ let gameBoard = {
     // Method for looping through tiles and drawing
     // --------------------------------------------
 
-    drawTiles: function(octagonType, boardLayer, ocatagonGap, octagonWidth, octagonColour, octagonBackground) {
+    drawTiles: function(octagonType, boardLayer, ocatagonGap, octagonWidth, octagonColour, octagonBackground, localPiece) {
         // Start path for each array of octagons
         boardLayer.beginPath();
         for (var i = 0; i < row; i++) {
@@ -1362,6 +1362,10 @@ let gameBoard = {
                     this.drawOctagon(boardLayer, ocatagonGap);
                 } else if (octagonType=='pirateHarbour' && this.boardArray[i][j].subTerrain == 'pirateHarbour') {
                     // Draws safe harbours - on a separate canvas overlay
+                    this.drawOctagon(boardLayer, ocatagonGap);
+                } else if (octagonType=='highlight' && this.boardArray[i][j].pieces.type == localPiece) {
+                    // Draws safe harbours - on a separate canvas overlay
+                    console.log('drawing ' + localPiece);
                     this.drawOctagon(boardLayer, ocatagonGap);
 
                 } else if (octagonType=='land' && this.boardArray[i][j].terrain == 'land') {
@@ -1392,6 +1396,25 @@ let gameBoard = {
 
         // safe harbours are also drawn on canvasActive later - can be changed later if necessary
         this.drawHarbours();
+    },
+
+    // Method to draw to on canvas overlay layer for piece highlighting
+    // ----------------------------------------------------------------
+    highlightTiles: function (localPiece) {
+        if(workFlow == 1) {console.log('Highlight tiles: ' + (Date.now() - launchTime)); }
+        // Clears the canvas for redraw
+        canvasHighlight.clearRect(0, 0, canvasHighlight.canvas.width, canvasHighlight.canvas.height);
+
+        // drawTiles is used to colour tiles (in white) on highlight layer
+        gameBoard.drawTiles('highlight', canvasHighlight, 4*screenReduction, 2*screenReduction, 'white', 'white', localPiece);
+    },
+
+    // Method to clear canvas overlay layer after piece highlighting
+    // -----------------------------------------------------------
+    clearHighlightTiles: function () {
+        if(workFlow == 1) {console.log('Clear highlighted tiles: ' + (Date.now() - launchTime)); }
+        // Clears the canvas
+        canvasHighlight.clearRect(0, 0, canvasHighlight.canvas.width, canvasHighlight.canvas.height);
     },
 
     // Method to add safe harbours to the map
