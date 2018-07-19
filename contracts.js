@@ -16,17 +16,14 @@ let tradeContracts = {
         // Loop for each kingdom island
         for (var i = 0; i < this.contractsArray.length; i++) {
             // Totals for number of open contracts and number of unopened contracts
-            // TESTING this.contractsArray[i].totalOpen = 0;
-            this.contractsArray[i].totalOpen = 6;
+            this.contractsArray[i].totalOpen = 0;
             this.contractsArray[i].totalActive = 0;
             this.contractsArray[i].totalClosed = 0;
-            // TESTING this.contractsArray[i].totalUnopen = resourceManagement.resourcePieces.length;
-            this.contractsArray[i].totalUnopen = 0;
+            this.contractsArray[i].totalUnopen = resourceManagement.resourcePieces.length;
             // Loop for each resource type
             let teamContracts = {};
             for (var j = 0; j < resourceManagement.resourcePieces.length; j++) {
-                // TESTING teamContracts[resourceManagement.resourcePieces[j].goods] = {created: false, struck: 'unopen', team: 'none', initial: 0, renewal: 0, timeRemaining: 0};
-                teamContracts[resourceManagement.resourcePieces[j].goods] = {created: true, struck: 'open', team: 'none', initial: 3, renewal: 1, timeRemaining: 1};
+                teamContracts[resourceManagement.resourcePieces[j].goods] = {created: false, struck: 'unopen', team: 'none', initial: 0, renewal: 0, timeRemaining: 0};
             }
             this.contractsArray[i].contracts = teamContracts;
         }

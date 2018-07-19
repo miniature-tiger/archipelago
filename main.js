@@ -113,7 +113,7 @@ boardMarkNode.appendChild(moonLayer);
 
 var endTurn = document.querySelector('.endturnmark');
 endTurn.setAttribute('class', gameManagement.turn + ' team_fill team_stroke');
-gameManagement.createTurnCircle(false, 0.7*surroundSize/100, -20*screenReduction, 0.15*surroundSize, endTurn, 'icon_holder');
+gameManagement.createTurnCircle(false, 0.6*surroundSize/100, 0*screenReduction, 0.18*surroundSize, endTurn, 'icon_holder');
 
 // Finds the scroll popup holder for the intro and gameManagement scrolls
 let scrollPopup = document.querySelector('.scroll_popup');
@@ -220,7 +220,7 @@ var settingsIcon = document.querySelector('.settingsmark');
 var settingsPopup = document.querySelector('.settings_popup');
 
 // Icon in bottom left corner
-gameManagement.createSettingsCog(false, 0.7*surroundSize/100, -20*screenReduction, 0.15*surroundSize, settingsIcon, 'icon_holder');
+gameManagement.createSettingsCog(false, 0.6*surroundSize/100, 0*screenReduction, 0.15*surroundSize, settingsIcon, 'icon_holder');
 // Settings pop up box
 gameManagement.createSettingsCog(true, screenWidth*(12/2000), -50*screenReduction, (screenWidth*4/20), settingsPopup, 'popup_cog');
 var popupCog = document.querySelector('.popup_cog');
