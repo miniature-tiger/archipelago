@@ -146,6 +146,8 @@ let pirates = {
             endTurn.addEventListener('click', gameManagement.nextTurn);
             boardMarkNode.addEventListener('click', boardHandler);
             stockDashboardNode.addEventListener('click', buildItem.clickStock);
+            stockDashboardNode.addEventListener('mouseover', stockDashboard.hoverPieceOn);
+            stockDashboardNode.addEventListener('mouseleave', gameBoard.clearHighlightTiles);
         }
 
     },

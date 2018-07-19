@@ -97,6 +97,10 @@ boardMarkNode.appendChild(board);
 let [activeBoard, canvasActive] = gameBoard.createCanvasLayer('activeBoard');
 boardMarkNode.appendChild(activeBoard);
 
+// Canvas 'activeBoard' (for active tiles that can be moved to) is created and size is set dynamically
+let [highlightBoard, canvasHighlight] = gameBoard.createCanvasLayer('highlightBoard');
+boardMarkNode.appendChild(highlightBoard);
+
 // SVG layer for compass set up (same height and width as board)
 let compassLayer = gameBoard.createNewLayer('compass');
 boardMarkNode.appendChild(compassLayer);
@@ -255,7 +259,7 @@ endTurn.addEventListener('click', gameManagement.nextTurn);
 
 
 // Set up of building event listener
-// ------------------------------
+// ---------------------------------
 
 // building slider set up
 let building = document.querySelector('.building');
@@ -270,7 +274,12 @@ thirdBuildLine.style.left = '7%';
 // Event listener added to stock dashboard
 stockDashboardNode.addEventListener('click', buildItem.clickStock);
 
+// Set up of stock dashboard event listener
+// ----------------------------------------
 
+// Hover event listener added to stock dashboard
+stockDashboardNode.addEventListener('mouseover', stockDashboard.hoverPieceOn);
+stockDashboardNode.addEventListener('mouseleave', gameBoard.clearHighlightTiles);
 
 
 // ------------------------------------------------------------------------------------
@@ -596,6 +605,8 @@ function boardHandler(event) {
                     endTurn.removeEventListener('click', gameManagement.nextTurn);
                     boardMarkNode.removeEventListener('click', boardHandler);
                     stockDashboardNode.removeEventListener('click', buildItem.clickStock);
+                    stockDashboardNode.removeEventListener('mouseover', stockDashboard.hoverPieceOn);
+                    stockDashboardNode.removeEventListener('mouseleave', gameBoard.clearHighlightTiles);
                     pieceMovement.deactivateTiles(maxMove);
                     // Redraw active tile layer after deactivation to remove activated tiles
                     gameBoard.drawActiveTiles();

@@ -234,7 +234,7 @@ let stockDashboard = {
 
     // Method to add new goods each turn
     // ---------------------------------
-    newTurnGoods : function() {
+    newTurnGoods: function() {
         for (var i = 0; i < gameBoard.boardArray.length; i++) {
             for (var j = 0; j < gameBoard.boardArray[i].length; j++) {
                 if(gameBoard.boardArray[i][j].pieces.team == gameManagement.turn) {
@@ -243,6 +243,21 @@ let stockDashboard = {
                         // Maximum goods set to 20
                         gameBoard.boardArray[i][j].pieces.stock = Math.min(gameBoard.boardArray[i][j].pieces.stock + gameBoard.boardArray[i][j].pieces.production, 20);
                     }
+                }
+            }
+        }
+    },
+
+    // Method to highlight pieces on board
+    // -----------------------------------
+    hoverPieceOn: function(e) {
+        let chosenPiece = '';
+        // Determines piece type of icon on sidebar based on id
+        if(e.target.id != '') {
+            for (var i = 0; i < stockDashboard.pieceTypes.length; i+=1) {
+                if(e.target.id == 'dash_' + stockDashboard.pieceTypes[i].type) {
+                    chosenPiece = e.target.id.substring(5, e.target.id.length);
+                    gameBoard.highlightTiles(chosenPiece);
                 }
             }
         }
