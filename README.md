@@ -18,7 +18,7 @@ https://miniature-tiger.github.io/archipelago/
 
 # Road map (short term):
 
-# Phase 1 - Board and ship movement: COMPLETE!!!
+# Phase 1 - Board and ship movement: COMPLETE
 * Board set up - COMPLETE
 * Basic ship creation: functionality and graphics  - COMPLETE 
 * Manual ship movement and board updating  - COMPLETE
@@ -28,7 +28,7 @@ https://miniature-tiger.github.io/archipelago/
 * Chaining together transitions to allow graphics of longer moves - COMPLETE
 * Separation of board layers (Canvas base layer, Canvas activation layer overlay, SVG piece overlays) - COMPLETE
 
-# Phase 2 - Resources, Goods, Building and Trade Contracts 
+# Phase 2 - Resources, Goods, Building and Trade Contracts: COMPLETE 
 
 Resources
 * Add Resource tiles - COMPLETE
@@ -53,8 +53,8 @@ Contracts for delivery:
 * Graphics of trade routes - COMPLETE
 * Continuance of contracts over time - COMPLETE
 * Breaking of contracts due to interference - COMPLETE
-* Re-work resource and contract surrounds to prevent overrun
-* Only allow one contract to be made with each island
+* Re-work resource and contract surrounds to prevent overrun - COMPLETE
+* Only allow one contract to be made with each island - COMPLETE
 
 Building:
 * New ship designs - Catamaran, warship, cargo ship - COMPLETE
@@ -66,41 +66,66 @@ Scoring:
 * Add score dashboard - COMPLETE
 * Breaking of game into stages - COMPLETE
 * Reduction in players as time passes - COMPLETE
-* Game ending - how to end the game (contracts to all islands or eight moons of time)
+* Game ending - time limit of eight moons and completing contracts with all four islands - COMPLETE
 
-# Phase 3 - Conflicts 
+# Phase 3 - Conflicts: COMPLETE
 
-Pirates
+Pirates:
 * Add pirate ships - COMPLETE
 * Automate pirate ship movements (basic movement with wind and search for cargo ships) - COMPLETE
 * Search - telescope range of 5 tiles for stronger search for ships - COMPLETE
 * Separate ship types for teams - COMPLETE
 
-Forts
+Forts:
 * Add fort icons - COMPLETE
 * Create safe harbour from pirate ships - COMPLETE
 
-Conflicts
+Conflicts:
 * Attack - Develop conflict method between ships - COMPLETE
 * Stealing of cargo - COMPLETE
 * Limping back to harbour - COMPLETE
 * Ship repair - COMPLETE
 
-# Phase 4 - Game Management and Settings 
+# Phase 4 - One player version development
+Surround, dashboards, commentary:
+* Keep dashboards fixed on one player with option to switch to other teams
+* Change commentary to focus on single player - with updates on other team moves
+
+Resource tile search phase:
+* Automate search for resource tiles
+* Automate claiming of resource tiles
+
+Conflicts:
+* Automate avoidance of pirate ships
+* Automate return to nearest harbour after damage taken
+
+Contracts for delivery:
+* Automate collection of goods
+* Automate delivery of goods
+
+Strategies and AI for computer players
+* Produce array of ships with game strategies
+* Decision making between different possibilities
+* Consider different ability levels and strategy types for computer players
+
+TBC...
+
+# Phase 5 - Game Management and Settings 
 Settings
 * Settings pop up created - COMPLETE
+* Local options (choose team colour, player name etc)
 * Options added - In progress - game speed added, developer tools added
-* Local options (player name etc)
-* Game saving and replay
+* Game saving
+* Game rewind / replay
 
-# Phase 5 - Central trading centre  
-* Develop central market allowing players without resources to trade and fulfill contracts
-
-# Phase 6 - One player version development
-* Artificial Intelligence levels for computer players
-
-# Phase 7 - Rules, roll-out, documentation, testing etc
+# Phase 6 - Rules, roll-out, documentation, testing etc
 * TBDeveloped
+
+# Phase 7 - Additional game features  
+* Kingdom tax collection ship
+* Develop central market allowing players without resources to trade and fulfill contracts
+* Whirlpools
+
 
 ----------------------------------------------
 
