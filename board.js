@@ -1365,7 +1365,6 @@ let gameBoard = {
                     this.drawOctagon(boardLayer, ocatagonGap);
                 } else if (octagonType=='highlight' && this.boardArray[i][j].pieces.type == localPiece) {
                     // Draws safe harbours - on a separate canvas overlay
-                    console.log('drawing ' + localPiece);
                     this.drawOctagon(boardLayer, ocatagonGap);
 
                 } else if (octagonType=='land' && this.boardArray[i][j].terrain == 'land') {

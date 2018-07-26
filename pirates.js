@@ -127,7 +127,7 @@ let pirates = {
         pirates.pirateCount +=1;
 
         let pathDistance = 0;
-        // Loop through each pirate ship with delay to allow transormations to occur
+        // Loop through each pirate ship
         if(pirates.pirateCount < pirates.pirateShips.length) {
             // Calls function above
             pirates.pirateMove();
@@ -159,7 +159,7 @@ let pirates = {
         if(workFlow == 1) {console.log('Populate pirate ship array: ' + (Date.now() - launchTime)); }
         for (var i = 0; i < gameBoard.boardArray.length; i++) {
             for (var j = 0; j < gameBoard.boardArray[i].length; j++) {
-                if((gameBoard.boardArray[i][j].pieces.team == 'Pirate') && (gameBoard.boardArray[i][j].pieces.category = 'Transport')) {
+                if((gameBoard.boardArray[i][j].pieces.team == 'Pirate') && (gameBoard.boardArray[i][j].pieces.category == 'Transport')) {
                     this.pirateShips[gameBoard.boardArray[i][j].pieces.ref].start = {row: + i, col: + j, pieces: gameBoard.boardArray[i][j].pieces};
                     this.pirateShips[gameBoard.boardArray[i][j].pieces.ref].end = {row: + i, col: + j};
                 }
@@ -190,7 +190,6 @@ let pirates = {
                 }
             }
         }
-        //console.log('targetCargo', this.targetCargo);
     },
 
     // Method to get array of tiles in findPath which are not active but are within telescope range

@@ -14,10 +14,10 @@ let gameManagement = {
     // Player object
     // -------------
     // Future update: set up based on user inputs for player names
-    playerListing: [  {teamColour: 'Green Team', type: 'human', status: 'competing', teamNumber: 1},
+    playerListing: [  {teamColour: 'Green Team', type: 'computer', status: 'competing', teamNumber: 1},
                       {teamColour: 'Blue Team', type: 'human', status: 'competing', teamNumber: 2 },
-                      {teamColour: 'Red Team', type: 'human', status: 'competing', teamNumber: 3 },
-                      {teamColour: 'Orange Team', type: 'human', status: 'competing', teamNumber: 4}, ],
+                      {teamColour: 'Red Team', type: 'computer', status: 'competing', teamNumber: 3 },
+                      {teamColour: 'Orange Team', type: 'computer', status: 'competing', teamNumber: 4}, ],
 
     // List of teams
     // -------------
@@ -29,6 +29,7 @@ let gameManagement = {
     // Current turn
     // ------------
     turn: 'Green Team',
+    type: 'human',
 
     // Current game date
     // -----------------
@@ -49,7 +50,14 @@ let gameManagement = {
             index = this.playerListing.findIndex(fI => fI.teamNumber == chosenTeam);
             this.teamArray.push(gameManagement.playerListing[index].teamColour);
         }
+        // Setting turn and type for first move
         this.turn = this.teamArray[0];
+        if (gameManagement.turn == 'Pirate') {
+            gameManagement.type = 'Pirate';
+        } else {
+            index = gameManagement.playerListing.findIndex(fI => fI.teamColour == gameManagement.turn);
+            gameManagement.type = gameManagement.playerListing[index].type;
+        }
     },
 
     // Method to activate next turn - up to moon change
@@ -88,8 +96,14 @@ let gameManagement = {
             gameManagement.gameDate += 1;
         }
 
-        // Team is changed
+        // Team and type are changed
         gameManagement.turn = gameManagement.teamArray[(gameManagement.teamArray.indexOf(gameManagement.turn)+1) % (gameManagement.teamArray.length)];
+        if (gameManagement.turn == 'Pirate') {
+            gameManagement.type = 'Pirate';
+        } else {
+            index = gameManagement.playerListing.findIndex(fI => fI.teamColour == gameManagement.turn);
+            gameManagement.type = gameManagement.playerListing[index].type;
+        }
 
         if(workFlow == 1) {console.log('Turn changed to ' + gameManagement.turn + ' : ' + (Date.now() - launchTime)); }
         if(gameBoardTrack == 1) {console.log(gameBoard.boardArray); }
@@ -156,7 +170,7 @@ let gameManagement = {
         endTurn.addEventListener('click', gameManagement.nextTurn);
 
         // Automated movement for pirates
-        if (gameManagement.turn == 'Pirate') {
+        if (gameManagement.type == 'Pirate') {
             pirates.automatePirates();
         } else {
             // Chance of new trade contract
@@ -178,6 +192,16 @@ let gameManagement = {
 
             // Update the contracts dashboard
             tradeContracts.drawContracts();
+        }
+
+        if (gameManagement.type == 'computer') {
+            // Remove event handlers to prevent manual moves
+            endTurn.removeEventListener('click', gameManagement.nextTurn);
+            boardMarkNode.removeEventListener('click', boardHandler);
+            // Automates moves of computer opponents
+            computer.automatePlayer();
+        } else {
+            boardMarkNode.addEventListener('click', boardHandler);
         }
     },
 
