@@ -405,7 +405,7 @@ let pieceMovement = {
         // Applying moves to game board array
         if(workFlow == 1) {console.log('----- Move Completion activated ----- ' + (Date.now() - launchTime)); }
 
-        if (gameManagement.turn != 'Pirate') {
+        if (gameManagement.type == 'human') {
             pieceMovement.landDiscovery();
 
             // Resetting movement array once second click has been made (if move valid)
@@ -416,12 +416,18 @@ let pieceMovement = {
             stockDashboardNode.addEventListener('click', buildItem.clickStock);
             stockDashboardNode.addEventListener('mouseover', stockDashboard.hoverPieceOn);
             stockDashboardNode.addEventListener('mouseleave', gameBoard.clearHighlightTiles);
-        } else if (gameManagement.turn == 'Pirate') {
+        } else if (gameManagement.type == 'Pirate') {
 
             // Resetting movement array once second click has been made (if move valid)
             pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
             startEnd = 'start';
             pirates.automatePirates();
+        } else if (gameManagement.type == 'computer') {
+            pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
+            startEnd = 'start';
+            computer.automatePlayer();
+        } else {
+            console.log('error in gameManagement.type');
         }
     },
 
