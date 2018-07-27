@@ -348,7 +348,7 @@ let pieceMovement = {
                             indicator = moveCount;
                             if(moveCount < numberOfTiles) {
                                 if(transitionMonitor == 1) {console.log('TM: Transition completed and loop to next transition: '+ (Date.now() - launchTime));}
-                                transitionManagement()
+                                transitionManagement();
                             } else {
                                 if(transitionMonitor == 1) {console.log('TM: All transitions complete - Applying moves to game board array: '+ (Date.now() - launchTime));}
                                 //console.log(chosenPiece);
@@ -359,6 +359,7 @@ let pieceMovement = {
                                 //Updating piece information
                                 chosenPiece.setAttribute('id', 'tile' + Number(pieceMovement.movementArray.end.row*1000 + pieceMovement.movementArray.end.col));
                                 chosenPiece.style.transition = '';
+                                gameBoard.drawActiveTiles();
                                 pieceMovement.harbourRepairArrival(chosenPiece);
                                 pieceMovement.shipConflict(rotateDirection);
                             }
