@@ -91,7 +91,7 @@ let pirates = {
                 } else {
                 // 3- If no ships in active range or visual range moves to maximum distance at minimum wind cost
                     if(workFlow == 1) {console.log('Finds max distance move at minimum cost: ' + (Date.now() - launchTime)); }
-                    pirates.maxPathDistance();
+                    pirates.maxDistanceTiles = pirates.maxPathDistance();
                     pirates.minCostTiles = pirates.minArray(pirates.maxDistanceTiles, 'moveCost');
                     pathDistance = pirates.minCostTiles[0].distance;
                     //console.log('minCostTiles', pirates.minCostTiles);
@@ -224,24 +224,25 @@ let pirates = {
     // Method to get array of tiles in findPath with maximum distance
     // --------------------------------------------------------------
     maxPathDistance: function() {
-        this.maxDistanceTiles = [];
+        localMaxDistanceTiles = [];
         let maxDistance = 1;
         for (var i = 0; i < col; i++) {
             for (var j = 0; j < row; j++) {
                 if (pieceMovement.findPath[i][j].activeStatus == 'active') {
                     if (pieceMovement.findPath[i][j].distance > maxDistance) {
                         maxDistance = pieceMovement.findPath[i][j].distance;
-                        this.maxDistanceTiles = [];
-                        this.maxDistanceTiles.push({row: + i, col: + j, distance: + pieceMovement.findPath[i][j].distance, moveCost: + pieceMovement.findPath[i][j].moveCost});
+                        localMaxDistanceTiles = [];
+                        localMaxDistanceTiles.push({row: + i, col: + j, distance: + pieceMovement.findPath[i][j].distance, moveCost: + pieceMovement.findPath[i][j].moveCost});
                         //console.log('greater than', this.maxDistanceTiles);
                     } else if (pieceMovement.findPath[i][j].distance == maxDistance) {
-                        this.maxDistanceTiles.push({row: + i, col: + j, distance: + pieceMovement.findPath[i][j].distance, moveCost: + pieceMovement.findPath[i][j].moveCost});
+                        localMaxDistanceTiles.push({row: + i, col: + j, distance: + pieceMovement.findPath[i][j].distance, moveCost: + pieceMovement.findPath[i][j].moveCost});
                         //console.log('equal to', this.maxDistanceTiles);
                     }
                 }
             }
         }
-        //console.log('maxDistanceTile', this.maxDistanceTiles);
+        return localMaxDistanceTiles;
+        console.log('maxDistanceTile', this.maxDistanceTiles);
     },
 
     // Method to reduce array of objects based on minimum value of one property
