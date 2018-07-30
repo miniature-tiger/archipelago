@@ -18,13 +18,14 @@ let pieceMovement = {
     // Now includes:
     //    path around obstacles
     //    movement costs for each direction integrated with compass needle direction
-    // Future update:
-    //    code for different pieces
     activateTiles: function(localStartRow, localStartCol, localMaxMove, searchRadius, displayActive, localDamagedStatus) {
         if(workFlow == 1) {console.log('Active tiles and paths determined: ' + (Date.now() - launchTime)); }
         // Initialises findPath array which holds board size array of
         // active/inactive status, movement cost to reach that tile, path to that tile
         this.initialisefindPath(localStartRow, localStartCol);
+
+        // Add detail of ships and harbours to find path array
+        this.paintFindPath();
 
         // Sets clicked piece status to active as starting point of chain reaction of setting active status
         //if (displayActive) {
@@ -51,8 +52,9 @@ let pieceMovement = {
                     for (var j = -k; j < k+1; j++) {
                         // Restrict by map size for columns so not searching off edge of board
                         if(localStartCol+j >=0 && localStartCol+j <col) {
-                            // Checks if tile is found. If so runs activeTiles to search for potential tiles to activate around it
-                            if ((this.findPath[localStartRow+i][localStartCol+j].pathStatus == true) && (this.findPath[localStartRow+i][localStartCol+j].target != 'Transport')) {
+                            // Checks if tile is found. If so runs activeTiles to search for potential tiles to activate around it.
+                            // Does not check tiles if pathStop is active (pathStop prevents ships moving through harbours or other ships)
+                            if ((this.findPath[localStartRow+i][localStartCol+j].pathStatus == true) && (this.findPath[localStartRow+i][localStartCol+j].pathStop.type == 'none' || k == 0)) {
                                 //Keep useful for debugging - console.log('run: ' + k);
                                 //Keep useful for debugging - console.log('starting from: row: ' + (localStartRow+i) + ' col: ' + (localStartCol+j) + ' prior cost: ' + this.findPath[localStartRow+i][localStartCol+j].moveCost);
                                 this.activeTiles(localStartRow+i, localStartCol+j, this.findPath[localStartRow+i][localStartCol+j].moveCost, localMaxMove, displayActive, k, localDamagedStatus);
@@ -71,13 +73,14 @@ let pieceMovement = {
 
     initialisefindPath: function(localStartRow, localStartCol) {
     // Initialises findPath array which holds board size (i rows x j columns) array of:
-    // active/inactive status
-    // movement cost to reach that tile
+    // active/inactive status and pathStatus
+    // movement cost and distance to reach that tile
     // path to that tile
+    // info on that tile such as presence of ships or harbours
         for (var i = 0; i < col; i++) {
             let localMoveRow = [];
             for (var j = 0; j < row; j++) {
-                localMoveRow[j] = {pathStatus: false, activeStatus: 'inactive', moveCost: 0, distance: 0,target: '', team: '', path: [{fromRow: +localStartRow , fromCol: +localStartCol}]};
+                localMoveRow[j] = {pathStatus: false, activeStatus: 'inactive', moveCost: 0, distance: 0, target: {type: 'none', team: 'none'}, harbour: {type: 'none', team: 'none'}, pathStop: {type: 'none', team: 'none'}, path: [{fromRow: +localStartRow , fromCol: +localStartCol}]};
             }
             this.findPath[i] = localMoveRow;
         }
@@ -157,11 +160,7 @@ let pieceMovement = {
 
                                 // Sets Transport tile to inactive to prevent moving there
                                 if (gameBoard.boardArray[localStartRow+i][localStartCol+j].pieces.category == 'Transport') {
-                                    this.findPath[localStartRow+i][localStartCol+j].target = 'Transport';
-                                    this.findPath[localStartRow+i][localStartCol+j].team = gameBoard.boardArray[localStartRow+i][localStartCol+j].pieces.team.slice(0);
-                                    //this.findPath[localStartRow+i][localStartCol+j].pathStatus = false;
                                     if (gameManagement.turn != 'Pirate') {
-                                        //this.findPath[localStartRow+i][localStartCol+j].pathStatus = false;
                                         this.findPath[localStartRow+i][localStartCol+j].activeStatus = 'inactive';
                                         gameBoard.boardArray[localStartRow+i][localStartCol+j].activeStatus = 'inactive';
                                     // Prevents pirate ships being activated on pirate ship moves
@@ -175,13 +174,33 @@ let pieceMovement = {
                                         this.findPath[localStartRow+i][localStartCol+j].activeStatus = 'inactive';
                                         gameBoard.boardArray[localStartRow+i][localStartCol+j].activeStatus = 'inactive';
                                     }
-
-                                    //console.log(this.findPath[localStartRow+i][localStartCol+j]);
                                 }
-                            //}
                             }
                         }
                     }
+                }
+            }
+        }
+    },
+
+    // Method adds detail of targets and pieces to tiles with pathStatus = true
+    // ------------------------------------------------------------------------
+    paintFindPath: function() {
+        for (var i = 0; i < col; i++) {
+            for (var j = 0; j < row; j++) {
+                // Target transport ships for pirate attack
+                if (gameBoard.boardArray[i][j].pieces.category == 'Transport' && gameBoard.boardArray[i][j].pieces.team != 'Pirate' && gameBoard.boardArray[i][j].pieces.damageStatus == 5) {
+                    this.findPath[i][j].target = {type: gameBoard.boardArray[i][j].pieces.type, team: gameBoard.boardArray[i][j].pieces.team};
+                }
+                // Safe harbour for ship repair or hiding
+                if (gameBoard.boardArray[i][j].subTerrain == 'harbour') {
+                    this.findPath[i][j].harbour = {type: gameBoard.boardArray[i][j].subTerrain, team: 'none'};
+                }
+                // Tiles where path must end
+                if (gameBoard.boardArray[i][j].pieces.category == 'Transport') {
+                    this.findPath[i][j].pathStop = {type: gameBoard.boardArray[i][j].pieces.type, team: gameBoard.boardArray[i][j].pieces.team};
+                } else if (gameBoard.boardArray[i][j].subTerrain == 'harbour') {
+                    this.findPath[i][j].pathStop = {type: gameBoard.boardArray[i][j].subTerrain, team: 'none'};
                 }
             }
         }
@@ -418,7 +437,6 @@ let pieceMovement = {
             stockDashboardNode.addEventListener('mouseover', stockDashboard.hoverPieceOn);
             stockDashboardNode.addEventListener('mouseleave', gameBoard.clearHighlightTiles);
         } else if (gameManagement.type == 'Pirate') {
-
             // Resetting movement array once second click has been made (if move valid)
             pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
             startEnd = 'start';
@@ -653,7 +671,7 @@ let pieceMovement = {
     harbourRepairArrival: function(shipPiece) {
         if(workFlow == 1) {console.log('Harbour repair arrival: ' + (Date.now() - launchTime)); }
         let repairDirection = 0;
-        // Finds moves that end in harbour repair
+        // Checks whether moves have ended with ship entering harbour for repair
         if (this.movementArray.start.pieces.damageStatus == 0 && gameManagement.turn != 'Pirate' && gameBoard.boardArray[this.movementArray.end.row][this.movementArray.end.col].subTerrain == 'harbour') {
             shipPiece.style.transition = 'transform ' + (0.4 * gameSpeed) + 's 0s ease-in-out';
             for (var k = -1; k <= 1; k++) {
@@ -670,7 +688,7 @@ let pieceMovement = {
             }
             shipPiece.style.transform = 'rotate(' + repairDirection + 'deg)';
 
-            // Updates boardArray for new status
+            // Updates boardArray for new status - cargo ships take longer to repair, working through damageStatus from 1 to 5 rather than just 3 to 5
             if (gameBoard.boardArray[this.movementArray.end.row][this.movementArray.end.col].pieces.type == 'cargo ship') {
                 gameBoard.boardArray[this.movementArray.end.row][this.movementArray.end.col].pieces.damageStatus = 1;
             } else {
@@ -679,7 +697,7 @@ let pieceMovement = {
             gameBoard.boardArray[this.movementArray.end.row][this.movementArray.end.col].pieces.direction = repairDirection;
             gameBoard.repairShip(shipPiece, gameBoard.boardArray[this.movementArray.end.row][this.movementArray.end.col].pieces.team, gameBoard.boardArray[this.movementArray.end.row][this.movementArray.end.col].pieces.type, gameBoard.boardArray[this.movementArray.end.row][this.movementArray.end.col].pieces.damageStatus);
         } else if (this.movementArray.start.pieces.damageStatus == 0 && gameManagement.turn == 'Pirate' && gameBoard.boardArray[this.movementArray.end.row][this.movementArray.end.col].subTerrain == 'pirateHarbour') {
-            // Updates boardArray for new status
+            // Updates boardArray for new status - all pirate ships assumed to be warships and repaired from 3 to 5
             gameBoard.boardArray[this.movementArray.end.row][this.movementArray.end.col].pieces.damageStatus = 3;
             gameBoard.repairShip(shipPiece, gameBoard.boardArray[this.movementArray.end.row][this.movementArray.end.col].pieces.team, gameBoard.boardArray[this.movementArray.end.row][this.movementArray.end.col].pieces.type, gameBoard.boardArray[this.movementArray.end.row][this.movementArray.end.col].pieces.damageStatus);
         }

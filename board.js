@@ -225,21 +225,13 @@ let gameBoard = {
       // TEST AREA
 
 
-        // Ships
-        this.boardArray[boardCenter-2][col-1].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-90', used: 'unused', damageStatus: 5, team: 'Orange Team', goods: 'none', stock: 0, production: 0, homeRow: boardCenter-1, homeCol: col-1};
-        this.boardArray[0][boardCenter-2].pieces = {populatedSquare: true, category: 'Transport', type: 'warship', direction: '180', used: 'unused', damageStatus: 5, team: 'Red Team', goods: 'none', stock: 0, production: 0, homeRow: 0, homeCol: boardCenter-1};
-
+        // Extra Ships
         /*
-        // Clay
-        this.boardArray[row-3][boardCenter+1] = {xpos: row-3, ypos: boardCenter+1, terrain: 'land', subTerrain: 'none', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Resources', type: 'clay', direction: '0', used: 'unused', damageStatus: 5, team: 'Unclaimed', goods: 'pottery', stock: 18, production: 1}};
-
-        // Flax
-        this.boardArray[row-3][boardCenter] = {xpos: row-3, ypos: boardCenter, terrain: 'land', subTerrain: 'none', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Resources', type: 'flax', direction: '0', used: 'unused', damageStatus: 5, team: 'Unclaimed', goods: 'cloth', stock: 18, production: 1}};
-
-        // Iron
-        this.boardArray[6][boardCenter] = {xpos: row-3, ypos: boardCenter, terrain: 'land', subTerrain: 'none', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Resources', type: 'ironworks', direction: '0', used: 'unused', damageStatus: 5, team: 'Unclaimed', goods: 'iron', stock: 18, production: 1}};
-
-        this.boardArray[5][boardCenter].pieces = {populatedSquare: true, category: 'Transport', type: 'catamaran', direction: '45', used: 'unused', damageStatus: 5, team: 'Green Team', goods: 'none', stock: 0};
+        this.boardArray[boardCenter-3][col-9].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-90', used: 'unused', damageStatus: 5, team: 'Orange Team', goods: 'none', stock: 0, production: 0, homeRow: boardCenter-1, homeCol: col-1};
+        this.boardArray[boardCenter-2][col-9].pieces = {populatedSquare: true, category: 'Transport', type: 'catamaran', direction: '-90', used: 'unused', damageStatus: 5, team: 'Orange Team', goods: 'none', stock: 0, production: 0, homeRow: boardCenter-1, homeCol: col-1};
+        this.boardArray[boardCenter-3][col-10].pieces = {populatedSquare: true, category: 'Transport', type: 'warship', direction: '-90', used: 'unused', damageStatus: 5, team: 'Orange Team', goods: 'none', stock: 0, production: 0, homeRow: boardCenter-1, homeCol: col-1};
+        this.boardArray[boardCenter-2][col-10].pieces = {populatedSquare: true, category: 'Transport', type: 'catamaran', direction: '180', used: 'unused', damageStatus: 5, team: 'Red Team', goods: 'none', stock: 0, production: 0, homeRow: boardCenter-1, homeCol: col-1};
+        this.boardArray[10][boardCenter-2].pieces = {populatedSquare: true, category: 'Transport', type: 'warship', direction: '180', used: 'unused', damageStatus: 0, team: 'Red Team', goods: 'none', stock: 0, production: 0, homeRow: 0, homeCol: boardCenter-1};
 
         // Battle Royale
         this.boardArray[row-4][boardCenter].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0};
