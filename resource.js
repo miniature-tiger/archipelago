@@ -67,5 +67,19 @@ let resourceManagement = {
         return(cardType);
     },
 
+    // Method to claim resource tile - used by both human and computer opponent game logic
+    // -----------------------------------------------------------------------------------
+    claimResource: function(localRow, localCol, localTeam) {
+        // Calculate placement on board of resource tile to be altered and remove it
+        let IDPiece = 'tile' + Number(localRow*1000 + localCol);
+        document.getElementById(IDPiece).remove();
+        // Change board array and add new SVG piece with team colour
+        gameBoard.boardArray[localRow][localCol].pieces.team = localTeam;
+        boardMarkNode.appendChild(gameBoard.createActionTile(localRow, localCol, gameBoard.boardArray[localRow][localCol].pieces.type, localTeam,
+          'tile' + Number(localRow*1000 + localCol), boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * localRow, boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * localCol, 1, gameBoard.boardArray[localRow][localCol].pieces.direction));
+        // Update score as necessary
+        gameScore.workScores('Exploring', localTeam, gameBoard.boardArray[localRow][localCol].pieces.type);
+    },
+
 // LAST BRACKET OF OBJECT
 }

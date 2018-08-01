@@ -56,7 +56,7 @@ let stockDashboard = {
                 stockDashboard.pieceTotals[h].pieces[stockDashboard.pieceTypes[k].type] = {quantity: counter, goods: piecesGoods, stock: piecesStock};
             }
         }
-          //console.log('pieceTotals', stockDashboard.pieceTotals);
+          console.log('pieceTotals', stockDashboard.pieceTotals);
     },
 
     // Method to populate stock dashboard on left-hand panel

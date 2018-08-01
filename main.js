@@ -13,7 +13,8 @@ const launchTime = Date.now();
 
 let workFlow = gameManagement.optionsArray[1].options[0].active;
 let gameBoardTrack = 0;
-let transitionMonitor = gameManagement.optionsArray[1].options[1].active;
+let arrayFlow = gameManagement.optionsArray[1].options[1].active;
+let transitionMonitor = gameManagement.optionsArray[1].options[2].active;
 
 
 
@@ -537,14 +538,8 @@ function boardHandler(event) {
                 if (pieceMovement.movementArray.end.pieces.category == 'Transport' && pieceMovement.movementArray.start.pieces.type != 'desert' && pieceMovement.movementArray.start.pieces.team == 'Unclaimed') {
                     pieceMovement.deactivateTiles(1);
                     gameBoard.drawActiveTiles();
-                    // Calculate placement on board of resource tile to be altered
-                    let IDPiece = 'tile' + Number(pieceMovement.movementArray.start.row*1000 + pieceMovement.movementArray.start.col);
-                    document.getElementById(IDPiece).remove();
-                    gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.team = gameManagement.turn;
-                    boardMarkNode.appendChild(gameBoard.createActionTile(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.type, gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.team,
-                      'tile' + Number((pieceMovement.movementArray.start.row)*1000 + (pieceMovement.movementArray.start.col)), boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * pieceMovement.movementArray.start.row, boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * pieceMovement.movementArray.start.col, 1, gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.direction));
+                    resourceManagement.claimResource(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, gameManagement.turn);
                     startEnd = 'start';
-                    gameScore.workScores('Exploring', gameManagement.turn, pieceMovement.movementArray.start.pieces.type);
 
                 // Loading of goods
               } else if ((pieceMovement.movementArray.start.pieces.category == 'Resources' || pieceMovement.movementArray.start.pieces.category == 'Settlements') && pieceMovement.movementArray.end.pieces.category == 'Transport') {

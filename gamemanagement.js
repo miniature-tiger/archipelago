@@ -461,7 +461,7 @@ let gameManagement = {
 
     optionsArray: [
                   { variable: 'speed', active: 'fast', options: [{text: 'slow', active: false, constant: 1.5}, {text: 'medium', active: false, constant: 1}, {text: 'fast', active: true, constant: 0.6}] },
-                  { variable: 'dev', options: [{text: 'workflow', active: false}, {text: 'transitions', active: false}] },
+                  { variable: 'dev', options: [{text: 'workflow', active: false}, {text: 'arrays', active: true}, {text: 'transitions', active: false}] },
                   ],
 
 
@@ -498,7 +498,8 @@ let gameManagement = {
             indexNew = this.optionsArray[1].options.findIndex(item => item.text == e.target.classList.item(1));
             this.optionsArray[1].options[indexNew].active = !this.optionsArray[1].options[indexNew].active;
             workFlow = this.optionsArray[1].options[0].active;
-            transitionMonitor = this.optionsArray[1].options[1].active;
+            arrayFlow = this.optionsArray[1].options[1].active;
+            transitionMonitor = this.optionsArray[1].options[2].active;
             this.clearPanel();
             this.devPanel(localScale);
         }
@@ -533,8 +534,10 @@ let gameManagement = {
         // Panel buttons - make into a loop?
         workFlowCheck = settingsPanel.appendChild(this.optionBox(localScale, this.optionsArray[1].options[0], this.optionsArray[1].variable, 18));
         workFlowCheck.setAttribute('transform', 'translate(' + (25 * localScale - 9 * localScale) + ', ' + (25 * localScale - 2 * localScale) + ')');
-        transitionsCheck = settingsPanel.appendChild(this.optionBox(localScale, this.optionsArray[1].options[1], this.optionsArray[1].variable, 18));
-        transitionsCheck.setAttribute('transform', 'translate(' + (25 * localScale - 9 * localScale) + ', ' + (32 * localScale - 2 * localScale) + ')');
+        arrayCheck = settingsPanel.appendChild(this.optionBox(localScale, this.optionsArray[1].options[1], this.optionsArray[1].variable, 18));
+        arrayCheck.setAttribute('transform', 'translate(' + (25 * localScale - 9 * localScale) + ', ' + (32 * localScale - 2 * localScale) + ')');
+        transitionsCheck = settingsPanel.appendChild(this.optionBox(localScale, this.optionsArray[1].options[2], this.optionsArray[1].variable, 18));
+        transitionsCheck.setAttribute('transform', 'translate(' + (25 * localScale - 9 * localScale) + ', ' + (39 * localScale - 2 * localScale) + ')');
 
     },
 
