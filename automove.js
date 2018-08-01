@@ -27,12 +27,12 @@ let computer = {
     // --------------------------------------------------------------
     automatePlayer: function() {
         if(workFlow == 1) {console.log('Automate computer opponent: ' + (Date.now() - launchTime)); }
-
         // Update array of all computer opponent ships
         if (computer.computerShipsTurnCount == -1) {
             this.populateComputerShipsArray();
             // Separate array of ships for current turn
             this.computerShipsTurn = this.computerShipsAll.filter(fI => fI.team == gameManagement.turn);
+            if(arrayFlow == 1) {console.log('computerShipsTurn', this.computerShipsTurn);}
         }
 
         // Increases counter to move on to next ship
@@ -178,7 +178,55 @@ let computer = {
                 }
             }
         }
-        if(workFlow == 1) {console.log(this.computerShipsAll);}
+        if(arrayFlow == 1) {console.log('computerShipsAll', this.computerShipsAll);}
+    },
+
+    // Method to check whether there are resources to be claimed and decide whether a resource should be claimed
+    // ---------------------------------------------------------------------------------------------------------
+    decideClaimResource: function() {
+        // Array of resources to be claimed
+        let claimableResources = [];
+        let teamPosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == gameManagement.turn);
+        let resourceType = '';
+
+        // Check whether there are resources to be claimed
+        for (var k = 0; k < computer.computerShipsTurn.length; k+=1) {
+
+            for (var i = -1; i < 2; i+=1) {
+                if(computer.computerShipsTurn[k].end.row+i >=0 && computer.computerShipsTurn[k].end.row+i <row) {
+                    for (var j = -1; j < 2; j+=1) {
+                        if(computer.computerShipsTurn[k].end.col+j >=0 && computer.computerShipsTurn[k].end.col+j <col) {
+                            // Reduces search to exclude diagonals
+                            if(i == 0 || j == 0) {
+                                // Checks if tile is land and unpopulated
+                                if (gameBoard.boardArray[computer.computerShipsTurn[k].end.row+i][computer.computerShipsTurn[k].end.col+j].pieces.category == 'Resources' && gameBoard.boardArray[computer.computerShipsTurn[k].end.row+i][computer.computerShipsTurn[k].end.col+j].pieces.type != 'desert' && gameBoard.boardArray[computer.computerShipsTurn[k].end.row+i][computer.computerShipsTurn[k].end.col+j].pieces.team == 'Unclaimed') {
+                                    resourceType = gameBoard.boardArray[computer.computerShipsTurn[k].end.row+i][computer.computerShipsTurn[k].end.col+j].pieces.type;
+                                    // Exclude resource types that have already been claimed
+                                    if (stockDashboard.pieceTotals[teamPosition].pieces[resourceType].quantity == 0) {
+                                        claimableResources.push({row: computer.computerShipsTurn[k].end.row+i, col: computer.computerShipsTurn[k].end.col+j, type: gameBoard.boardArray[computer.computerShipsTurn[k].end.row+i][computer.computerShipsTurn[k].end.col+j].pieces.type, production: gameBoard.boardArray[computer.computerShipsTurn[k].end.row+i][computer.computerShipsTurn[k].end.col+j].pieces.production});
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if(arrayFlow == 1) {console.log('claimableResources', claimableResources);}
+
+        // Reduce down array / sort order of claiming according to criteria - ignore for first implementation
+
+        // Decide whether a resource should be claimed - simple version of decision for first implementation
+        for (var l = 0; l < claimableResources.length; l+=1) {
+            // Need to check whether player has already claimed this resource in this loop - can happen that claimableResource includes 2 or 3 of same resource type 
+            if (stockDashboard.pieceTotals[teamPosition].pieces[claimableResources[l].type].quantity == 0) {
+                // Claim resource (already checked that have resource in construction of claimable resource)
+                resourceManagement.claimResource(claimableResources[l].row, claimableResources[l].col, gameManagement.turn);
+                // Update stock take and stock dashboard before next claimable resource checked
+                stockDashboard.stockTake();
+                stockDashboard.drawStock();
+            }
+        }
     },
 
 

@@ -375,12 +375,12 @@ let pieceMovement = {
                                 gameBoard.boardArray[pieceMovement.movementArray['start'].row][pieceMovement.movementArray['start'].col].pieces = {populatedSquare: false, category: '', type: 'no piece', direction: '', used: 'unused', damageStatus: 5, team: '', goods: 'none', stock: 0};
                                 gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces = {populatedSquare: true, category: pieceMovement.movementArray.start.pieces.category, type: pieceMovement.movementArray.start.pieces.type, direction: rotateDirection, used: 'used', damageStatus: pieceMovement.movementArray.start.pieces.damageStatus, team: pieceMovement.movementArray.start.pieces.team, goods: pieceMovement.movementArray.start.pieces.goods, stock: pieceMovement.movementArray.start.pieces.stock, ref: pieceMovement.movementArray.start.pieces.ref};
 
-                                //Updating piece information
+                                // Updating piece information
                                 chosenPiece.setAttribute('id', 'tile' + Number(pieceMovement.movementArray.end.row*1000 + pieceMovement.movementArray.end.col));
                                 chosenPiece.style.transition = '';
                                 gameBoard.drawActiveTiles();
-                                pieceMovement.harbourRepairArrival(chosenPiece);
-                                pieceMovement.shipConflict(rotateDirection);
+
+                                pieceMovement.postTransition(rotateDirection, chosenPiece);
                             }
                         } else {
                             if(transitionMonitor == 1) {console.log('TM: Transition ignored - rotation not translation');}
@@ -419,15 +419,38 @@ let pieceMovement = {
 
     },
 
+    // Method for post ship movement actions
+    // -------------------------------------
+    postTransition: function(rotateDirection, chosenPiece) {
+    // Pirates, human, computer opponent treated separately
+    // Move completion called to reset once post transition complete
+    // Pirate ship conflict has transitions so move completion needs to be called once this is finished (from shipConflict)
+    // May need to do this for computer opponents as well once actions with transitions implemented
+        if (gameManagement.type == 'Pirate') {
+            pieceMovement.harbourRepairArrival(chosenPiece);
+            pieceMovement.shipConflict(rotateDirection);
+        } else if (gameManagement.type == 'human') {
+            if(this.movementArray.start.pieces.damageStatus == 5) {
+                pieceMovement.landDiscovery();
+            }
+            pieceMovement.harbourRepairArrival(chosenPiece);
+            pieceMovement.moveCompletion();
+        } else { // 'computer'
+            if(this.movementArray.start.pieces.damageStatus == 5) {
+                pieceMovement.landDiscovery();
+            }
+            computer.decideClaimResource();
+            pieceMovement.harbourRepairArrival(chosenPiece);
+            pieceMovement.moveCompletion();
+        }
+    },
+
     // Method to complete ship movement once all transitions have been cycled through
     // ------------------------------------------------------------------------------
     moveCompletion: function(chosenPiece) {
         // Applying moves to game board array
         if(workFlow == 1) {console.log('----- Move Completion activated ----- ' + (Date.now() - launchTime)); }
-
         if (gameManagement.type == 'human') {
-            pieceMovement.landDiscovery();
-
             // Resetting movement array once second click has been made (if move valid)
             pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
             startEnd = 'start';
@@ -442,6 +465,8 @@ let pieceMovement = {
             startEnd = 'start';
             pirates.automatePirates();
         } else if (gameManagement.type == 'computer') {
+
+            // Resetting movement array once second click has been made (if move valid)
             pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
             startEnd = 'start';
             computer.automatePlayer();
@@ -480,7 +505,7 @@ let pieceMovement = {
             if(this.movementArray.end.row+i >=0 && this.movementArray.end.row+i <row) {
                 for (var j = -searchDistance; j < searchDistance + 1; j++) {
                     if(this.movementArray.end.col+j >=0 && this.movementArray.end.col+j <col) {
-                        // Reduces seacrh to exclude diagonals
+                        // Reduces search to exclude diagonals
                         if(i == 0 || j == 0) {
                             // Checks if tile is land and unpopulated
                             if(gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].terrain == 'land' && !gameBoard.boardArray[this.movementArray.end.row+i][this.movementArray.end.col+j].pieces.populatedSquare) {
@@ -498,8 +523,6 @@ let pieceMovement = {
                 }
             }
         }
-
-        //console.log('valid cargo - start');
     },
 
     // Method to check a ship is nearby to allow resource to be settled
@@ -577,7 +600,8 @@ let pieceMovement = {
         let endCannon = 0;
         if (pirates.conflictArray.conflict == true) {
             if(workFlow == 1) {console.log('Ship conflict - battle: ' + (Date.now() - launchTime)); }
-            //console.log(pirates.conflictArray);
+            console.log(pirates.conflictArray);
+            console.log(startDirection);
             // Obtains ID and element of pirates
             IDPirate = 'tile' + Number(pirates.conflictArray.pirate.row*1000 + pirates.conflictArray.pirate.col);
             let piratePiece = document.getElementById(IDPirate);
