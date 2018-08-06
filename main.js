@@ -468,7 +468,7 @@ function boardHandler(event) {
                     }
 
                 // Loading of a ship
-              } else if (((pieceMovement.movementArray.start.pieces.category == 'Resources' && pieceMovement.movementArray.start.pieces.type != 'desert') || pieceMovement.movementArray.start.pieces.category == 'Settlements') && pieceMovement.movementArray[startEnd].pieces.team == gameManagement.turn) {
+                } else if (((pieceMovement.movementArray.start.pieces.category == 'Resources' && pieceMovement.movementArray.start.pieces.type != 'desert') || pieceMovement.movementArray.start.pieces.category == 'Settlements') && pieceMovement.movementArray[startEnd].pieces.team == gameManagement.turn) {
                     if (pieceMovement.shipAvailable(pieceMovement.movementArray.start.pieces.goods) == 'compatible') {
                         if (pieceMovement.movementArray.start.pieces.stock > 0) {
                             startEnd = 'end';
