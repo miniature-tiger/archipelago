@@ -19,6 +19,10 @@ let computer = {
 
     telescopeHarbour: [],
 
+    telescopeResources: [],
+
+    bestDestination: [],
+
     maxDistanceTiles: [],
 
     minCostTiles: [],
@@ -101,9 +105,9 @@ let computer = {
                 if(workFlow == 1) {console.log('Damaged ship - decide move: '+ (Date.now() - launchTime)); }
 
                 computer.targetHarbour = pirates.findTarget('All', 'harbour');
-                if(workFlow == 1) {console.log('targetHarbour', computer.targetHarbour);}
+                if(arrayFlow == 1) {console.log('targetHarbour', computer.targetHarbour);}
                 computer.telescopeHarbour = pirates.useTelescope('All', 'harbour', maxMove);
-                if(workFlow == 1) {console.log('telescopeHarbour', computer.telescopeHarbour);}
+                if(arrayFlow == 1) {console.log('telescopeHarbour', computer.telescopeHarbour);}
 
                 if (computer.targetHarbour.length > 0) {
                     // 1 - Move to safe harbour within wind range
@@ -137,12 +141,26 @@ let computer = {
             // Deciding move for undamaged ships (damageStatus is 5 for healthy ships)
             } else if (pieceMovement.movementArray.start.pieces.damageStatus == 5) {
                 if(workFlow == 1) {console.log('Good ship - decide move: '+ (Date.now() - launchTime)); }
-                // Move maximum distance at minimum wind cost
-                if(workFlow == 1) {console.log('Finds max distance move at minimum cost: ' + (Date.now() - launchTime)); }
-                computer.maxDistanceTiles = pirates.maxPathDistance();
-                computer.minCostTiles = pirates.minArray(computer.maxDistanceTiles, 'moveCost');
-                computer.computerShipsTurn[computer.computerShipsTurnCount].end.row = computer.minCostTiles[0].row;
-                computer.computerShipsTurn[computer.computerShipsTurnCount].end.col = computer.minCostTiles[0].col;
+
+                computer.telescopeResources = pirates.useTelescope('All', 'resourceHarbour', row);
+                if(arrayFlow == 1) {console.log('telescopeResources', computer.telescopeResources);}
+
+                computer.bestDestination = computer.rankDestinations(computer.telescopeResources);
+
+                if (computer.bestDestination.length > 0) {
+                    lastTile = pirates.findLastActive(pieceMovement.findPath[computer.bestDestination[0].row][computer.bestDestination[0].col].path, 0);
+                    computer.computerShipsTurn[computer.computerShipsTurnCount].end.row = pieceMovement.findPath[computer.bestDestination[0].row][computer.bestDestination[0].col].path[lastTile].fromRow;
+                    computer.computerShipsTurn[computer.computerShipsTurnCount].end.col = pieceMovement.findPath[computer.bestDestination[0].row][computer.bestDestination[0].col].path[lastTile].fromCol;
+
+                } else {
+                // Move maximum distance at minimum wind cost - should not be required if
+                    if(workFlow == 1) {console.log('Finds max distance move at minimum cost: ' + (Date.now() - launchTime)); }
+                    computer.maxDistanceTiles = pirates.maxPathDistance();
+                    computer.minCostTiles = pirates.minArray(computer.maxDistanceTiles, 'moveCost');
+                    console.log('computer.maxDistanceTiles', computer.maxDistanceTiles)
+                    computer.computerShipsTurn[computer.computerShipsTurnCount].end.row = computer.minCostTiles[0].row;
+                    computer.computerShipsTurn[computer.computerShipsTurnCount].end.col = computer.minCostTiles[0].col;
+                }
 
             // Catching move for ships under repair (damageStatus between 0 and 5)
             } else {
@@ -191,7 +209,6 @@ let computer = {
 
         // Check whether there are resources to be claimed
         for (var k = 0; k < computer.computerShipsTurn.length; k+=1) {
-
             for (var i = -1; i < 2; i+=1) {
                 if(computer.computerShipsTurn[k].end.row+i >=0 && computer.computerShipsTurn[k].end.row+i <row) {
                     for (var j = -1; j < 2; j+=1) {
@@ -218,7 +235,7 @@ let computer = {
 
         // Decide whether a resource should be claimed - simple version of decision for first implementation
         for (var l = 0; l < claimableResources.length; l+=1) {
-            // Need to check whether player has already claimed this resource in this loop - can happen that claimableResource includes 2 or 3 of same resource type 
+            // Need to check whether player has already claimed this resource in this loop - can happen that claimableResource includes 2 or 3 of same resource type
             if (stockDashboard.pieceTotals[teamPosition].pieces[claimableResources[l].type].quantity == 0) {
                 // Claim resource (already checked that have resource in construction of claimable resource)
                 resourceManagement.claimResource(claimableResources[l].row, claimableResources[l].col, gameManagement.turn);
@@ -227,6 +244,63 @@ let computer = {
                 stockDashboard.drawStock();
             }
         }
+    },
+
+    // Method to rank potential map destinations for move choice related to Resources
+    // ------------------------------------------------------------------------------
+    // TO DO: add / subtract points for (a) Nearness to next good option (b) Closeness to pirates ships
+    // Also need to consider moving off route for lesser detination if its on the way to best destination
+    rankDestinations: function(movesToRate) {
+        // Team position of piece information array required to check if resource pieces already held
+        let teamPosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == gameManagement.turn);
+        let maxPoints = 0;
+        let bestMove = [];
+
+        // Loops through all potential map moves and adds points to rate them
+        for (var i = 0; i < movesToRate.length; i+=1) {
+            movesToRate[i].points = 0;
+            if(movesToRate[i].pathStop[0] == 'none' || movesToRate[i].activeStatus != 'active') {
+                for (var j = 0; j < movesToRate[i].type.length; j+=1) {
+                    // Virgin islands are worth visiting - and a better option if they can be reached in one turn
+                    if(movesToRate[i].type[j] == 'virgin') {
+                        if(movesToRate[i].activeStatus == 'active') {
+                            movesToRate[i].points += 3;
+                        } else {
+                            movesToRate[i].points += 1;
+                        }
+                    // Revealed pieces that are needed are more valuable options than virgin islands which may be desert or duplicate pieces
+                    } else if (stockDashboard.pieceTotals[teamPosition].pieces[movesToRate[i].type[j]].quantity == 0) {
+                        if(movesToRate[i].activeStatus == 'active') {
+                            movesToRate[i].points += 6;
+                        } else {
+                            movesToRate[i].points += 4;
+                        }
+                    } else {
+                       // no points
+                    }
+                }
+
+                // Points for destinations at greater distance are reduced by estimated number of moves to get there
+                let moveCostDivisor = 1;
+                if (movesToRate[i].activeStatus == 'active') {
+                    // moveCostDivisor = 1;
+                } else {
+                    moveCostDivisor = movesToRate[i].moveCost/maxMove;
+                }
+                movesToRate[i].points = Number((movesToRate[i].points / moveCostDivisor).toFixed(2));
+
+                // Array built up of highest scoring options
+                if (movesToRate[i].points > maxPoints) {
+                    maxPoints = movesToRate[i].points
+                    bestMove = [movesToRate[i]];
+                } else if (movesToRate[i].points == maxPoints && movesToRate[i].points > 0) {
+                    bestMove.push(movesToRate[i]);
+                }
+            }
+        }
+
+        if(arrayFlow == 1) {console.log('bestMove', bestMove);}
+        return bestMove;
     },
 
 
