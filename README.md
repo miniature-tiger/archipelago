@@ -92,23 +92,26 @@ Surround, dashboards, commentary:
 * Change commentary to focus on single player - with updates on other team moves
 
 Resource tile search phase:
+* Get all ships moving
 * Automate search for resource tiles
 * Automate claiming of resource tiles
 
 Conflicts:
 * Automate avoidance of pirate ships
-* Automate return to nearest harbour after damage taken
+* Automate ship return to nearest harbour after damage taken
 
 Contracts for delivery:
 * Automate collection of goods
 * Automate delivery of goods
 
+Shipbuilding
+* Automate decision to build ships
+* Automate teamworking so that ships on same team do not pursue same targets
+
 Strategies and AI for computer players
 * Produce array of ships with game strategies
 * Decision making between different possibilities
 * Consider different ability levels and strategy types for computer players
-
-TBC...
 
 # Phase 5 - Game Management and Settings 
 Settings
