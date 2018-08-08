@@ -54,7 +54,7 @@ let pieceMovement = {
                         if(localStartCol+j >=0 && localStartCol+j <col) {
                             // Checks if tile is found. If so runs activeTiles to search for potential tiles to activate around it.
                             // Does not check tiles if pathStop is active (pathStop prevents ships moving through harbours or other ships)
-                            if ((this.findPath[localStartRow+i][localStartCol+j].pathStatus == true) && (this.findPath[localStartRow+i][localStartCol+j].pathStop.type[0] == 'none' || k == 0)) {
+                            if ((this.findPath[localStartRow+i][localStartCol+j].pathStatus == true) && (this.findPath[localStartRow+i][localStartCol+j].pathStop.type.length < 1 || k == 0)) {
                                 //Keep useful for debugging - console.log('run: ' + k);
                                 //Keep useful for debugging - console.log('starting from: row: ' + (localStartRow+i) + ' col: ' + (localStartCol+j) + ' prior cost: ' + this.findPath[localStartRow+i][localStartCol+j].moveCost);
                                 this.activeTiles(localStartRow+i, localStartCol+j, this.findPath[localStartRow+i][localStartCol+j].moveCost, localMaxMove, displayActive, k, localDamagedStatus);
@@ -69,6 +69,9 @@ let pieceMovement = {
         //if (displayActive) {
         //    gameBoard.boardArray[localStartRow][localStartCol].activeStatus = 'inactive';
         //}
+
+        // Add further detail of last tiles to find path array
+        this.postPaintFindPath()
     },
 
     initialisefindPath: function(localStartRow, localStartCol) {
@@ -80,7 +83,7 @@ let pieceMovement = {
         for (var i = 0; i < col; i++) {
             let localMoveRow = [];
             for (var j = 0; j < row; j++) {
-                localMoveRow[j] = {pathStatus: false, activeStatus: 'inactive', moveCost: 0, distance: 0, target: {type: ['none'], team: 'none'}, resourceHarbour: {type: ['none'], team: 'none'}, harbour: {type: ['none'], team: 'none'}, pathStop: {type: ['none'], team: 'none'}, path: [{fromRow: +localStartRow , fromCol: +localStartCol}]};
+                localMoveRow[j] = {pathStatus: false, activeStatus: 'inactive', moveCost: 0, distance: 0, target: {type: [], detail: []}, resourceHarbour: {type: [], detail: []}, harbour: {type: [], detail: []}, pathStop: {type: [], detail: []}, lastTile: {row: undefined, col: undefined}, pirateRange: {type: [], detail: []}, path: [{fromRow: +localStartRow , fromCol: +localStartCol}]};
             }
             this.findPath[i] = localMoveRow;
         }
@@ -183,18 +186,20 @@ let pieceMovement = {
         }
     },
 
-    // Method adds detail of targets and pieces to tiles with pathStatus = true
-    // ------------------------------------------------------------------------
+    // Method adds detail of targets and pieces to tiles within findPath - this information can be generated before findPath
+    // ---------------------------------------------------------------------------------------------------------------------
     paintFindPath: function() {
         for (var i = 0; i < col; i++) {
             for (var j = 0; j < row; j++) {
+
                 // Target transport ships for pirate attack
                 if (gameBoard.boardArray[i][j].pieces.category == 'Transport' && gameBoard.boardArray[i][j].pieces.team != 'Pirate' && gameBoard.boardArray[i][j].pieces.damageStatus == 5) {
                     this.findPath[i][j].target = {type: [gameBoard.boardArray[i][j].pieces.type], team: gameBoard.boardArray[i][j].pieces.team};
                 }
+
                 // Unclaimed resources and virgin islands harbour
-                if (  (gameBoard.boardArray[i][j].terrain == 'land' && !gameBoard.boardArray[i][j].pieces.populatedSquare) ||
-                      (gameBoard.boardArray[i][j].pieces.category == 'Resources' && gameBoard.boardArray[i][j].pieces.type != 'desert' && gameBoard.boardArray[i][j].pieces.team == 'Unclaimed') ) {
+                if ((gameBoard.boardArray[i][j].terrain == 'land' && !gameBoard.boardArray[i][j].pieces.populatedSquare) ||
+                    (gameBoard.boardArray[i][j].pieces.category == 'Resources' && gameBoard.boardArray[i][j].pieces.type != 'desert' && gameBoard.boardArray[i][j].pieces.team == 'Unclaimed')) {
                     // Single tile search around the island
                     for (var k = -1; k < 2; k+=1) {
                         if(i + k >=0 && i + k <row) {
@@ -203,18 +208,10 @@ let pieceMovement = {
                                     // Reduces search to exclude diagonals
                                     if(k == 0 || l == 0) {
                                         if(gameBoard.boardArray[i+k][j+l].terrain == 'sea') {
-                                            if(this.findPath[i+k][j+l].resourceHarbour.type[0] == 'none') {
-                                                if (gameBoard.boardArray[i][j].pieces.category == 'Resources' && gameBoard.boardArray[i][j].pieces.type != 'desert' && gameBoard.boardArray[i][j].pieces.team == 'Unclaimed') {
-                                                    this.findPath[i+k][j+l].resourceHarbour.type[0] = gameBoard.boardArray[i][j].pieces.type;
-                                                } else {
-                                                    this.findPath[i+k][j+l].resourceHarbour.type[0] = 'virgin';
-                                                }
+                                            if (gameBoard.boardArray[i][j].pieces.category == 'Resources' && gameBoard.boardArray[i][j].pieces.type != 'desert' && gameBoard.boardArray[i][j].pieces.team == 'Unclaimed') {
+                                                this.findPath[i+k][j+l].resourceHarbour.type.push(gameBoard.boardArray[i][j].pieces.type);
                                             } else {
-                                                if (gameBoard.boardArray[i][j].pieces.category == 'Resources' && gameBoard.boardArray[i][j].pieces.type != 'desert' && gameBoard.boardArray[i][j].pieces.team == 'Unclaimed') {
-                                                    this.findPath[i+k][j+l].resourceHarbour.type.push(gameBoard.boardArray[i][j].pieces.type);
-                                                } else {
-                                                    this.findPath[i+k][j+l].resourceHarbour.type.push('virgin');
-                                                }
+                                                this.findPath[i+k][j+l].resourceHarbour.type.push('virgin');
                                             }
                                         }
                                     }
@@ -223,20 +220,66 @@ let pieceMovement = {
                         }
                     }
                 }
+
                 // Safe harbour for ship repair or hiding
                 if (gameBoard.boardArray[i][j].subTerrain == 'harbour') {
-                    this.findPath[i][j].harbour = {type: [gameBoard.boardArray[i][j].subTerrain], team: 'none'};
+                    this.findPath[i][j].harbour = {type: [gameBoard.boardArray[i][j].subTerrain], team: []};
                 }
+
                 // Tiles where path must end
                 if (gameBoard.boardArray[i][j].pieces.category == 'Transport') {
-                    this.findPath[i][j].pathStop = {type: [gameBoard.boardArray[i][j].pieces.type], team: gameBoard.boardArray[i][j].pieces.team};
+                    this.findPath[i][j].pathStop = {type: [gameBoard.boardArray[i][j].pieces.type], team: [gameBoard.boardArray[i][j].pieces.team]};
                 } else if (gameBoard.boardArray[i][j].subTerrain == 'harbour') {
-                    this.findPath[i][j].pathStop = {type: [gameBoard.boardArray[i][j].subTerrain], team: 'none'};
+                    this.findPath[i][j].pathStop = {type: [gameBoard.boardArray[i][j].subTerrain], team: []};
+                }
+
+                // Pirate ships
+                if (gameBoard.boardArray[i][j].pieces.category == 'Transport' && gameBoard.boardArray[i][j].pieces.team == 'Pirate' && gameBoard.boardArray[i][j].pieces.damageStatus != 0) {
+                    // Find the max move of the ship
+                    let maxMovePirate = stockDashboard.pieceTypes[stockDashboard.pieceTypes.findIndex(fI => fI.type == gameBoard.boardArray[i][j].pieces.type)].maxMove
+                    // Loop maxmove+1 tiles around the pirate ship
+                    for (var k = -maxMovePirate; k < maxMovePirate+1; k+=1) {
+                        if(i + k >=0 && i + k <row) {
+                            for (var l = -maxMovePirate; l < maxMovePirate+1; l+=1) {
+                                if(j + l >=0 && j + l <col) {
+                                    // Mark the distance from the ship (plain number of tiles not wind-based moveCost)
+                                    if(gameBoard.boardArray[i+k][j+l].terrain == 'sea' && gameBoard.boardArray[i+k][j+l].subterrain != 'harbour') {
+                                        this.findPath[i+k][j+l].pirateRange.type.push(Math.max(Math.abs(k), Math.abs(l))-maxMovePirate-1);
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
         if(arrayFlow == 1) {console.log('findPath', this.findPath);}
     },
+
+
+    // Method adds detail of targets and pieces to tiles within findPath - this information requires findPath to be generated first
+    // ----------------------------------------------------------------------------------------------------------------------------
+    postPaintFindPath: function() {
+
+        for (var i = 0; i < col; i++) {
+            for (var j = 0; j < row; j++) {
+
+                // Last activated tile for destinations which are outside activated range
+                if (this.findPath[i][j].pathStatus) {
+                    if (this.findPath[i][j].activeStatus == 'active') {
+                        this.findPath[i][j].lastTile = {row: i, col: j};
+                    } else {
+                        lastTile = pirates.findLastActive(this.findPath[i][j].path, 0);
+                        //console.log(this.findPath[i][j].path[lastTile].fromRow, this.findPath[i][j].path[lastTile].fromCol);
+                        this.findPath[i][j].lastTile = {row: this.findPath[i][j].path[lastTile].fromRow, col: this.findPath[i][j].path[lastTile].fromCol};
+                    }
+                }
+            }
+        }
+
+    },
+
+
 
     // Sets the "cost" of each move in relation to the wind direction
     // e.g. 1 if move is within 45 degrees of direction of wind, 2 at 90 degrees to wind, 3 in 45 degrees of against wind

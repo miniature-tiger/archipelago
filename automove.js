@@ -253,31 +253,36 @@ let computer = {
     rankDestinations: function(movesToRate) {
         // Team position of piece information array required to check if resource pieces already held
         let teamPosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == gameManagement.turn);
-        let maxPoints = 0;
+        let maxPoints = -10;
         let bestMove = [];
 
         // Loops through all potential map moves and adds points to rate them
         for (var i = 0; i < movesToRate.length; i+=1) {
-            movesToRate[i].points = 0;
-            if(movesToRate[i].pathStop[0] == 'none' || movesToRate[i].activeStatus != 'active') {
+            movesToRate[i].points = [0, 0];
+            if(movesToRate[i].pathStop.length < 1 || movesToRate[i].activeStatus != 'active') {
                 for (var j = 0; j < movesToRate[i].type.length; j+=1) {
                     // Virgin islands are worth visiting - and a better option if they can be reached in one turn
                     if(movesToRate[i].type[j] == 'virgin') {
                         if(movesToRate[i].activeStatus == 'active') {
-                            movesToRate[i].points += 3;
+                            movesToRate[i].points[0] += 3;
                         } else {
-                            movesToRate[i].points += 1;
+                            movesToRate[i].points[0] += 2;
                         }
                     // Revealed pieces that are needed are more valuable options than virgin islands which may be desert or duplicate pieces
                     } else if (stockDashboard.pieceTotals[teamPosition].pieces[movesToRate[i].type[j]].quantity == 0) {
                         if(movesToRate[i].activeStatus == 'active') {
-                            movesToRate[i].points += 6;
+                            movesToRate[i].points[0] += 6;
                         } else {
-                            movesToRate[i].points += 4;
+                            movesToRate[i].points[0] += 4;
                         }
                     } else {
                        // no points
                     }
+                }
+
+                // Deduction for pirate ships in range of move active tile (not final destination tile)
+                for (var k = 0; k < movesToRate[i].pirateRange.length; k+=1) {
+                    movesToRate[i].points[1] += movesToRate[i].pirateRange[k];
                 }
 
                 // Points for destinations at greater distance are reduced by estimated number of moves to get there
@@ -287,13 +292,14 @@ let computer = {
                 } else {
                     moveCostDivisor = movesToRate[i].moveCost/maxMove;
                 }
-                movesToRate[i].points = Number((movesToRate[i].points / moveCostDivisor).toFixed(2));
+                movesToRate[i].points[0] = Number((movesToRate[i].points[0] / moveCostDivisor).toFixed(2));
+                movesToRate[i].points[1] = Number((movesToRate[i].points[1] / moveCostDivisor).toFixed(2));
 
                 // Array built up of highest scoring options
-                if (movesToRate[i].points > maxPoints) {
-                    maxPoints = movesToRate[i].points
+                if (movesToRate[i].points[0] + movesToRate[i].points[1] > maxPoints) {
+                    maxPoints = movesToRate[i].points[0] + movesToRate[i].points[1];
                     bestMove = [movesToRate[i]];
-                } else if (movesToRate[i].points == maxPoints && movesToRate[i].points > 0) {
+                } else if (movesToRate[i].points[0] + movesToRate[i].points[1] == maxPoints) {
                     bestMove.push(movesToRate[i]);
                 }
             }

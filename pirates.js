@@ -62,9 +62,9 @@ let pirates = {
                 if(workFlow == 1) {console.log('Good ship - decide move: '+ (Date.now() - launchTime)); }
                 // Finds targetable Transports within reach, then cuts down array based on distance and move cost
                 pirates.targetCargo = pirates.findTarget('All', 'target');
-                if(workFlow == 1) {console.log('targetCargo', pirates.targetCargo);}
+                if(arrayFlow == 1) {console.log('targetCargo', pirates.targetCargo);}
                 pirates.telescopeCargo = pirates.useTelescope('All', 'target', maxMove);
-                if(workFlow == 1) {console.log('telescopeCargo', pirates.telescopeCargo);}
+                if(arrayFlow == 1) {console.log('telescopeCargo', pirates.telescopeCargo);}
                 if ((pirates.targetCargo.length > 0) && (pirates.pirateShips[pirates.pirateCount].start.pieces.damageStatus != 0)) {
                     // 1 - Look for Transports within wind range
                     if(workFlow == 1) {console.log('Move to attack player ship within range: ' + (Date.now() - launchTime)); }
@@ -195,7 +195,7 @@ let pirates = {
         for (var i = 0; i < row; i++) {
             for (var j = 0; j < col; j++) {
                 if (findPiece == 'All') {
-                    if ((pieceMovement.findPath[i][j][localKey].type[0] != 'none') && (pieceMovement.findPath[i][j].activeStatus == 'active')) {
+                    if ((pieceMovement.findPath[i][j][localKey].type.length > 0) && (pieceMovement.findPath[i][j].activeStatus == 'active')) {
                         searchResult.push({row: i, col: j, distance: pieceMovement.findPath[i][j].distance, moveCost: pieceMovement.findPath[i][j].moveCost, type: pieceMovement.findPath[i][j][localKey].type});
                     }
                 } else {
@@ -218,12 +218,12 @@ let pirates = {
         for (var i = Math.max(pieceMovement.movementArray.start.row - searchRange, 0); i < Math.min(pieceMovement.movementArray.start.row + searchRange + 1, row); i++) {
             for (var j = Math.max(pieceMovement.movementArray.start.col - searchRange, 0); j < Math.min(pieceMovement.movementArray.start.col + searchRange + 1, col); j++) {
                 if (findPiece = 'All') {
-                    if (pieceMovement.findPath[i][j][localKey].type[0] != 'none' && pieceMovement.findPath[i][j].pathStatus == true) {
-                        searchResult.push({row: i, col: j, distance: pieceMovement.findPath[i][j].distance, moveCost: pieceMovement.findPath[i][j].moveCost, type: pieceMovement.findPath[i][j][localKey].type, activeStatus: pieceMovement.findPath[i][j].activeStatus, pathStop: pieceMovement.findPath[i][j].pathStop.type});
+                    if (pieceMovement.findPath[i][j][localKey].type.length > 0 && pieceMovement.findPath[i][j].pathStatus == true) {
+                        searchResult.push({row: i, col: j, distance: pieceMovement.findPath[i][j].distance, moveCost: pieceMovement.findPath[i][j].moveCost, type: pieceMovement.findPath[i][j][localKey].type, activeStatus: pieceMovement.findPath[i][j].activeStatus, pathStop: pieceMovement.findPath[i][j].pathStop.type, pirateRange: pieceMovement.findPath[pieceMovement.findPath[i][j].lastTile.row][pieceMovement.findPath[i][j].lastTile.col].pirateRange.type});
                     }
                 } else {
                     if (pieceMovement.findPath[i][j][localKey].type.includes(findPiece) && pieceMovement.findPath[i][j].pathStatus == true) {
-                        searchResult.push({row: i, col: j, distance: pieceMovement.findPath[i][j].distance, moveCost: pieceMovement.findPath[i][j].moveCost, type: pieceMovement.findPath[i][j][localKey].type, activeStatus: pieceMovement.findPath[i][j].activeStatus, pathStop: pieceMovement.findPath[i][j].pathStop.type});
+                        searchResult.push({row: i, col: j, distance: pieceMovement.findPath[i][j].distance, moveCost: pieceMovement.findPath[i][j].moveCost, type: pieceMovement.findPath[i][j][localKey].type, activeStatus: pieceMovement.findPath[i][j].activeStatus, pathStop: pieceMovement.findPath[i][j].pathStop.type, pirateRange: pieceMovement.findPath[pieceMovement.findPath[i][j].lastTile.row][pieceMovement.findPath[i][j].lastTile.col].pirateRange.type});
                     }
                 }
             }
