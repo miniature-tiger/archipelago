@@ -17,7 +17,7 @@ let compass = {
     // -----------------------------------
     // 90% of wind changes are small, 10% are large
     newWindDirection: function (windDirection) {
-        if (Math.random() > 0.9) {
+        if (Math.random() > 0.5) {
             return this.largeWindChange();
         } else {
             return Math.round(((this.smallWindChange() + windDirection) + 8) % 8);
