@@ -30,12 +30,23 @@ let stockDashboard = {
         let counter = 0;
         let piecesGoods = 'none';
         let piecesStock = 0;
+        let stockTeam = [];
+        let unclaimedPosition = gameManagement.teamArray.length;
+        let totalPosition = gameManagement.teamArray.length + 1;
 
-        for (var h = 0; h < gameManagement.teamArray.length; h++) {
+        // Set up array of team names with Unclaimed and total added
+        for (var g = 0; g < gameManagement.teamArray.length; g++) {
+            stockTeam[g] = gameManagement.teamArray[g];
+        }
+        stockTeam[unclaimedPosition] = 'Unclaimed';
+        stockTeam[totalPosition] = 'Total';
+
+        stockDashboard.pieceTotals[totalPosition] = {team: 'total', pieces: {}};
+
+        for (var h = 0; h < stockTeam.length - 1; h++) {
             //console.log(gameManagement.teamArray[h]);
-            stockDashboard.pieceTotals[h] = {team: gameManagement.teamArray[h], pieces: {}};
+            stockDashboard.pieceTotals[h] = {team: stockTeam[h], pieces: {}};
             for (var k = 0; k < stockDashboard.pieceTypes.length; k++) {
-                //console.log(stockDashboard.pieceTypes[k].type);
                 stockDashboard.pieceTotals[h].pieces[stockDashboard.pieceTypes[k].type] = {};
                 counter = 0;
                 piecesGoods = 'none';
@@ -43,7 +54,7 @@ let stockDashboard = {
                 for (var i = 0; i < gameBoard.boardArray.length; i++) {
                     for (var j = 0; j < gameBoard.boardArray[i].length; j++) {
                         if(gameBoard.boardArray[i][j].pieces.populatedSquare) {
-                            if(gameBoard.boardArray[i][j].pieces.team == gameManagement.teamArray[h]) {
+                            if(gameBoard.boardArray[i][j].pieces.team == stockTeam[h]) {
                                 if(gameBoard.boardArray[i][j].pieces.type == stockDashboard.pieceTypes[k].type) {
                                     counter += 1;
                                     piecesGoods = gameBoard.boardArray[i][j].pieces.goods;
@@ -53,17 +64,86 @@ let stockDashboard = {
                         }
                     }
                 }
-                stockDashboard.pieceTotals[h].pieces[stockDashboard.pieceTypes[k].type] = {quantity: counter, goods: piecesGoods, stock: piecesStock};
+                stockDashboard.pieceTotals[h].pieces[stockDashboard.pieceTypes[k].type] = {quantity: counter, goods: piecesGoods, stock: piecesStock, category: stockDashboard.pieceTypes[k].category};
+                if(h == 0) {
+                    stockDashboard.pieceTotals[totalPosition].pieces[stockDashboard.pieceTypes[k].type] = {quantity: counter, category: stockDashboard.pieceTypes[k].category};
+                } else {
+                    stockDashboard.pieceTotals[totalPosition].pieces[stockDashboard.pieceTypes[k].type].quantity += counter;
+                }
+
             }
         }
-          console.log('pieceTotals', stockDashboard.pieceTotals);
+          if(arrayFlow == 1) {console.log('pieceTotals', stockDashboard.pieceTotals)};
     },
+
+    // Quick calculation of Resource tiles held by player
+    // --------------------------------------------------
+    resourceCount: function(localTeam) {
+        let teamPosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == localTeam);
+        let resourceTotal = 0;
+
+        for (const tilePiece of Object.keys(stockDashboard.pieceTotals[teamPosition].pieces)) {
+            if (stockDashboard.pieceTotals[teamPosition].pieces[tilePiece].category == 'Resources') {
+                resourceTotal += stockDashboard.pieceTotals[teamPosition].pieces[tilePiece].quantity;
+            }
+        }
+        return resourceTotal
+    },
+
+    // All the useful resource stats for a team
+    // ----------------------------------------
+    resourceStats: function(localTeam) {
+        const stockTeamPosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == localTeam);
+        const stockTotalPosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == 'total');
+        const unclaimedPosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == 'Unclaimed');
+        const scoreTotalPosition = gameScore.scoreArray.findIndex(fI => fI.team == 'total');
+        const undiscoveredIslands = resourceManagement.countIslands();
+
+        let stats = {};
+        let statATotal = 0, statBTotal = 0, statCTotal = 0, statDTotal =0;
+
+        for (const pieceType of Object.keys(stockDashboard.pieceTotals[stockTeamPosition].pieces)) {
+            let piecePosition = stockDashboard.pieceTypes.findIndex(fI => fI.type == pieceType);
+            if (stockDashboard.pieceTotals[stockTeamPosition].pieces[pieceType].category == 'Resources') {
+                // Resource quantity and probability stats
+                statA = stockDashboard.pieceTotals[stockTeamPosition].pieces[pieceType].quantity;
+                statC = stockDashboard.pieceTotals[unclaimedPosition].pieces[pieceType].quantity;
+                statB = stockDashboard.pieceTotals[stockTotalPosition].pieces[pieceType].quantity - statC;
+                statD = stockDashboard.pieceTypes[piecePosition].deckNumber - statB - statC;
+                statE = Number((statD * 100 / undiscoveredIslands).toFixed(1));
+                // Resource points stats
+                if (gameScore.scoreArray[scoreTotalPosition].Exploring[pieceType] == 0) {
+                    statF = gameScore.pointsArray.discoveryFirst;
+                } else {
+                    statF = gameScore.pointsArray.discoveryLater;
+                }
+                if (gameScore.scoreArray[scoreTotalPosition].Exploring.half == 0) {
+                    statG = gameScore.pointsArray.discoveryHalf;
+                } else {
+                    statG = 0;
+                }
+                if (gameScore.scoreArray[scoreTotalPosition].Exploring.all == 0) {
+                    statH = gameScore.pointsArray.discoveryComplete;
+                } else {
+                    statH = 0;
+                }
+                // Add to summary and totals
+                stats[pieceType] = {player: statA, otherPlayer: statB, unclaimed: statC, undiscovered: statD, probDiscovery: statE, discoveryFirst: statF, discoveryHalf: statG, discoveryComplete: statH};
+                statATotal += statA;
+                statBTotal += statB;
+                statCTotal += statC;
+                statDTotal += statD;
+            }
+            stats.total = {player: statATotal, otherPlayer: statBTotal, unclaimed: statCTotal, undiscovered: statDTotal};
+        }
+
+        return(stats);
+    },
+
 
     // Method to populate stock dashboard on left-hand panel
     // -----------------------------------------------------
-
     drawStock: function() {
-
         // Any existing dashboard is deleted
         while (stockDashboardNode.firstChild) {
             stockDashboardNode.removeChild(stockDashboardNode.firstChild);
