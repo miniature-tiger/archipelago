@@ -10,9 +10,24 @@ let gameScore = {
           {team: 'Green Team', Exploring: {forest: 0, ironworks: 0, quarry: 0, plantation: 0, flax: 0, clay: 0, half: 0, all: 0, total: 0}, Building: {warship: 0, cargo: 0, total: 0}, Trading: {Narwhal: 0, Needlefish: 0, Seahorse: 0, Swordfish: 0, total: 0}, Gifts: {total: 0}, Total: {total: 0}, },
           {team: 'Blue Team', Exploring: {forest: 0, ironworks: 0, quarry: 0, plantation: 0, flax: 0, clay: 0, half: 0, all: 0, total: 0}, Building: {warship: 0, cargo: 0, total: 0}, Trading: {Narwhal: 0, Needlefish: 0, Seahorse: 0, Swordfish: 0, total: 0}, Gifts: {total: 0}, Total: {total: 0}, },
           {team: 'Red Team', Exploring: {forest: 0, ironworks: 0, quarry: 0, plantation: 0, flax: 0, clay: 0, half: 0, all: 0, total: 0}, Building: {warship: 0, cargo: 0, total: 0}, Trading: {Narwhal: 0, Needlefish: 0, Seahorse: 0, Swordfish: 0, total: 0}, Gifts: {total: 0}, Total: {total: 0}, },
-          {team: 'Orange Team', Exploring: {forest: 0, ironworks: 0, quarry: 0, plantation: 0, flax: 0, clay: 0, half: 0, all: 0, total: 0}, Building: {warship: 0, cargo: 0, total: 0}, Trading: {Narwhal: 0, Needlefish: 0, Seahorse: 0, Swordfish: 0, total: 0}, Gifts: {total: 0}, Total: {total: 0}, }, ],
+          {team: 'Orange Team', Exploring: {forest: 0, ironworks: 0, quarry: 0, plantation: 0, flax: 0, clay: 0, half: 0, all: 0, total: 0}, Building: {warship: 0, cargo: 0, total: 0}, Trading: {Narwhal: 0, Needlefish: 0, Seahorse: 0, Swordfish: 0, total: 0}, Gifts: {total: 0}, Total: {total: 0}, },
+          {team: 'total', Exploring: {forest: 0, ironworks: 0, quarry: 0, plantation: 0, flax: 0, clay: 0, half: 0, all: 0, total: 0}, Building: {warship: 0, cargo: 0, total: 0}, Trading: {Narwhal: 0, Needlefish: 0, Seahorse: 0, Swordfish: 0, total: 0}, Gifts: {total: 0}, Total: {total: 0}, }, ],
 
     scoreSummary: {Exploring: [], Building: [], Trading: [], Gifts: [], Total: [],},
+
+    // Array to define points awarded for each game activity
+    // -----------------------------------------------------
+    pointsArray: {
+        // Exploring
+        discoveryFirst: 3,
+        discoveryLater: 1,
+        discoveryHalf: 5,
+        discoveryComplete: 5,
+        // Building
+        buildFirst: 5,
+        buildSecond: 3,
+        buildLater: 1,
+    },
 
     // Method to organise score updates
     // ------------------------------------------------
@@ -22,6 +37,19 @@ let gameScore = {
         this.drawScores(scoreComments);
     },
 
+    // Method to increase scores
+    // -------------------------
+    increaseScore: function(teamPosition, contest, subContest, points) {
+        const totalPosition = this.scoreArray.length - 1;
+
+        this.scoreArray[teamPosition][contest][subContest] = points;
+        this.scoreArray[teamPosition][contest].total += points;
+        this.scoreArray[teamPosition].Total.total += points;
+
+        this.scoreArray[totalPosition][contest][subContest] += points;
+        this.scoreArray[totalPosition][contest].total += points;
+        this.scoreArray[totalPosition].Total.total += points;
+    },
 
     // Method to check if score is to be added for move
     // ------------------------------------------------
@@ -34,24 +62,20 @@ let gameScore = {
         // Comment to go with scoring
         let buildComment = ['',''];
 
+        // Scoring for Exploring - first to discover a new resource
         if (contest == 'Exploring') {
-            // Scoring for Exploring - first to discover a new resource
             let alreadyExplored = false;
-            for (var j = 0; j < this.scoreArray.length; j++) {
+            for (var j = 0; j < this.scoreArray.length - 1; j++) {
                 if (this.scoreArray[j].Exploring[subContest] > 0) {
                     alreadyExplored = true;
                 }
             }
             if (alreadyExplored == true) {
-                this.scoreArray[teamPosition].Exploring[subContest] = 1;
-                this.scoreArray[teamPosition].Exploring.total += 1;
-                this.scoreArray[teamPosition].Total.total += 1;
-                buildComment[0] = gameManagement.turn + ': 1 point for claiming ' + subContest + ' resource.';
+                this.increaseScore(teamPosition, 'Exploring', subContest, this.pointsArray.discoveryLater);
+                buildComment[0] = gameManagement.turn + ': ' + this.pointsArray.discoveryLater + ' point for claiming ' + subContest + ' resource.';
             } else {
-                this.scoreArray[teamPosition].Exploring[subContest] = 5;
-                this.scoreArray[teamPosition].Exploring.total += 5;
-                this.scoreArray[teamPosition].Total.total += 5;
-                buildComment[0] = gameManagement.turn + ': 5 point reward for first player to discover ' + subContest + ' resource.';
+                this.increaseScore(teamPosition, 'Exploring', subContest, this.pointsArray.discoveryFirst);
+                buildComment[0] = gameManagement.turn + ': ' + this.pointsArray.discoveryFirst + ' point reward for first player to discover ' + subContest + ' resource.';
             }
 
             // Scoring for Exploring - bonuses for being first to reach 3 resource tiles and completing all 6 tiles
@@ -60,7 +84,7 @@ let gameScore = {
             scoreSubCategories.splice(6, 3);
             for (var i = 0; i < scoreSubCategories.length; i++) {
                 // Loop of each team to count number of previously found resources
-                for (var j = 0; j < this.scoreArray.length; j++) {
+                for (var j = 0; j < this.scoreArray.length - 1; j++) {
                     if(this.scoreArray[j].Exploring[scoreSubCategories[i]] > 0 ) {
                         countExplored[j] += 1;
                     }
@@ -71,72 +95,60 @@ let gameScore = {
             let maxOtherCount = Math.max.apply(null, countExplored);
             // 10 point bonus for being first to all resource tiles, 5 points for being first to half-way
             if (teamExploreCount == 6 && teamExploreCount > maxOtherCount) {
-                this.scoreArray[teamPosition].Exploring.all = 10;
-                this.scoreArray[teamPosition].Exploring.total += 10;
-                this.scoreArray[teamPosition].Total.total += 10;
-                buildComment[1] = 'Bonus 10 points for first to discover all resources.';
+                this.increaseScore(teamPosition, 'Exploring', 'all', this.pointsArray.discoveryComplete);
+                buildComment[1] = 'Bonus ' + this.pointsArray.discoveryComplete + ' points for first to discover all resources.';
             } else if (teamExploreCount == 3 && teamExploreCount > maxOtherCount) {
-                this.scoreArray[teamPosition].Exploring.half = 5;
-                this.scoreArray[teamPosition].Exploring.total += 5;
-                this.scoreArray[teamPosition].Total.total += 5;
-                buildComment[1] = 'Bonus 5 points for first player to discover 3 resources.';
+                this.increaseScore(teamPosition, 'Exploring', 'half', this.pointsArray.discoveryHalf);
+                buildComment[1] = 'Bonus ' + this.pointsArray.discoveryHalf + ' points for first player to discover 3 resources.';
             }
+
+        // Scoring for Building - first to build a new ship
         } else if (contest == 'Building') {
-            // Scoring for Building - first to build a new ship
             if (subContest == 'cargo ship') {
                 subContest = 'cargo';
             }
             let alreadyBuilt = 0;
-            for (var j = 0; j < this.scoreArray.length; j++) {
+            for (var j = 0; j < this.scoreArray.length - 1; j++) {
                 if (this.scoreArray[j].Building[subContest] > 0) {
                     alreadyBuilt += 1;
                 }
             }
             if (alreadyBuilt == 0) {
-                this.scoreArray[teamPosition].Building[subContest] = 10;
-                this.scoreArray[teamPosition].Building.total += 10;
-                this.scoreArray[teamPosition].Total.total += 10;
+                this.increaseScore(teamPosition, 'Building', subContest, this.pointsArray.buildFirst);
                 if (subContest == 'cargo') {
-                    buildComment[0] = gameManagement.turn + ': 10 point reward for first player to build ' + subContest + ' ship.';
+                    buildComment[0] = gameManagement.turn + ': ' + this.pointsArray.buildFirst + ' point reward for first player to build ' + subContest + ' ship.';
                 } else {
-                    buildComment[0] = gameManagement.turn + ': 10 point reward for first player to build ' + subContest + '.';
+                    buildComment[0] = gameManagement.turn + ': ' + this.pointsArray.buildFirst + ' point reward for first player to build ' + subContest + '.';
                 }
             } else if (alreadyBuilt == 1) {
-                this.scoreArray[teamPosition].Building[subContest] = 5;
-                this.scoreArray[teamPosition].Building.total += 5;
-                this.scoreArray[teamPosition].Total.total += 5;
+                this.increaseScore(teamPosition, 'Building', subContest, this.pointsArray.buildSecond);
                 if (subContest == 'cargo') {
-                    buildComment[0] = gameManagement.turn + ': 5 point reward for second player to build ' + subContest + ' ship.';
+                    buildComment[0] = gameManagement.turn + ': ' + this.pointsArray.buildSecond + ' point reward for second player to build ' + subContest + ' ship.';
                 } else {
-                    buildComment[0] = gameManagement.turn + ': 5 point reward for second player to build ' + subContest + '.';
+                    buildComment[0] = gameManagement.turn + ': ' + this.pointsArray.buildSecond + ' point reward for second player to build ' + subContest + '.';
                 }
             } else {
-                this.scoreArray[teamPosition].Building[subContest] = 2;
-                this.scoreArray[teamPosition].Building.total += 2;
-                this.scoreArray[teamPosition].Total.total += 2;
+                this.increaseScore(teamPosition, 'Building', subContest, this.pointsArray.buildLater);
                 if (subContest == 'cargo') {
-                    buildComment[0] = gameManagement.turn + ': 2 points for building ' + subContest + ' ship.';
+                    buildComment[0] = gameManagement.turn + ': ' + this.pointsArray.buildLater + ' point reward for building ' + subContest + ' ship.';
                 } else {
-                    buildComment[0] = gameManagement.turn + ': 2 points for building ' + subContest + '.';
+                    buildComment[0] = gameManagement.turn + ': ' + this.pointsArray.buildLater + ' point reward for building ' + subContest + '.';
                 }
             }
 
+        // Scoring for Trading
         } else if (contest == 'Trading') {
             let alreadyContracted = false;
-            for (var j = 0; j < this.scoreArray.length; j++) {
+            for (var j = 0; j < this.scoreArray.length - 1; j++) {
                 if (this.scoreArray[j].Trading[subContest] > 0) {
                     alreadyContracted = true;
                 }
             }
             if (alreadyContracted == true) {
-                this.scoreArray[teamPosition].Trading[subContest] += scoreDetail;
-                this.scoreArray[teamPosition].Trading.total += scoreDetail;
-                this.scoreArray[teamPosition].Total.total += scoreDetail;
+                this.increaseScore(teamPosition, 'Trading', subContest, scoreDetail);
                 buildComment[0] = gameManagement.turn + ': ' + scoreDetail + ' points for trade route to ' + subContest + ' island.';
             } else {
-                this.scoreArray[teamPosition].Trading[subContest] += (5 + scoreDetail);
-                this.scoreArray[teamPosition].Trading.total += (5 + scoreDetail);
-                this.scoreArray[teamPosition].Total.total += (5 + scoreDetail);
+                this.increaseScore(teamPosition, 'Trading', subContest, (5 + scoreDetail));
                 buildComment[0] = gameManagement.turn + ': ' + scoreDetail + ' points for trade route.';
                 buildComment[1] = 'Bonus 5 points for first trade route to ' + subContest + ' island.';
             }
@@ -157,7 +169,7 @@ let gameScore = {
         // Loop of each contest in score board
         for (var i = 0; i < scoreCategories.length; i++) {
             // Loop of each team in each contest
-            for (var j = 0; j < this.scoreArray.length; j++) {
+            for (var j = 0; j < this.scoreArray.length - 1; j++) {
                 // Push team entry for array of objects --> contest: [{team: score}, {team: score} ...]
                 this.scoreSummary[scoreCategories[i]].push({team: this.scoreArray[j].team, score: this.scoreArray[j][scoreCategories[i]].total});
             }

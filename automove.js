@@ -246,38 +246,93 @@ let computer = {
         }
     },
 
+    // Calculate rating points for resource searching of islands
+    // ----------------------------------------------------------
+    pointsResource: function(islandStatus, resourceStats) {
+        let points = 0;
+        let gameProgressionBonus = 1;
+        let buildingBonus = 1;
+
+        // Islands with undiscovered resources
+        if (islandStatus == 'virgin') {
+            for (const pieceType of Object.keys(resourceStats)) {
+                if (pieceType != 'total') {
+                    // Only add potential points for resources that have not already been claimed
+                    if (resourceStats[pieceType].player == 0) {
+                        // Points for discovering resource
+                        points += (resourceStats[pieceType].probDiscovery / 100) * resourceStats[pieceType].discoveryFirst;
+                        // Extra impetus - collecting resources will result in other points in future
+                        points += (resourceStats[pieceType].probDiscovery / 100) * gameProgressionBonus;//console.log('3', points);
+                        // Extra impetus - collecting resources required for ship building will result in other points in future
+                        if (pieceType == 'forest' || pieceType == 'ironworks' || pieceType == 'flax') {
+                            points += (resourceStats[pieceType].probDiscovery / 100) * buildingBonus;
+                        }
+                        // Extra points that would result from being first to find 3 or all 6 resources
+                        if (resourceStats.total.player == 2) {
+                            points += (resourceStats[pieceType].probDiscovery / 100) * resourceStats[pieceType].discoveryHalf;
+                        } else if (resourceStats.total.player == 5) {
+                            points += (resourceStats[pieceType].probDiscovery / 100) * resourceStats[pieceType].discoveryComplete;
+                        }
+                    }
+                }
+            }
+
+        // Islands with unclaimed resources
+        } else {
+            // Only add potential points for resources that have not already been claimed
+            if (resourceStats[islandStatus].player == 0) {
+                // Points for discovering resource
+                points += resourceStats[islandStatus].discoveryFirst;
+                // Extra impetus - collecting resources will result in other points in future
+                points += gameProgressionBonus;
+                // Extra impetus - collecting resources required for ship building will result in other points in future
+                if (islandStatus == 'forest' || islandStatus == 'ironworks' || islandStatus == 'flax') {
+                    points += buildingBonus;
+                }
+                // Extra points that would result from being first to find 3 or all 6 resources
+                if (resourceStats.total.player == 2) {
+                    points += resourceStats[islandStatus].discoveryHalf;
+                } else if (resourceStats.total.player == 5) {
+                    points += resourceStats[islandStatus].discoveryComplete;
+                }
+            }
+        }
+        return Number(points.toFixed(2));
+    },
+
     // Method to rank potential map destinations for move choice related to Resources
     // ------------------------------------------------------------------------------
-    // TO DO: add / subtract points for (a) Nearness to next good option (b) Closeness to pirates ships
+    // TO DO: add / subtract points for (a) Nearness to next good option
     // Also need to consider moving off route for lesser detination if its on the way to best destination
     rankDestinations: function(movesToRate) {
         // Team position of piece information array required to check if resource pieces already held
         let teamPosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == gameManagement.turn);
-        let maxPoints = 0;
+        let resourceStats = stockDashboard.resourceStats(gameManagement.turn);
+        let virginPoints = this.pointsResource('virgin', resourceStats);
+        if (arrayFlow == 1) {console.log('resourceStats', resourceStats);}
+
+        let maxPoints = -10;
         let bestMove = [];
 
         // Loops through all potential map moves and adds points to rate them
         for (var i = 0; i < movesToRate.length; i+=1) {
-            movesToRate[i].points = 0;
-            if(movesToRate[i].pathStop[0] == 'none' || movesToRate[i].activeStatus != 'active') {
+            movesToRate[i].points = [0, 0];
+            if(movesToRate[i].pathStop.length < 1 || movesToRate[i].activeStatus != 'active') {
                 for (var j = 0; j < movesToRate[i].type.length; j+=1) {
                     // Virgin islands are worth visiting - and a better option if they can be reached in one turn
                     if(movesToRate[i].type[j] == 'virgin') {
-                        if(movesToRate[i].activeStatus == 'active') {
-                            movesToRate[i].points += 3;
-                        } else {
-                            movesToRate[i].points += 1;
-                        }
+                        movesToRate[i].points[0] += virginPoints;
                     // Revealed pieces that are needed are more valuable options than virgin islands which may be desert or duplicate pieces
                     } else if (stockDashboard.pieceTotals[teamPosition].pieces[movesToRate[i].type[j]].quantity == 0) {
-                        if(movesToRate[i].activeStatus == 'active') {
-                            movesToRate[i].points += 6;
-                        } else {
-                            movesToRate[i].points += 4;
-                        }
+                        movesToRate[i].points[0] += this.pointsResource(movesToRate[i].type[j], resourceStats);
                     } else {
                        // no points
                     }
+                }
+
+                // Deduction for pirate ships in range of move active tile (not final destination tile)
+                for (var k = 0; k < movesToRate[i].pirateRange.length; k+=1) {
+                    movesToRate[i].points[1] += movesToRate[i].pirateRange[k];
                 }
 
                 // Points for destinations at greater distance are reduced by estimated number of moves to get there
@@ -285,24 +340,24 @@ let computer = {
                 if (movesToRate[i].activeStatus == 'active') {
                     // moveCostDivisor = 1;
                 } else {
-                    moveCostDivisor = movesToRate[i].moveCost/maxMove;
+                    moveCostDivisor = movesToRate[i].moveCost/maxMove + 1;
                 }
-                movesToRate[i].points = Number((movesToRate[i].points / moveCostDivisor).toFixed(2));
+                movesToRate[i].points[0] = Number((movesToRate[i].points[0] / moveCostDivisor).toFixed(2));
+                //movesToRate[i].points[1] = Number((movesToRate[i].points[1] / moveCostDivisor).toFixed(2));
 
                 // Array built up of highest scoring options
-                if (movesToRate[i].points > maxPoints) {
-                    maxPoints = movesToRate[i].points
+                if (movesToRate[i].points[0] + movesToRate[i].points[1] > maxPoints) {
+                    maxPoints = movesToRate[i].points[0] + movesToRate[i].points[1];
                     bestMove = [movesToRate[i]];
-                } else if (movesToRate[i].points == maxPoints && movesToRate[i].points > 0) {
+                } else if (movesToRate[i].points[0] + movesToRate[i].points[1] == maxPoints) {
                     bestMove.push(movesToRate[i]);
                 }
             }
         }
 
-        if(arrayFlow == 1) {console.log('bestMove', bestMove);}
+        if (arrayFlow == 1) {console.log('bestMove', bestMove);}
         return bestMove;
     },
-
 
 // LAST BRACKET OF OBJECT
 }

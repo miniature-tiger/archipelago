@@ -55,7 +55,6 @@ let resourceManagement = {
             }
         }
         return counter;
-
     },
 
     // Method which picks card from resource deck at random and deletes that card from the array
