@@ -115,6 +115,8 @@ let pieceMovement = {
                                 //console.log('row: ' + (localStartRow+i) + ' col: ' + (localStartCol+j) + ' prior cost: ' + localCumulMoveCost + ' new cost: ' + this.moveCost(localStartRow, localStartCol ,localStartRow+i, localStartCol+j, needleDirection))
                                 if (localDamagedStatus == 0) {
                                     tileCumulMoveCost = localCumulMoveCost + 1;
+                                } else if (localCumulMoveCost > localMaxMove) {
+                                    tileCumulMoveCost = localCumulMoveCost + 1;
                                 } else {
                                     tileCumulMoveCost = localCumulMoveCost + this.moveCost(localStartRow, localStartCol ,localStartRow+i, localStartCol+j, needleDirection);
                                 }
@@ -244,7 +246,7 @@ let pieceMovement = {
                                 if(j + l >=0 && j + l <col) {
                                     // Mark the distance from the ship (plain number of tiles not wind-based moveCost)
                                     if(gameBoard.boardArray[i+k][j+l].terrain == 'sea' && gameBoard.boardArray[i+k][j+l].subterrain != 'harbour') {
-                                        this.findPath[i+k][j+l].pirateRange.type.push(Math.max(Math.abs(k), Math.abs(l))-maxMovePirate-1);
+                                        this.findPath[i+k][j+l].pirateRange.type.push(maxMovePirate - Math.max(Math.abs(k), Math.abs(l))+1);
                                     }
                                 }
                             }
