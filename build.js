@@ -81,7 +81,7 @@ let buildItem = {
         // Activating current team harbours
         for (var i = 0; i < gameBoard.boardArray.length; i++) {
             for (var j = 0; j < gameBoard.boardArray[i].length; j++) {
-                if (gameBoard.boardArray[i][j].pieces.team == gameManagement.turn && gameBoard.boardArray[i][j].subTerrain == 'harbour' && gameBoard.boardArray[i][j].pieces.populatedSquare == false) {
+                if (gameBoard.boardArray[i][j].subTerrainTeam == gameManagement.turn && gameBoard.boardArray[i][j].subTerrain == 'harbour' && gameBoard.boardArray[i][j].pieces.populatedSquare == false) {
                     gameBoard.boardArray[i][j].activeStatus = 'active';
                 } else if (gameBoard.boardArray[i][j].pieces.team == gameManagement.turn && gameBoard.boardArray[i][j].pieces.type == 'fort') {
                     pieceMovement.movementArray.start.row = i;
