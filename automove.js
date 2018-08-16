@@ -57,7 +57,6 @@ let computer = {
             stockDashboardNode.addEventListener('click', buildItem.clickStock);
             stockDashboardNode.addEventListener('mouseover', stockDashboard.hoverPieceOn);
             stockDashboardNode.addEventListener('mouseleave', gameBoard.clearHighlightTiles);
-
         }
     },
 
@@ -300,6 +299,15 @@ let computer = {
         return Number(points.toFixed(2));
     },
 
+    // Pirates reduction factor
+    // ----------------------------------------------------------
+    piratesFactor: function(localDistance) {
+        let captureProbability = [0, 0.125, 0.375, 0.4, 0.875, 1];
+
+        return captureProbability[localDistance];
+    },
+
+
     // Method to rank potential map destinations for move choice related to Resources
     // ------------------------------------------------------------------------------
     // TO DO: add / subtract points for (a) Nearness to next good option
@@ -310,6 +318,7 @@ let computer = {
         let resourceStats = stockDashboard.resourceStats(gameManagement.turn);
         let virginPoints = this.pointsResource('virgin', resourceStats);
         if (arrayFlow == 1) {console.log('resourceStats', resourceStats);}
+        const piratesMovePenalty = 3;
 
         let maxPoints = -10;
         let bestMove = [];
@@ -330,11 +339,6 @@ let computer = {
                     }
                 }
 
-                // Deduction for pirate ships in range of move active tile (not final destination tile)
-                for (var k = 0; k < movesToRate[i].pirateRange.length; k+=1) {
-                    movesToRate[i].points[1] += movesToRate[i].pirateRange[k];
-                }
-
                 // Points for destinations at greater distance are reduced by estimated number of moves to get there
                 let moveCostDivisor = 1;
                 if (movesToRate[i].activeStatus == 'active') {
@@ -345,8 +349,15 @@ let computer = {
                 movesToRate[i].points[0] = Number((movesToRate[i].points[0] / moveCostDivisor).toFixed(2));
                 //movesToRate[i].points[1] = Number((movesToRate[i].points[1] / moveCostDivisor).toFixed(2));
 
+                // Deduction for pirate ships in range of move active tile (not final destination tile)
+                for (var k = 0; k < movesToRate[i].pirateRange.length; k+=1) {
+                    movesToRate[i].points[1] += this.piratesFactor(movesToRate[i].pirateRange[k]);
+                }
+                movesToRate[i].points[1] = Math.min(movesToRate[i].points[1], 1);
+                movesToRate[i].points[1] = -(movesToRate[i].points[1] * (movesToRate[i].points[0] * (1-(1/piratesMovePenalty))));
+
                 // Array built up of highest scoring options
-                if (movesToRate[i].points[0] + movesToRate[i].points[1] > maxPoints) {
+                if (movesToRate[i].points[0] > 0 && (movesToRate[i].points[0] + movesToRate[i].points[1] > maxPoints)) {
                     maxPoints = movesToRate[i].points[0] + movesToRate[i].points[1];
                     bestMove = [movesToRate[i]];
                 } else if (movesToRate[i].points[0] + movesToRate[i].points[1] == maxPoints) {
