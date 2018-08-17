@@ -300,6 +300,7 @@ let pirates = {
                                 if ((j+l >= 0) && (j+l < col)) {
                                     if (gameBoard.boardArray[i+k][j+l].terrain == 'sea') {
                                         gameBoard.boardArray[i+k][j+l].subTerrain = 'harbour';
+                                        gameBoard.boardArray[i+k][j+l].subTerrainTeam = fortTeam;
                                     }
                                 }
                             }

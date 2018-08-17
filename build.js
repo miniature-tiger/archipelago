@@ -19,6 +19,17 @@ let buildItem = {
         }
     },
 
+    enoughGoodsToBuild: function(localBuildNo, localTeamNo) {
+        // Loop through each goods type in build recipe and only allow construction if sufficient goods stock available
+        let result = true;
+        for (var k = 0; k < buildItem.buildRecipe[localBuildNo].recipe.length; k++) {
+            if(stockDashboard.goodsTotals[localTeamNo].land[buildItem.buildRecipe[localBuildNo].recipe[k].goods] < buildItem.buildRecipe[localBuildNo].recipe[k].quantity) {
+                result = false;
+            }
+        }
+        return result;
+    },
+
     // Method to operate building slider and check if chosen ship can be built
     // -----------------------------------------------------------------------
     clickBuild: function(stockElement, localBuild) {
@@ -40,13 +51,11 @@ let buildItem = {
         // Add icon of ship clicked on
         let buildIcon = building.appendChild(gameBoard.createActionTile(0, 0, localBuild, gameManagement.turn, 'buildPiece', 10, (screenWidth - 2*surroundSize) * 0.04 - (gridSize + 2*tileBorder)/2, 1.5, 0));
 
-        // Loop through each goods type in build recipe and only allow construction if sufficient goods stock available
-        let allowConstruction = true;
+        // Check enough goods to build chosen ship
+        let allowConstruction = this.enoughGoodsToBuild(buildNo, teamNo);
+
+        // Adds goods icons to illustrate quantity held vs quantity required
         for (var k = 0; k < buildItem.buildRecipe[buildNo].recipe.length; k++) {
-            if(stockDashboard.goodsTotals[teamNo].land[buildItem.buildRecipe[buildNo].recipe[k].goods] < buildItem.buildRecipe[buildNo].recipe[k].quantity) {
-                allowConstruction = false;
-            }
-            // Adds goods icons to illustrate quantity held vs quantity required
             for (var i = 0; i < Math.min(stockDashboard.goodsTotals[teamNo].land[buildItem.buildRecipe[buildNo].recipe[k].goods], buildItem.buildRecipe[buildNo].recipe[k].quantity); i++) {
                 building.appendChild(gameBoard.createIcon(buildItem.buildRecipe[buildNo].recipe[k].goods + i, 1.5, buildItem.buildRecipe[buildNo].recipe[k].goods, (screenWidth - 2*surroundSize) * ((k+2) * 0.20) - tileBorder/2 + (((i % 10) - 0.5) * (gridSize + tileBorder) / 1.5), 10 + Math.floor(i/10) * ((gridSize + tileBorder) / 1.5)));
                 for (var z = 0; z < building.lastChild.children.length; z++) {
@@ -78,11 +87,14 @@ let buildItem = {
     // ---------------------------------------------------------------------
     // End inputs are captured as normal through buildMarkNode event listener
     startConstruction: function() {
+        // Array of potential harbours for computer opponent
+        let shipBuildLocation = [];
         // Activating current team harbours
         for (var i = 0; i < gameBoard.boardArray.length; i++) {
             for (var j = 0; j < gameBoard.boardArray[i].length; j++) {
-                if (gameBoard.boardArray[i][j].pieces.team == gameManagement.turn && gameBoard.boardArray[i][j].subTerrain == 'harbour' && gameBoard.boardArray[i][j].pieces.populatedSquare == false) {
+                if (gameBoard.boardArray[i][j].subTerrainTeam == gameManagement.turn && gameBoard.boardArray[i][j].subTerrain == 'harbour' && gameBoard.boardArray[i][j].pieces.populatedSquare == false) {
                     gameBoard.boardArray[i][j].activeStatus = 'active';
+                    shipBuildLocation.push({row: i, col: j});
                 } else if (gameBoard.boardArray[i][j].pieces.team == gameManagement.turn && gameBoard.boardArray[i][j].pieces.type == 'fort') {
                     pieceMovement.movementArray.start.row = i;
                     pieceMovement.movementArray.start.col = j;
@@ -99,6 +111,22 @@ let buildItem = {
         firstBuildLine.innerText = 'Select harbour for construction.';
         secondBuildLine.innerText = '';
         thirdBuildLine.innerText = '';
+
+        return shipBuildLocation;
+    },
+
+    // Method to add ship piece to board and board game array
+    // ------------------------------------------------------
+    buildShip: function(localRow, localCol, localType, localTeam, localDirection) {
+        let newShip = boardMarkNode.appendChild(gameBoard.createActionTile(localRow, localCol, localType, localTeam,
+          'tile' + Number((localRow)*1000 + (localCol)), boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * (localRow), boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * (localCol), 1, localDirection));
+        if (localType == 'cargo ship') {
+            gameBoard.boardArray[localRow][localCol].pieces = {populatedSquare: true, category: 'Transport', type: localType, direction: '0', used: 'unused', damageStatus: 1, team: localTeam, goods: 'none', stock: 0, production: 0};
+            gameBoard.repairShip(newShip, localTeam, localType, 1);
+        } else if (localType == 'warship') {
+            gameBoard.boardArray[localRow][localCol].pieces = {populatedSquare: true, category: 'Transport', type: localType, direction: '0', used: 'unused', damageStatus: 3, team: localTeam, goods: 'none', stock: 0, production: 0};
+            gameBoard.repairShip(newShip, localTeam, localType, 3);
+        }
     },
 
     // Method to reduce stock levels of Resource and fort tiles for construction of ship

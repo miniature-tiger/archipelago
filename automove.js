@@ -37,6 +37,9 @@ let computer = {
             // Separate array of ships for current turn
             this.computerShipsTurn = this.computerShipsAll.filter(fI => fI.team == gameManagement.turn);
             if(arrayFlow == 1) {console.log('computerShipsTurn', this.computerShipsTurn);}
+            // Building decision made at the start of the turned
+            stockDashboard.goodsStockTake();
+            this.decideBuild();
         }
 
         // Increases counter to move on to next ship
@@ -242,6 +245,58 @@ let computer = {
                 stockDashboard.stockTake();
                 stockDashboard.drawStock();
             }
+        }
+    },
+
+    // Method to check whether a ship can be built and decide whether to build a ship and which ship
+    // ---------------------------------------------------------------------------------------------
+    decideBuild: function() {
+        let teamPosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == gameManagement.turn);
+        let buildStats = stockDashboard.buildStats(gameManagement.turn);
+        let buildOptions = [];
+        let buildCounter = 0;
+
+        // Prefer warship to cargo ship if actual rewards are equal
+        buildStats['warship'].buildReward += 0.5;
+
+        // loop through all ship types
+        for (const pieceType of Object.keys(buildStats)) {
+            // check if ship piece is not already held - only one of each type allowed per player
+            if (buildStats[pieceType].player === 0) {
+                // check whether ship can be built based on resources
+                let buildNo = buildItem.buildRecipe.findIndex(fI => fI.type == pieceType);
+                if (buildItem.enoughGoodsToBuild(buildNo, teamPosition)) {
+                    buildStats[pieceType].buildPossible = true;
+                    buildOptions.push({type: pieceType, buildReward: buildStats[pieceType].buildReward});
+                    buildCounter += 1;
+                } else {
+                    buildStats[pieceType].buildPossible = false;
+                }
+            } else {
+                buildStats[pieceType].buildPossible = false;
+            }
+        }
+        if (arrayFlow == 1) {console.log('buildStats', buildStats);}
+        if (arrayFlow == 1) {console.log('buildOptions', buildOptions);}
+
+        if (buildCounter > 0) {
+            // deciding which ship to build
+            let maxScore = 0;
+            for (var i = 0; i < buildOptions.length; i+=1) {
+                if (buildOptions[i].buildReward > maxScore) {
+                    buildChoice = i;
+                    shipBuildType = buildOptions[i].type;
+                    maxScore = buildOptions[i].buildReward
+                }
+            }
+
+            // adding ship to board, paying for it with goods, and adding score reward
+            pieceMovement.movementArray.start.pieces = {type: buildOptions[buildChoice].type};
+            let shipLocationArray = buildItem.startConstruction();
+            pieceMovement.deactivateTiles(1);
+            buildItem.buildShip(shipLocationArray[0].row, shipLocationArray[0].col, shipBuildType, gameManagement.turn, 0);
+            buildItem.constructionPayment(shipBuildType);
+            gameScore.workScores('Building', gameManagement.turn, shipBuildType);
         }
     },
 
