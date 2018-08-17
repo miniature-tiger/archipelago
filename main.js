@@ -194,7 +194,6 @@ for (var iconHolder_i = 0; iconHolder_i < iconHolder.length; iconHolder_i++) {
 
 if(workFlow == 1) {console.log('Set up of stock dashboard and contracts dashboard: ' + (Date.now() - launchTime)); }
 
-stockDashboard.populateGoodsTotals();
 stockDashboard.newTurnGoods();
 stockDashboard.stockTake();
 stockDashboard.drawStock();
@@ -584,15 +583,7 @@ function boardHandler(event) {
               } else if (pieceMovement.movementArray.start.pieces.category == 'Building') {
                     pieceMovement.deactivateTiles(1);
                     gameBoard.drawActiveTiles();
-                    let newShip = boardMarkNode.appendChild(gameBoard.createActionTile(pieceMovement.movementArray.end.row, pieceMovement.movementArray.end.col, pieceMovement.movementArray.start.pieces.type, gameManagement.turn,
-                      'tile' + Number((pieceMovement.movementArray.end.row)*1000 + (pieceMovement.movementArray.end.col)), boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * (pieceMovement.movementArray.end.row), boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * (pieceMovement.movementArray.end.col), 1, pieceMovement.movementArray.end.pieces.direction));
-                    if (pieceMovement.movementArray.start.pieces.type == 'cargo ship') {
-                        gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces = {populatedSquare: true, category: 'Transport', type: pieceMovement.movementArray.start.pieces.type, direction: '0', used: 'unused', damageStatus: 1, team: gameManagement.turn, goods: 'none', stock: 0, production: 0};
-                        gameBoard.repairShip(newShip, gameManagement.turn, pieceMovement.movementArray.start.pieces.type, 1);
-                    } else if (pieceMovement.movementArray.start.pieces.type == 'warship') {
-                        gameBoard.boardArray[pieceMovement.movementArray.end.row][pieceMovement.movementArray.end.col].pieces = {populatedSquare: true, category: 'Transport', type: pieceMovement.movementArray.start.pieces.type, direction: '0', used: 'unused', damageStatus: 3, team: gameManagement.turn, goods: 'none', stock: 0, production: 0};
-                        gameBoard.repairShip(newShip, gameManagement.turn, pieceMovement.movementArray.start.pieces.type, 3);
-                    }
+                    buildItem.buildShip(pieceMovement.movementArray.end.row, pieceMovement.movementArray.end.col, pieceMovement.movementArray.start.pieces.type, gameManagement.turn, pieceMovement.movementArray.end.pieces.direction);
                     buildItem.constructionPayment(pieceMovement.movementArray.start.pieces.type);
                     gameScore.workScores('Building', gameManagement.turn, pieceMovement.movementArray.start.pieces.type);
                 // Piece movement

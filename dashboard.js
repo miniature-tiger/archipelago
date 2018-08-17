@@ -108,8 +108,8 @@ let stockDashboard = {
                 // Resource quantity and probability stats
                 statA = stockDashboard.pieceTotals[stockTeamPosition].pieces[pieceType].quantity;
                 statC = stockDashboard.pieceTotals[unclaimedPosition].pieces[pieceType].quantity;
-                statB = stockDashboard.pieceTotals[stockTotalPosition].pieces[pieceType].quantity - statC;
-                statD = stockDashboard.pieceTypes[piecePosition].deckNumber - statB - statC;
+                statB = stockDashboard.pieceTotals[stockTotalPosition].pieces[pieceType].quantity - statC - statA;
+                statD = stockDashboard.pieceTypes[piecePosition].deckNumber - statA - statB - statC;
                 statE = Number((statD * 100 / undiscoveredIslands).toFixed(1));
                 // Resource points stats
                 if (gameScore.scoreArray[scoreTotalPosition].Exploring[pieceType] == 0) {
@@ -140,6 +140,42 @@ let stockDashboard = {
         return(stats);
     },
 
+    // All the useful building stats for a team
+    // ----------------------------------------
+    buildStats: function(localTeam) {
+
+        const stockTeamPosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == localTeam);
+        const stockTotalPosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == 'total');
+        const stockPiratePosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == 'Pirate');
+
+        let stats = {};
+        //let statATotal = 0, statBTotal = 0;
+
+        for (const pieceType of Object.keys(stockDashboard.pieceTotals[stockTeamPosition].pieces)) {
+            let piecePosition = stockDashboard.pieceTypes.findIndex(fI => fI.type == pieceType);
+            if (stockDashboard.pieceTotals[stockTeamPosition].pieces[pieceType].category == 'Transport') {
+                // Ship quantity stats
+                statA = stockDashboard.pieceTotals[stockTeamPosition].pieces[pieceType].quantity; // player
+                pirateTotal = stockDashboard.pieceTotals[stockPiratePosition].pieces[pieceType].quantity; // pirates to be excluded
+                statB = stockDashboard.pieceTotals[stockTotalPosition].pieces[pieceType].quantity - statA - pirateTotal; // other Players
+                if (statA + statB === 0) {
+                    statC = gameScore.pointsArray.buildFirst;
+                } else if (statA + statB === 1) {
+                    statC = gameScore.pointsArray.buildSecond;
+                } else {
+                    statC = gameScore.pointsArray.buildLater;
+                }
+
+                // Add to summary and totals
+                stats[pieceType] = {player: statA, otherPlayer: statB, buildReward: statC};
+                //statATotal += statA;
+                //statBTotal += statB;
+            }
+            //stats.total = {player: statATotal, otherPlayer: statBTotal};
+        }
+
+        return(stats);
+    },
 
     // Method to populate stock dashboard on left-hand panel
     // -----------------------------------------------------
@@ -272,17 +308,11 @@ let stockDashboard = {
 
     goodsTotals: [],
 
-    populateGoodsTotals: function () {
-        for (var h = 0; h < gameManagement.teamArray.length; h++) {
-            this.goodsTotals.push({team: gameManagement.teamArray[h], land: {wood: 0, iron: 0, stone: 0}, sea: {wood: 0, iron: 0, stone: 0}, total: {wood: 0, iron: 0, stone: 0}});
-        }
-    },
-
     goodsStockTake: function() {
         let counter = 0;
         for (var h = 0; h < gameManagement.teamArray.length; h++) {
             //console.log(gameManagement.teamArray[h]);
-            this.goodsTotals[h] = {team: gameManagement.teamArray[h], land: {wood: 0, iron: 0, stone: 0}, sea: {wood: 0, iron: 0, stone: 0}, total: {wood: 0, iron: 0, stone: 0}};
+            this.goodsTotals[h] = {team: gameManagement.teamArray[h], land: {}, sea: {}, total: {}};
             for (var k = 0; k < this.pieceTypes.length; k++) {
                 //console.log(stockDashboard.pieceTypes[k].type);
                 this.goodsTotals[h].land[this.pieceTypes[k].goods] = 0;
@@ -310,6 +340,7 @@ let stockDashboard = {
                 this.goodsTotals[h].total[this.pieceTypes[k].goods] = counterLand + counterSea;
             }
         }
+        if (arrayFlow == 1) {console.log('goodsTotals', this.goodsTotals);}
     },
 
     // Method to add new goods each turn
