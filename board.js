@@ -230,6 +230,9 @@ let gameBoard = {
         this.boardArray[boardCenter][boardCenter+1].pieces = {populatedSquare: true, category: 'Resources', type: 'ironworks', direction: '0', used: 'unused', damageStatus: 5, team: 'Blue Team', goods: 'iron', stock: 20, production: 2};
         this.boardArray[boardCenter+1][boardCenter].pieces = {populatedSquare: true, category: 'Resources', type: 'flax', direction: '0', used: 'unused', damageStatus: 5, team: 'Blue Team', goods: 'cloth', stock: 20, production: 2};
         this.boardArray[boardCenter][boardCenter+2].pieces = {populatedSquare: true, category: 'Transport', type: 'catamaran', direction: '90', used: 'unused', damageStatus: 5, team: 'Blue Team', goods: 'none', stock: 0, production: 0};
+        this.boardArray[boardCenter][col-2].pieces = {populatedSquare: true, category: 'Transport', type: 'warship', direction: '270', used: 'unused', damageStatus: 5, team: 'Orange Team', goods: 'none', stock: 0, production: 0};
+        this.boardArray[row-1][boardCenter-1].pieces = {populatedSquare: true, category: 'Transport', type: 'warship', direction: '0', used: 'unused', damageStatus: 5, team: 'Green Team', goods: 'none', stock: 0, production: 0};
+        this.boardArray[row-2][boardCenter].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '0', used: 'unused', damageStatus: 5, team: 'Green Team', goods: 'none', stock: 0, production: 0};
 
         this.boardArray[boardCenter][boardCenter-4].pieces = {populatedSquare: true, category: 'Resources', type: 'forest', direction: '0', used: 'unused', damageStatus: 5, team: 'Orange Team', goods: 'wood', stock: 20, production: 2};
         this.boardArray[boardCenter][boardCenter+4].pieces = {populatedSquare: true, category: 'Resources', type: 'ironworks', direction: '0', used: 'unused', damageStatus: 5, team: 'Orange Team', goods: 'iron', stock: 20, production: 2};

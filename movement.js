@@ -211,9 +211,9 @@ let pieceMovement = {
                                     if(k == 0 || l == 0) {
                                         if(gameBoard.boardArray[i+k][j+l].terrain == 'sea') {
                                             if (gameBoard.boardArray[i][j].pieces.category == 'Resources' && gameBoard.boardArray[i][j].pieces.type != 'desert') {
-                                                this.findPath[i+k][j+l].resourceHarbour.push({type: gameBoard.boardArray[i][j].pieces.type, detail: gameBoard.boardArray[i][j].pieces.team});
+                                                this.findPath[i+k][j+l].resourceHarbour.push({type: gameBoard.boardArray[i][j].pieces.type, detail: gameBoard.boardArray[i][j].pieces.team, ref: i+'-'+j});
                                             } else {
-                                                this.findPath[i+k][j+l].resourceHarbour.push({type: 'virgin', detail: 'Unclaimed'});
+                                                this.findPath[i+k][j+l].resourceHarbour.push({type: 'virgin', detail: 'Unclaimed', ref: i+'-'+j});
                                             }
                                         }
                                     }
@@ -255,8 +255,6 @@ let pieceMovement = {
                 }
             }
         }
-        //if(arrayFlow == 1) {console.log('findPath', this.findPath);}
-        if (arrayFlow == 1) {console.log('findPath', JSON.parse(JSON.stringify(this.findPath)));}
     },
 
 
@@ -279,7 +277,7 @@ let pieceMovement = {
                 }
             }
         }
-
+        if (arrayFlow == 1) {console.log('findPath', JSON.parse(JSON.stringify(this.findPath)));}
     },
 
 

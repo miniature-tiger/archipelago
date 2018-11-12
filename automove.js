@@ -17,7 +17,9 @@ let computer = {
 
     moveDecisionArray: [],
 
-    finalDecision: {},
+    finalDecision: [],
+
+    priorMoves: [],
 
     targetHarbour: [],
 
@@ -39,6 +41,7 @@ let computer = {
         if(workFlow == 1) {console.log('Automate computer opponent: ' + (Date.now() - launchTime)); }
         // Update array of all computer opponent ships
         if (computer.computerShipsTurnCount == -1) {
+            computer.priorMoves = [];
             this.populateComputerShipsArray();
             // Separate array of ships for current turn
             this.computerShipsTurn = this.computerShipsAll.filter(fI => fI.team == gameManagement.turn);
@@ -81,8 +84,6 @@ let computer = {
     // Makes a list of best moves from each category and ship for a computer player
     // ----------------------------------------------------------------------------
     moveChoices: function() {
-      // TO DO - ADD PRIOR MOVES ARRAY WITH MOVES ALREADY MADE AND FEED THESE IN TO MOVEDECISIONARRAY TO ENSURE SAME MOVES ARE NOT REPEATED
-      // TO DO - ADD A TARGET INDICATOR FOR RESOURCE SEACHES TO MAKE SURE THE SAME (DISTANT) RESOURCE IS NOT SEACRHED FOR BY ALL SHIPS
 
         let decisionMoves = 3;
         let bestCollection = [];
@@ -106,8 +107,12 @@ let computer = {
                 computer.bestDestination = computer.rankDestinations(computer.telescopeResources);
                 if (computer.bestDestination.length > 0) {
                     for (let i = 0; i < Math.min(computer.bestDestination.length, decisionMoves); i+=1) {
+                        let targetRefs = [];
+                        for (let j = 0; j < computer.bestDestination[i].resourceHarbour.length; j+=1) {
+                            targetRefs.push(computer.bestDestination[i].resourceHarbour[j].ref);
+                        }
                         lastTile = pirates.findLastActive(pieceMovement.findPath[computer.bestDestination[i].row][computer.bestDestination[i].col].path, 0);
-                        computer.moveDecisionArray.push({ship: ship.type, shipNumber: index, moveType: 'resource', points: computer.bestDestination[i].points, moveCost: computer.bestDestination[i].moveCost,
+                        computer.moveDecisionArray.push({ship: ship.type, shipNumber: index, moveType: 'resource', points: computer.bestDestination[i].points, target: targetRefs, moveCost: computer.bestDestination[i].moveCost,
                                                             distance: computer.bestDestination[i].distance, targetRow: computer.bestDestination[i].row, targetCol: computer.bestDestination[i].col,
                                                             row: pieceMovement.findPath[computer.bestDestination[i].row][computer.bestDestination[i].col].path[lastTile].fromRow, col: pieceMovement.findPath[computer.bestDestination[i].row][computer.bestDestination[i].col].path[lastTile].fromCol});
                     }
@@ -117,7 +122,7 @@ let computer = {
 
                 for (let i = 0; i < bestCollection.length; i+=1) {
                     lastTile = pirates.findLastActive(pieceMovement.findPath[bestCollection[i].row][bestCollection[i].col].path, 0);
-                    computer.moveDecisionArray.push({ship: ship.type, shipNumber: index, moveType: 'collection', points: bestCollection[i].points, resource: bestCollection[i].resource, moveCost: bestCollection[i].moveCost, distance: bestCollection[i].distance,
+                    computer.moveDecisionArray.push({ship: ship.type, shipNumber: index, moveType: 'collection', points: bestCollection[i].points, target: [bestCollection[i].resource], moveCost: bestCollection[i].moveCost, distance: bestCollection[i].distance,
                                                         targetRow: bestCollection[i].row, targetCol: bestCollection[i].col, row: pieceMovement.findPath[bestCollection[i].row][bestCollection[i].col].path[lastTile].fromRow, col: pieceMovement.findPath[bestCollection[i].row][bestCollection[i].col].path[lastTile].fromCol});
                 }
                 // Adding best contract delivery moves to moveDecisionArray
@@ -136,7 +141,8 @@ let computer = {
 
         // First implementation is simple - sorts and takes highest scoring move overall
         // then next high score that does not use the same ship or target the same tile
-        computer.finalDecision = [];
+        if (arrayFlow == 1) {console.log('priorMoves', JSON.parse(JSON.stringify(computer.priorMoves)));}
+        computer.finalDecision = JSON.parse(JSON.stringify(computer.priorMoves));
         computer.moveDecisionArray.sort(function (a, b) {
             return b.points[2] - a.points[2];
         });
@@ -144,8 +150,9 @@ let computer = {
         // Makes move decision for each ship from amongst resource / collection etc options
         // All ships considered even though only one ship is moved at a time
         // - i.e. team-based decision-making considers strategy of all ships when making move decision for one ship
+        // .some used to ensure no overlap between move targets
         for (let option of computer.moveDecisionArray) {
-            if (option.points[0] > 0 && !computer.finalDecision.some(best => best.ship == option.ship) && !computer.finalDecision.some(best => best.resource == option.resource)) {
+            if (option.points[0] > 0 && !computer.finalDecision.some(best => best.ship == option.ship) && !computer.finalDecision.some(best => best.target.some(value => option.target.includes(value)))) {
                 computer.finalDecision.push(option);
             }
         }
@@ -241,7 +248,7 @@ let computer = {
                 if (finalDecisionPosition != -1) {
                     computer.computerShipsTurn[computer.computerShipsTurnCount].end.row = computer.finalDecision[finalDecisionPosition].row;
                     computer.computerShipsTurn[computer.computerShipsTurnCount].end.col = computer.finalDecision[finalDecisionPosition].col;
-
+                    computer.priorMoves.push(computer.finalDecision[finalDecisionPosition]);
                 } else {
                 // If move has not previously been decided in moveDecision then moves maximum distance at minimum wind cost
                     if(workFlow == 1) {console.log('Finds max distance move at minimum cost: ' + (Date.now() - launchTime)); }
