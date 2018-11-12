@@ -27,6 +27,8 @@ let gameScore = {
         buildFirst: 5,
         buildSecond: 3,
         buildLater: 1,
+        // Trading
+        tradeFirst: 5,
     },
 
     // Method to organise score updates
@@ -148,9 +150,9 @@ let gameScore = {
                 this.increaseScore(teamPosition, 'Trading', subContest, scoreDetail);
                 buildComment[0] = gameManagement.turn + ': ' + scoreDetail + ' points for trade route to ' + subContest + ' island.';
             } else {
-                this.increaseScore(teamPosition, 'Trading', subContest, (5 + scoreDetail));
+                this.increaseScore(teamPosition, 'Trading', subContest, (this.pointsArray.tradeFirst + scoreDetail));
                 buildComment[0] = gameManagement.turn + ': ' + scoreDetail + ' points for trade route.';
-                buildComment[1] = 'Bonus 5 points for first trade route to ' + subContest + ' island.';
+                buildComment[1] = 'Bonus ' + this.pointsArray.tradeFirst + ' points for first trade route to ' + subContest + ' island.';
             }
         }
         return buildComment;

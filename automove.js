@@ -15,6 +15,10 @@ let computer = {
 
     computerShipsTurnCount: -1,
 
+    moveDecisionArray: [],
+
+    finalDecision: {},
+
     targetHarbour: [],
 
     telescopeHarbour: [],
@@ -27,6 +31,8 @@ let computer = {
 
     minCostTiles: [],
 
+    contractStatsTurn: [],
+
     // Method to manage automated movement of computer opponent ships
     // --------------------------------------------------------------
     automatePlayer: function() {
@@ -36,10 +42,15 @@ let computer = {
             this.populateComputerShipsArray();
             // Separate array of ships for current turn
             this.computerShipsTurn = this.computerShipsAll.filter(fI => fI.team == gameManagement.turn);
-            if(arrayFlow == 1) {console.log('computerShipsTurn', this.computerShipsTurn);}
-            // Building decision made at the start of the turned
+            if(arrayFlow == 1) {console.log('computerShipsTurn', JSON.parse(JSON.stringify(this.computerShipsTurn)));}
+            // Building decision made at the start of the turn
             stockDashboard.goodsStockTake();
             this.decideBuild();
+
+            // Obtain stats on potential contract deliveries for player
+            stockDashboard.goodsStockTake();
+            computer.contractStatsTurn = stockDashboard.contractStats();
+            if (arrayFlow == 1) {console.log('contractStats', JSON.parse(JSON.stringify(computer.contractStatsTurn)));}
         }
 
         // Increases counter to move on to next ship
@@ -47,6 +58,10 @@ let computer = {
 
         // Ship move or update once all ships have moved
         if(computer.computerShipsTurnCount < computer.computerShipsTurn.length) {
+            // Calls decision method before each ship moves to decide moves for ships
+            computer.moveChoices();
+            computer.moveDecision();
+            // Moves ship
             computer.computerMove();
 
         } else {
@@ -63,7 +78,84 @@ let computer = {
         }
     },
 
+    // Makes a list of best moves from each category and ship for a computer player
+    // ----------------------------------------------------------------------------
+    moveChoices: function() {
+      // TO DO - ADD PRIOR MOVES ARRAY WITH MOVES ALREADY MADE AND FEED THESE IN TO MOVEDECISIONARRAY TO ENSURE SAME MOVES ARE NOT REPEATED
+      // TO DO - ADD A TARGET INDICATOR FOR RESOURCE SEACHES TO MAKE SURE THE SAME (DISTANT) RESOURCE IS NOT SEACRHED FOR BY ALL SHIPS
 
+        let decisionMoves = 3;
+        let bestCollection = [];
+        computer.moveDecisionArray = [];
+
+        // Loops through each ship and determines best scoring moves (resource searches, contract delivery etc)
+        computer.computerShipsTurn.forEach(function(ship, index) {
+            // Only undamaged ships are covered by decision making functions - damaged ships just head for repair
+            if (ship.start.pieces.damageStatus == 5 && ship.moveStatus == false) {
+                // Finds ship maxMove for findpath generation
+                let arrayPosition = stockDashboard.pieceTypes.findIndex(k => k.type == ship.start.pieces.type);
+                maxMove = 0;
+                if (arrayPosition != -1) {
+                    maxMove = stockDashboard.pieceTypes[arrayPosition].maxMove;
+                }
+                // activates tiles to generate findpath and uses telescope to find best moves
+                pieceMovement.activateTiles(ship.start.row, ship.start.col, maxMove, 30, false, 5);
+                computer.telescopeResources = pirates.useTelescope('All', 'resourceHarbour', row);
+                if(arrayFlow == 1) {console.log('telescopeResources', computer.telescopeResources);}
+                // Adds best resource search moves to moveDecisionArray
+                computer.bestDestination = computer.rankDestinations(computer.telescopeResources);
+                if (computer.bestDestination.length > 0) {
+                    for (let i = 0; i < Math.min(computer.bestDestination.length, decisionMoves); i+=1) {
+                        lastTile = pirates.findLastActive(pieceMovement.findPath[computer.bestDestination[i].row][computer.bestDestination[i].col].path, 0);
+                        computer.moveDecisionArray.push({ship: ship.type, shipNumber: index, moveType: 'resource', points: computer.bestDestination[i].points, moveCost: computer.bestDestination[i].moveCost,
+                                                            distance: computer.bestDestination[i].distance, targetRow: computer.bestDestination[i].row, targetCol: computer.bestDestination[i].col,
+                                                            row: pieceMovement.findPath[computer.bestDestination[i].row][computer.bestDestination[i].col].path[lastTile].fromRow, col: pieceMovement.findPath[computer.bestDestination[i].row][computer.bestDestination[i].col].path[lastTile].fromCol});
+                    }
+                }
+                // Adds best resource collection moves to moveDecisionArray
+                bestCollection = computer.rankCollection(computer.telescopeResources, computer.contractStatsTurn, maxMove, decisionMoves);
+
+                for (let i = 0; i < bestCollection.length; i+=1) {
+                    lastTile = pirates.findLastActive(pieceMovement.findPath[bestCollection[i].row][bestCollection[i].col].path, 0);
+                    computer.moveDecisionArray.push({ship: ship.type, shipNumber: index, moveType: 'collection', points: bestCollection[i].points, resource: bestCollection[i].resource, moveCost: bestCollection[i].moveCost, distance: bestCollection[i].distance,
+                                                        targetRow: bestCollection[i].row, targetCol: bestCollection[i].col, row: pieceMovement.findPath[bestCollection[i].row][bestCollection[i].col].path[lastTile].fromRow, col: pieceMovement.findPath[bestCollection[i].row][bestCollection[i].col].path[lastTile].fromCol});
+                }
+                // Adding best contract delivery moves to moveDecisionArray
+                // TO DO
+            }
+            pieceMovement.deactivateTiles();
+        });
+        if (arrayFlow == 1) {console.log('moveDecisionArray', JSON.parse(JSON.stringify(computer.moveDecisionArray)));}
+    },
+
+
+    // Makes decisions on which moves to choose from list derived in moveChoices
+    // -------------------------------------------------------------------------
+    // Decisions are reviewed after each ship move in light of new information
+    moveDecision: function() {
+
+        // First implementation is simple - sorts and takes highest scoring move overall
+        // then next high score that does not use the same ship or target the same tile
+        computer.finalDecision = [];
+        computer.moveDecisionArray.sort(function (a, b) {
+            return b.points[2] - a.points[2];
+        });
+
+        // Makes move decision for each ship from amongst resource / collection etc options
+        // All ships considered even though only one ship is moved at a time
+        // - i.e. team-based decision-making considers strategy of all ships when making move decision for one ship
+        for (let option of computer.moveDecisionArray) {
+            if (option.points[0] > 0 && !computer.finalDecision.some(best => best.ship == option.ship) && !computer.finalDecision.some(best => best.resource == option.resource)) {
+                computer.finalDecision.push(option);
+            }
+        }
+
+        if (arrayFlow == 1) {console.log('finalDecision', JSON.parse(JSON.stringify(computer.finalDecision)));}
+    },
+
+
+    // Moves computer ships based on decisions made
+    // --------------------------------------------
     computerMove: function() {
         if(workFlow == 1) {console.log('Computer player: ' + computer.computerShipsTurn[computer.computerShipsTurnCount].team + ' ' + computer.computerShipsTurn[computer.computerShipsTurnCount].type + ' moves: '+ (Date.now() - launchTime)); }
         if(computer.computerShipsTurnCount < computer.computerShipsTurn.length) {
@@ -144,18 +236,14 @@ let computer = {
             } else if (pieceMovement.movementArray.start.pieces.damageStatus == 5) {
                 if(workFlow == 1) {console.log('Good ship - decide move: '+ (Date.now() - launchTime)); }
 
-                computer.telescopeResources = pirates.useTelescope('All', 'resourceHarbour', row);
-                if(arrayFlow == 1) {console.log('telescopeResources', computer.telescopeResources);}
-
-                computer.bestDestination = computer.rankDestinations(computer.telescopeResources);
-
-                if (computer.bestDestination.length > 0) {
-                    lastTile = pirates.findLastActive(pieceMovement.findPath[computer.bestDestination[0].row][computer.bestDestination[0].col].path, 0);
-                    computer.computerShipsTurn[computer.computerShipsTurnCount].end.row = pieceMovement.findPath[computer.bestDestination[0].row][computer.bestDestination[0].col].path[lastTile].fromRow;
-                    computer.computerShipsTurn[computer.computerShipsTurnCount].end.col = pieceMovement.findPath[computer.bestDestination[0].row][computer.bestDestination[0].col].path[lastTile].fromCol;
+                // If move has previously been decided in moveDecision then takes this move
+                let finalDecisionPosition = computer.finalDecision.findIndex(fI => fI.shipNumber == computer.computerShipsTurnCount);
+                if (finalDecisionPosition != -1) {
+                    computer.computerShipsTurn[computer.computerShipsTurnCount].end.row = computer.finalDecision[finalDecisionPosition].row;
+                    computer.computerShipsTurn[computer.computerShipsTurnCount].end.col = computer.finalDecision[finalDecisionPosition].col;
 
                 } else {
-                // Move maximum distance at minimum wind cost - should not be required if
+                // If move has not previously been decided in moveDecision then moves maximum distance at minimum wind cost
                     if(workFlow == 1) {console.log('Finds max distance move at minimum cost: ' + (Date.now() - launchTime)); }
                     computer.maxDistanceTiles = pirates.maxPathDistance();
                     computer.minCostTiles = pirates.minArray(computer.maxDistanceTiles, 'moveCost');
@@ -176,7 +264,9 @@ let computer = {
                 console.log('Computer opponent move decided - movement array shown below: '+ (Date.now() - launchTime));
                 console.log(pieceMovement.movementArray);
             }
-            pieceMovement.deactivateTiles(maxMove+1);
+            computer.computerShipsTurn[computer.computerShipsTurnCount].moveStatus = true;
+            if(arrayFlow == 1) {console.log('computerShipsTurn', JSON.parse(JSON.stringify(this.computerShipsTurn)));}
+            pieceMovement.deactivateTiles();
             pieceMovement.shipTransition(gameSpeed);
         }
     },
@@ -190,15 +280,16 @@ let computer = {
                 if((gameBoard.boardArray[i][j].pieces.team == gameManagement.turn) && (gameBoard.boardArray[i][j].pieces.category == 'Transport')) {
                     index = this.computerShipsAll.findIndex(fI => (fI.team == gameManagement.turn && fI.type == gameBoard.boardArray[i][j].pieces.type));
                     if (index == -1) {
-                        this.computerShipsAll.push({team: gameManagement.turn, type: gameBoard.boardArray[i][j].pieces.type, manifest: this.teamHome[gameManagement.turn], start: {row: + i, col: + j, pieces: gameBoard.boardArray[i][j].pieces}, end: {row: + i, col: + j} });
+                        this.computerShipsAll.push({team: gameManagement.turn, type: gameBoard.boardArray[i][j].pieces.type, manifest: this.teamHome[gameManagement.turn], start: {row: + i, col: + j, pieces: gameBoard.boardArray[i][j].pieces}, end: {row: + i, col: + j}, moveStatus: false});
                     } else {
                         this.computerShipsAll[index].start = {row: + i, col: + j, pieces: gameBoard.boardArray[i][j].pieces};
                         this.computerShipsAll[index].end = {row: + i, col: + j};
+                        this.computerShipsAll[index].moveStatus = false;
                     }
                 }
             }
         }
-        if(arrayFlow == 1) {console.log('computerShipsAll', this.computerShipsAll);}
+        if(arrayFlow == 1) {console.log('computerShipsAll', JSON.parse(JSON.stringify(this.computerShipsAll)));}
     },
 
     // Method to check whether there are resources to be claimed and decide whether a resource should be claimed
@@ -293,7 +384,7 @@ let computer = {
             // adding ship to board, paying for it with goods, and adding score reward
             pieceMovement.movementArray.start.pieces = {type: buildOptions[buildChoice].type};
             let shipLocationArray = buildItem.startConstruction();
-            pieceMovement.deactivateTiles(1);
+            pieceMovement.deactivateTiles();
             buildItem.buildShip(shipLocationArray[0].row, shipLocationArray[0].col, shipBuildType, gameManagement.turn, 0);
             buildItem.constructionPayment(shipBuildType);
             gameScore.workScores('Building', gameManagement.turn, shipBuildType);
@@ -380,17 +471,19 @@ let computer = {
 
         // Loops through all potential map moves and adds points to rate them
         for (var i = 0; i < movesToRate.length; i+=1) {
-            movesToRate[i].points = [0, 0];
-            if(movesToRate[i].pathStop.length < 1 || movesToRate[i].activeStatus != 'active') {
-                for (var j = 0; j < movesToRate[i].type.length; j+=1) {
+            movesToRate[i].points = [0, 0, 0];
+            if(movesToRate[i].pathStop.length == 0 || movesToRate[i].activeStatus != 'active') {
+                for (var j = 0; j < movesToRate[i].resourceHarbour.length; j+=1) {
                     // Virgin islands are worth visiting - and a better option if they can be reached in one turn
-                    if(movesToRate[i].type[j] == 'virgin') {
-                        movesToRate[i].points[0] += virginPoints;
-                    // Revealed pieces that are needed are more valuable options than virgin islands which may be desert or duplicate pieces
-                    } else if (stockDashboard.pieceTotals[teamPosition].pieces[movesToRate[i].type[j]].quantity == 0) {
-                        movesToRate[i].points[0] += this.pointsResource(movesToRate[i].type[j], resourceStats);
-                    } else {
-                       // no points
+                    if(movesToRate[i].resourceHarbour[j].detail == 'Unclaimed') {
+                        if(movesToRate[i].resourceHarbour[j].type == 'virgin') {
+                            movesToRate[i].points[0] += virginPoints;
+                        // Revealed pieces that are needed are more valuable options than virgin islands which may be desert or duplicate pieces
+                        } else if (stockDashboard.pieceTotals[teamPosition].pieces[movesToRate[i].resourceHarbour[j].type].quantity == 0) {
+                            movesToRate[i].points[0] += this.pointsResource(movesToRate[i].resourceHarbour[j].type, resourceStats);
+                        } else {
+                           // no points
+                        }
                     }
                 }
 
@@ -411,6 +504,9 @@ let computer = {
                 movesToRate[i].points[1] = Math.min(movesToRate[i].points[1], 1);
                 movesToRate[i].points[1] = -(movesToRate[i].points[1] * (movesToRate[i].points[0] * (1-(1/piratesMovePenalty))));
 
+                // Adds total points
+                movesToRate[i].points[2] = movesToRate[i].points[0] + movesToRate[i].points[1];
+
                 // Array built up of highest scoring options
                 if (movesToRate[i].points[0] > 0 && (movesToRate[i].points[0] + movesToRate[i].points[1] > maxPoints)) {
                     maxPoints = movesToRate[i].points[0] + movesToRate[i].points[1];
@@ -421,9 +517,87 @@ let computer = {
             }
         }
 
-        if (arrayFlow == 1) {console.log('bestMove', bestMove);}
+        if (arrayFlow == 1) {console.log('bestMove', JSON.parse(JSON.stringify(bestMove)));}
         return bestMove;
     },
+
+    // Method to rank potential resource collection options
+    // ------------------------------------------------------------------------------
+    rankCollection: function(movesArray, contractStatsArray, localMaxMove, localDecisionMoves) {
+
+        const piratesMovePenalty = 3;
+        let maxPoints = -10;
+        const averageMoveAdj = 2;
+        let optionsCollection = [];
+        let bestCollection = [];
+
+        // Loops through all potential map moves and finds team resource harbours
+        for (let i = 0; i < movesArray.length; i+=1) {
+            movesArray[i].points = [0, 0, 0];
+            if (movesArray[i].pathStop.length == 0 || movesArray[i].activeStatus != 'active') {
+                for (var j = 0; j < movesArray[i].resourceHarbour.length; j+=1) {
+                    // Only adding scores for harbours of resources discovered by team
+                    if (movesArray[i].resourceHarbour[j].detail == gameManagement.turn) {
+                        contractStatsArray.forEach(function(contract, index) {
+                            if (contract.resource == movesArray[i].resourceHarbour[j].type) {
+                                optionsCollection.push({row: movesArray[i].row, col: movesArray[i].col, resource: movesArray[i].resourceHarbour[j].type, points: [0, 0, 0], moveCost: movesArray[i].moveCost, activeStatus: movesArray[i].activeStatus, distance: movesArray[i].distance, move: movesArray[i], contract: contract})
+                            }
+                        });
+                    }
+                }
+            }
+        }
+
+        // Loops through each potential collection move and adds score for ranking
+        for (let option of optionsCollection) {
+            // Works out number of moves to complete delivery
+            let movesToCollect = 1;
+            if (option.activeStatus != 'active') {
+                movesToCollect = Math.ceil(option.moveCost/localMaxMove);
+            }
+            let movesToDeliver = Math.ceil(option.contract.distancePoints / (localMaxMove / averageMoveAdj));
+
+            // Capturing points for delivery of contract
+            option.points[0] = option.contract.firstPoints + option.contract.distancePoints;
+
+            // Deduction for pirate ships in range of move active tile (not final destination tile)
+            for (var k = 0; k < option.move.pirateRange.length; k+=1) {
+                option.points[1] += this.piratesFactor(option.move.pirateRange[k]);
+            }
+            option.points[1] = Math.min(option.points[1], 1);
+            option.points[1] = Number((-option.points[1] * (option.points[0] * (1-(1/piratesMovePenalty)))).toFixed(3));
+
+            // Points for destinations at greater distance are reduced by estimated number of moves to get there
+            option.points[0] = Number((option.points[0] / (movesToCollect + movesToDeliver + option.contract.phasesToInitial)).toFixed(2));
+
+            // Total points
+            option.points[2] = option.points[0] + option.points[1];
+
+        }
+
+        // Sorts potential moves by score so that top score for each resource is considered first
+        optionsCollection.sort(function (a, b) {
+            return b.points[2] - a.points[2];
+        });
+
+        for (let option of optionsCollection) {
+            // Array built up of highest scoring option for each resource
+            if (option.points[0] > 0 && !bestCollection.some(best => best.resource == option.contract.resource)) {
+                bestCollection.push({ship: option.ship, moveType: option.moveType, points: option.points, moveCost: option.moveCost, distance: option.distance, resource: option.contract.resource, row: option.row, col: option.col});
+            }
+        }
+
+        // Sorts resource collection into order of score and takes top three options (since maximum three ships)
+        bestCollection.sort(function (a, b) {
+            return b.points[2] - a.points[2];
+        });
+        bestCollection = bestCollection.slice(0, localDecisionMoves);
+
+        if (arrayFlow == 1) {console.log('optionsCollection', JSON.parse(JSON.stringify(optionsCollection)));}
+        if (arrayFlow == 1) {console.log('bestCollection', JSON.parse(JSON.stringify(bestCollection)));}
+        return bestCollection;
+    },
+
 
 // LAST BRACKET OF OBJECT
 }

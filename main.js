@@ -535,14 +535,14 @@ function boardHandler(event) {
             if (pieceMovement.movementArray.end.activeStatus == 'active') {
                 // Claiming of unclaimed resources
                 if (pieceMovement.movementArray.end.pieces.category == 'Transport' && pieceMovement.movementArray.start.pieces.type != 'desert' && pieceMovement.movementArray.start.pieces.team == 'Unclaimed') {
-                    pieceMovement.deactivateTiles(1);
+                    pieceMovement.deactivateTiles();
                     gameBoard.drawActiveTiles();
                     resourceManagement.claimResource(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, gameManagement.turn);
                     startEnd = 'start';
 
                 // Loading of goods
               } else if ((pieceMovement.movementArray.start.pieces.category == 'Resources' || pieceMovement.movementArray.start.pieces.category == 'Settlements') && pieceMovement.movementArray.end.pieces.category == 'Transport') {
-                    pieceMovement.deactivateTiles(1);
+                    pieceMovement.deactivateTiles();
                     gameBoard.drawActiveTiles();
                     //loadingStock = gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.stock;
                     let arrayPosition = stockDashboard.pieceTypes.findIndex(k => k.type == pieceMovement.movementArray.end.pieces.type);
@@ -560,15 +560,15 @@ function boardHandler(event) {
 
                 // Delivery of goods for contract
               } else if (pieceMovement.movementArray.start.pieces.category == 'Transport' && pieceMovement.movementArray.end.pieces.team == 'Kingdom' && pieceMovement.movementArray.end.pieces.type == 'fort') {
-                    pieceMovement.deactivateTiles(maxMove);
+                    pieceMovement.deactivateTiles();
                     gameBoard.drawActiveTiles();
-                    tradeContracts.discoverPath(pieceMovement.movementArray.end.row, pieceMovement.movementArray.end.col, pieceMovement.movementArray.start.pieces.goods);
-                    tradeContracts.fulfilDelivery();
+                    tradeRouteInfo = tradeContracts.discoverPath(pieceMovement.movementArray.end.row, pieceMovement.movementArray.end.col, pieceMovement.movementArray.start.pieces.goods);
+                    tradeContracts.fulfilDelivery(pieceMovement.movementArray.start.pieces.goods, tradeRouteInfo);
                     tradeContracts.drawContracts();
 
                 // Unloading to own team fort or resource tile
               } else if (pieceMovement.movementArray.start.pieces.category == 'Transport' && pieceMovement.movementArray.end.pieces.team == gameManagement.turn && (pieceMovement.movementArray.end.pieces.type == 'fort' || pieceMovement.movementArray.end.pieces.category == 'Resources')) {
-                    pieceMovement.deactivateTiles(maxMove);
+                    pieceMovement.deactivateTiles();
                     gameBoard.drawActiveTiles();
                     //loadingStock = gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.stock;
                     loadingGoods = gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.goods;
@@ -581,7 +581,7 @@ function boardHandler(event) {
                     loadingStock = 0;
                 // Building new ship
               } else if (pieceMovement.movementArray.start.pieces.category == 'Building') {
-                    pieceMovement.deactivateTiles(1);
+                    pieceMovement.deactivateTiles();
                     gameBoard.drawActiveTiles();
                     buildItem.buildShip(pieceMovement.movementArray.end.row, pieceMovement.movementArray.end.col, pieceMovement.movementArray.start.pieces.type, gameManagement.turn, pieceMovement.movementArray.end.pieces.direction);
                     buildItem.constructionPayment(pieceMovement.movementArray.start.pieces.type);
@@ -593,7 +593,7 @@ function boardHandler(event) {
                     stockDashboardNode.removeEventListener('click', buildItem.clickStock);
                     stockDashboardNode.removeEventListener('mouseover', stockDashboard.hoverPieceOn);
                     stockDashboardNode.removeEventListener('mouseleave', gameBoard.clearHighlightTiles);
-                    pieceMovement.deactivateTiles(maxMove);
+                    pieceMovement.deactivateTiles();
                     // Redraw active tile layer after deactivation to remove activated tiles
                     gameBoard.drawActiveTiles();
                     pieceMovement.shipTransition(gameSpeed);
@@ -612,7 +612,7 @@ function boardHandler(event) {
 }
 
 function resetMove() {
-    pieceMovement.deactivateTiles(maxMove);
+    pieceMovement.deactivateTiles();
     gameBoard.drawActiveTiles();
 
     // Resetting movement array once second click has been made (if invalid)

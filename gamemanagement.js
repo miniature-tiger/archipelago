@@ -70,7 +70,7 @@ let gameManagement = {
         endTurn.removeEventListener('click', gameManagement.nextTurn);
 
         // Resetting if second click not applied
-        pieceMovement.deactivateTiles(maxMove);
+        pieceMovement.deactivateTiles();
         gameBoard.drawActiveTiles();
 
         // Resetting movement array in case second click has not been made

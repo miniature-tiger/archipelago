@@ -9,8 +9,8 @@ let tradeContracts = {
                       {name: 'Swordfish'},
                     ],
 
-    // Method to populate contracts array
-    // ----------------------------------
+    // Method to initialise contracts array
+    // ------------------------------------
     populateContracts: function() {
         if(workFlow == 1) {console.log('Contracts array populated: ' + (Date.now() - launchTime)); }
         // Loop for each kingdom island
@@ -35,7 +35,7 @@ let tradeContracts = {
     newContract: function() {
         if(workFlow == 1) {console.log('New contract issuance assessed: ' + (Date.now() - launchTime)); }
         // x% chance that a new contract is generated
-        if (Math.random() > 0.75 && gameManagement.gameDate >= 8) {
+        if (Math.random() > 0 && gameManagement.gameDate >= 1) { // should be >=9
             // Chooses a kingdom settlement at random
             let settlementNumber = Math.floor((Math.random() * this.contractsArray.length));
             let contractIsland = this.contractsArray[settlementNumber];
@@ -66,7 +66,6 @@ let tradeContracts = {
                 this.contractsArray[settlementNumber].totalUnopen -= 1;
                 this.contractsArray[settlementNumber].contracts[resourceType] = {created: true, struck: 'open', team: 'none', initial: initialAmount, renewal: renewalAmount, timeRemaining: 8};
 
-
                 // Comment that a contract is generated
                 clearCommentary();
                 commentary.style.bottom = 0;
@@ -77,8 +76,20 @@ let tradeContracts = {
         } else {
             //console.log('no contract');
         }
+        if (arrayFlow == 1) {console.log('contractsArray', this.contractsArray);}
     },
 
+    // Helper to check whether a player already has a contract with an island
+    // -----------------------------------------------------------------------
+    hasContract: function(localFort, localTeam) {
+        let result = false;
+        for (var contractGood in this.contractsArray[localFort].contracts) {
+            if(this.contractsArray[localFort].contracts[contractGood].team == localTeam) {
+                  result = true;
+            }
+        }
+        return result;
+    },
 
     // Method to check possible delivery to fulfil open contract
     // ---------------------------------------------------------
@@ -94,12 +105,7 @@ let tradeContracts = {
         }
 
         // Determines whether a team already has a contract with that island (only one contract per island is allowed)
-        let checkTeam = false;
-        for (var contractGood in this.contractsArray[chosenFort].contracts) {
-            if(this.contractsArray[chosenFort].contracts[contractGood].team == localTeam) {
-                  checkTeam = true;
-            }
-        }
+        let checkTeam = this.hasContract(chosenFort, localTeam);
 
         // Determines whether ship cargo meets criteria for delivery
         if(this.contractsArray[chosenFort].contracts[searchType].struck == 'open') {
@@ -121,14 +127,29 @@ let tradeContracts = {
 
     // Method to complete contract delivery
     // ------------------------------------
-    fulfilDelivery : function() {
-        // Determines which fort is being delivered to
+    fulfilDelivery: function(localGoods, localTradeRouteInfo) {
+
+        let localPath = localTradeRouteInfo[0];
+        let localStartRow = localTradeRouteInfo[1];
+        let localStartCol = localTradeRouteInfo[2];
+        let localDistance = localTradeRouteInfo[3];
+
+        // Add path and Resource tile to contract array
         let chosenFort = -1;
         for (var k = 0; k < this.contractsArray.length; k++) {
             if(this.contractsArray[k].row == pieceMovement.movementArray.end.row && this.contractsArray[k].col == pieceMovement.movementArray.end.col) {
                 chosenFort = k;
             }
         }
+        this.contractsArray[chosenFort].contracts[localGoods].resourceRow = localStartRow;
+        this.contractsArray[chosenFort].contracts[localGoods].resourceCol = localStartCol;
+        this.contractsArray[chosenFort].contracts[localGoods].contractPath = localPath;
+
+        // creates the SVG path for the trade route
+        gameBoard.tradeRoute(localPath, gameManagement.turn, chosenFort, localGoods);
+
+        // Processes the score (all the information is in this method)
+        gameScore.workScores('Trading', gameManagement.turn, this.contractsArray[chosenFort].name, localDistance);
 
         // Updates game board based on delivery
         deliveryGoods = gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.goods;
@@ -143,7 +164,6 @@ let tradeContracts = {
         this.contractsArray[chosenFort].contracts[deliveryGoods].team = gameManagement.turn;
         this.contractsArray[chosenFort].totalOpen -=1;
         this.contractsArray[chosenFort].totalActive +=1;
-
     },
 
     // Method to track continuance and countdown of contract
@@ -298,27 +318,11 @@ let tradeContracts = {
             k += 1;
         }
 
-        // separates the path for the trade route
-        let localPath = this.tradePath[harbour.harbourEndRow][harbour.harbourEndCol].path;
-
-        // Add path and Resource tile to contract array
-        for (var f = 0; f < this.contractsArray.length; f++) {
-            if(this.contractsArray[f].row == localEndRow && this.contractsArray[f].col == localEndCol) {
-                chosenFort = f;
-            }
-        }
-        this.contractsArray[chosenFort].contracts[localGoods].resourceRow = localStartRow;
-        this.contractsArray[chosenFort].contracts[localGoods].resourceCol = localStartCol;
-        this.contractsArray[chosenFort].contracts[localGoods].contractPath = localPath;
-
-        // creates the SVG path for the trade route
-        gameBoard.tradeRoute(localPath, gameManagement.turn, chosenFort, localGoods);
-
-        // Processes the score (all the information is in this method)
-        gameScore.workScores('Trading', gameManagement.turn, this.contractsArray[chosenFort].name, this.tradePath[harbour.harbourEndRow][harbour.harbourEndCol].distance);
+        // returns trade route information including the path, the start resource position and the path distance
+        return [this.tradePath[harbour.harbourEndRow][harbour.harbourEndCol].path, localStartRow, localStartCol, this.tradePath[harbour.harbourEndRow][harbour.harbourEndCol].distance];
     },
 
-    // Method to seacrh for route around obstacles
+    // Method to search for route around obstacles
     // -------------------------------------------
     pathTiles: function(localStartRowI, localStartColJ, localCumulMoveCost, localMaxMove, directionAngle, k, localEndRow, localEndCol) {
         // pathTiles searches a 3x3 grid around the passed (activated) tile reference to find more potential tiles to activate
