@@ -1,15 +1,27 @@
-# Archipelago
-A seafaring and trading turn-based strategy game.
- 
-Web-based, built with javascript. 
+# Archipelago - A seafaring and trading turn-based strategy game.
 
+### What is the Project About?
+Archipelago is a seafaring and trading turn-based strategy game. Players guide their ships around the islands, searching for goods, building ships, trading with the Kingdom settlements and avoiding being chased down by pirates. 
+
+### Development overview
+The basic game mechanics are largely complete, although there are a few more details to be added (see phase 7 of roadmap).
+Currently I'm working on a one-player version of the game against three computer opponents.
+A multi-player version is also planned once the one-player version is complete. 
+
+### Technology Stack
+Browser-based. 
+Mechanics: Javascript.
+Visuals: CSS initially but now moved across to Canvas and SVG.
+
+### Where to play!
 The game can currently be found here:
 https://miniature-tiger.github.io/archipelago/
 
 ----------------------------------------------
 
+# Installation
 
-# To install locally
+### To install locally
 1) Download all files to your local computer using the "Clone of download" ---> "Download ZIP" buttons on the archipelago repository of github.
 2) Move downloaded files to the folder of your choice.
 3) Open the index.html file using your preferred browser (production testing is in safari and chrome).
@@ -101,18 +113,18 @@ Conflicts:
 * Automate ship return to nearest harbour after damage taken - COMPLETE
 
 Contracts for delivery:
-* Automate collection of goods
+* Automate collection of goods - COMPLETE
 * Automate delivery of goods
-* Automate choice of contracts to fulfil
+* Automate choice of contracts to fulfil - COMPLETE
 
 Shipbuilding
 * Automate decision to build ships - COMPLETE
 
 Strategies and AI for computer players
-* Produce array of ships with game strategies
-* Decision making between different possibilities - IN PROGRESS
-* Automate teamworking so that ships on same team do not pursue same targets
-* Consider different ability levels and strategy types for computer players
+* Produce array of ships with game strategies 
+* Decision making between different possibilities - BASICS COMPLETE
+* Automate teamworking so that ships on same team do not pursue same targets - COMPLETE
+* Consider different ability levels and strategy types for computer players - IN PROGRESS
 
 # Phase 5 - Game Management and Settings 
 Settings
@@ -129,6 +141,8 @@ Settings
 * Kingdom tax collection ship
 * Develop central market allowing players without resources to trade and fulfill contracts
 * Whirlpools
+
+# Phase 8 - Multi-player version
 
 
 ----------------------------------------------
