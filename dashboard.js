@@ -51,6 +51,7 @@ let stockDashboard = {
                 counter = 0;
                 piecesGoods = 'none';
                 piecesStock = 0;
+                piecesProduction = 0;
                 for (var i = 0; i < gameBoard.boardArray.length; i++) {
                     for (var j = 0; j < gameBoard.boardArray[i].length; j++) {
                         if(gameBoard.boardArray[i][j].pieces.populatedSquare) {
@@ -59,12 +60,13 @@ let stockDashboard = {
                                     counter += 1;
                                     piecesGoods = gameBoard.boardArray[i][j].pieces.goods;
                                     piecesStock = gameBoard.boardArray[i][j].pieces.stock;
+                                    piecesProduction = gameBoard.boardArray[i][j].pieces.production;
                                 }
                             }
                         }
                     }
                 }
-                stockDashboard.pieceTotals[h].pieces[stockDashboard.pieceTypes[k].type] = {quantity: counter, goods: piecesGoods, stock: piecesStock, category: stockDashboard.pieceTypes[k].category};
+                stockDashboard.pieceTotals[h].pieces[stockDashboard.pieceTypes[k].type] = {quantity: counter, goods: piecesGoods, stock: piecesStock, production: piecesProduction, category: stockDashboard.pieceTypes[k].category};
                 if(h == 0) {
                     stockDashboard.pieceTotals[totalPosition].pieces[stockDashboard.pieceTypes[k].type] = {quantity: counter, category: stockDashboard.pieceTypes[k].category};
                 } else {
@@ -87,7 +89,7 @@ let stockDashboard = {
                 resourceTotal += stockDashboard.pieceTotals[teamPosition].pieces[tilePiece].quantity;
             }
         }
-        return resourceTotal
+        return resourceTotal;
     },
 
     // All the useful resource stats for a team
@@ -138,6 +140,43 @@ let stockDashboard = {
         }
 
         return(stats);
+    },
+
+    // Method to produce array of contracts that can be fulfilled by players with associated stats
+    // --------------------------------------------------------------------------------------------
+    contractStats: function() {
+        const stockTeamPosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == gameManagement.turn);
+        let stats = [];
+
+        // contract information for all islands and all resources is held in tradeContracts.contractsArray
+        tradeContracts.contractsArray.forEach(function(island, index) {
+            // check whether a player already has a contract with an island to narrow down contracts to be assessed
+            let checkTeam = tradeContracts.hasContract(index, gameManagement.turn);
+            if (!checkTeam) {
+                Object.keys(island.contracts).forEach(function(good) {
+                    // Only need to examine contracts that are open (so not unopen, active or closed)
+                    if (island.contracts[good].struck == 'open') {
+                        let piecePosition = stockDashboard.pieceTypes.findIndex(fI => fI.goods == good);
+                        pieceType = stockDashboard.pieceTypes[piecePosition].type;
+                        // check whether player has resource
+                        if (stockDashboard.pieceTotals[stockTeamPosition].pieces[pieceType].quantity > 0) {
+                            stockAmount = stockDashboard.pieceTotals[stockTeamPosition].pieces[pieceType].stock;
+                            netStockProduction = stockDashboard.pieceTotals[stockTeamPosition].pieces[pieceType].production; // adjust for existing contracts
+                            // check estimated time to have enough resources to fulfil initial delivery
+                            if (netStockProduction > 0) {
+                                phasesToInitial = Math.max((island.contracts[good].initial - stockAmount) / netStockProduction, 0);
+                            }
+
+                            // calculate estimated points for fulfilling the delivery and pushes stats for each potential contract to array
+                            tradeRouteInfo = tradeContracts.discoverPath(island.row, island.col, good);
+                            stats.push({island: island.name, goods: good, stock: stockAmount, resource: pieceType, netProduction: netStockProduction, initial: island.contracts[good].initial, phasesToInitial: phasesToInitial, distancePoints: tradeRouteInfo[3], firstPoints: gameScore.pointsArray.tradeFirst});
+                        }
+                    }
+                });
+            }
+        });
+
+        return stats;
     },
 
     // All the useful building stats for a team

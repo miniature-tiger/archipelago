@@ -115,7 +115,7 @@ let pirates = {
                 console.log('Pirates move decided - movement array shown below: '+ (Date.now() - launchTime));
                 console.log(pieceMovement.movementArray);
             }
-            pieceMovement.deactivateTiles(maxMove);
+            pieceMovement.deactivateTiles();
             pieceMovement.shipTransition(gameSpeed);
 
         }
@@ -195,14 +195,14 @@ let pirates = {
         for (var i = 0; i < row; i++) {
             for (var j = 0; j < col; j++) {
                 if (findPiece == 'All') {
-                    if ((pieceMovement.findPath[i][j][localKey].type.length > 0) && (pieceMovement.findPath[i][j].activeStatus == 'active')) {
-                        searchResult.push({row: i, col: j, distance: pieceMovement.findPath[i][j].distance, moveCost: pieceMovement.findPath[i][j].moveCost, type: pieceMovement.findPath[i][j][localKey].type});
+                    if ((pieceMovement.findPath[i][j][localKey].length > 0) && (pieceMovement.findPath[i][j].activeStatus == 'active')) {
+                        searchResult.push({row: i, col: j, distance: pieceMovement.findPath[i][j].distance, moveCost: pieceMovement.findPath[i][j].moveCost, type: pieceMovement.findPath[i][j][localKey]});
                     }
                 } else {
-                    if ((pieceMovement.findPath[i][j][localKey].type.includes(findPiece)) && (pieceMovement.findPath[i][j].activeStatus == 'active')) {
-                        console.log('localkey.type', pieceMovement.findPath[i][j][localKey].type);
-                        searchResult.push({row: i, col: j, distance: pieceMovement.findPath[i][j].distance, moveCost: pieceMovement.findPath[i][j].moveCost, type: pieceMovement.findPath[i][j][localKey].type});
-                    }
+                    //if ((pieceMovement.findPath[i][j][localKey].type.includes(findPiece)) && (pieceMovement.findPath[i][j].activeStatus == 'active')) {
+                    //    console.log('localkey.type', pieceMovement.findPath[i][j][localKey].type);
+                    //    searchResult.push({row: i, col: j, distance: pieceMovement.findPath[i][j].distance, moveCost: pieceMovement.findPath[i][j].moveCost, type: pieceMovement.findPath[i][j][localKey].type});
+                    //}
                 }
             }
         }
@@ -218,13 +218,15 @@ let pirates = {
         for (var i = Math.max(pieceMovement.movementArray.start.row - searchRange, 0); i < Math.min(pieceMovement.movementArray.start.row + searchRange + 1, row); i++) {
             for (var j = Math.max(pieceMovement.movementArray.start.col - searchRange, 0); j < Math.min(pieceMovement.movementArray.start.col + searchRange + 1, col); j++) {
                 if (findPiece = 'All') {
-                    if (pieceMovement.findPath[i][j][localKey].type.length > 0 && pieceMovement.findPath[i][j].pathStatus == true) {
-                        searchResult.push({row: i, col: j, distance: pieceMovement.findPath[i][j].distance, moveCost: pieceMovement.findPath[i][j].moveCost, type: pieceMovement.findPath[i][j][localKey].type, activeStatus: pieceMovement.findPath[i][j].activeStatus, pathStop: pieceMovement.findPath[i][j].pathStop.type, pirateRange: pieceMovement.findPath[pieceMovement.findPath[i][j].lastTile.row][pieceMovement.findPath[i][j].lastTile.col].pirateRange.type});
+                    if (pieceMovement.findPath[i][j][localKey].length > 0 && pieceMovement.findPath[i][j].pathStatus == true) {
+                        // Pirate range is based on last tile of active path i.e. where the ship will stop not the final destination - this differs from findpath 
+                        searchResult.push({row: i, col: j, distance: pieceMovement.findPath[i][j].distance, moveCost: pieceMovement.findPath[i][j].moveCost, activeStatus: pieceMovement.findPath[i][j].activeStatus, pathStop: pieceMovement.findPath[i][j].pathStop, pirateRange: pieceMovement.findPath[pieceMovement.findPath[i][j].lastTile.row][pieceMovement.findPath[i][j].lastTile.col].pirateRange});
+                        searchResult[searchResult.length-1][localKey] = pieceMovement.findPath[i][j][localKey];
                     }
                 } else {
-                    if (pieceMovement.findPath[i][j][localKey].type.includes(findPiece) && pieceMovement.findPath[i][j].pathStatus == true) {
-                        searchResult.push({row: i, col: j, distance: pieceMovement.findPath[i][j].distance, moveCost: pieceMovement.findPath[i][j].moveCost, type: pieceMovement.findPath[i][j][localKey].type, activeStatus: pieceMovement.findPath[i][j].activeStatus, pathStop: pieceMovement.findPath[i][j].pathStop.type, pirateRange: pieceMovement.findPath[pieceMovement.findPath[i][j].lastTile.row][pieceMovement.findPath[i][j].lastTile.col].pirateRange.type});
-                    }
+                  //  if (pieceMovement.findPath[i][j][localKey].type.includes(findPiece) && pieceMovement.findPath[i][j].pathStatus == true) {
+                  //      searchResult.push({row: i, col: j, distance: pieceMovement.findPath[i][j].distance, moveCost: pieceMovement.findPath[i][j].moveCost, type: pieceMovement.findPath[i][j][localKey].type, activeStatus: pieceMovement.findPath[i][j].activeStatus, pathStop: pieceMovement.findPath[i][j].pathStop.type, pirateRange: pieceMovement.findPath[pieceMovement.findPath[i][j].lastTile.row][pieceMovement.findPath[i][j].lastTile.col].pirateRange.type});
+                  //  }
                 }
             }
         }
