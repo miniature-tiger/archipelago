@@ -30,7 +30,7 @@ https://miniature-tiger.github.io/archipelago/
 
 # Road map (short term):
 
-# Phase 1 - Board and ship movement: COMPLETE
+### Phase 1 - Board and ship movement: COMPLETE
 * Board set up - COMPLETE
 * Basic ship creation: functionality and graphics  - COMPLETE 
 * Manual ship movement and board updating  - COMPLETE
@@ -40,7 +40,7 @@ https://miniature-tiger.github.io/archipelago/
 * Chaining together transitions to allow graphics of longer moves - COMPLETE
 * Separation of board layers (Canvas base layer, Canvas activation layer overlay, SVG piece overlays) - COMPLETE
 
-# Phase 2 - Resources, Goods, Building and Trade Contracts: COMPLETE 
+### Phase 2 - Resources, Goods, Building and Trade Contracts: COMPLETE 
 
 Resources
 * Add Resource tiles - COMPLETE
@@ -80,7 +80,7 @@ Scoring:
 * Reduction in players as time passes - COMPLETE
 * Game ending - time limit of eight moons and completing contracts with all four islands - COMPLETE
 
-# Phase 3 - Conflicts: COMPLETE
+### Phase 3 - Conflicts: COMPLETE
 
 Pirates:
 * Add pirate ships - COMPLETE
@@ -98,7 +98,7 @@ Conflicts:
 * Limping back to harbour - COMPLETE
 * Ship repair - COMPLETE
 
-# Phase 4 - One player version development
+### Phase 4 - One player version development
 Surround, dashboards, commentary:
 * Keep dashboards fixed on one player with option to switch to other teams
 * Change commentary to focus on single player - with updates on other team moves
@@ -126,7 +126,7 @@ Strategies and AI for computer players
 * Automate teamworking so that ships on same team do not pursue same targets - COMPLETE
 * Consider different ability levels and strategy types for computer players - IN PROGRESS
 
-# Phase 5 - Game Management and Settings 
+### Phase 5 - Game Management and Settings 
 Settings
 * Settings pop up created - COMPLETE
 * Local options (choose team colour, player name etc)
@@ -134,16 +134,16 @@ Settings
 * Game saving
 * Game rewind / replay
 
-# Phase 6 - Rules, roll-out, documentation, testing etc
+### Phase 6 - Rules, roll-out, documentation, testing etc
 * TBDeveloped
 
-# Phase 7 - Additional game features  
+### Phase 7 - Additional game features  
 * Kingdom tax collection ship
 * Develop central market allowing players without resources to trade and fulfill contracts
 * Whirlpools
 
-# Phase 8 - Multi-player version
-
+### Phase 8 - Multi-player version
+* TBDeveloped
 
 ----------------------------------------------
 
