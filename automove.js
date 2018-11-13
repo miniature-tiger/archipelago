@@ -113,7 +113,7 @@ let computer = {
                         }
                         lastTile = pirates.findLastActive(pieceMovement.findPath[computer.bestDestination[i].row][computer.bestDestination[i].col].path, 0);
                         computer.moveDecisionArray.push({ship: ship.type, shipNumber: index, moveType: 'resource', points: computer.bestDestination[i].points, target: targetRefs, moveCost: computer.bestDestination[i].moveCost,
-                                                            distance: computer.bestDestination[i].distance, targetRow: computer.bestDestination[i].row, targetCol: computer.bestDestination[i].col,
+                                                            distance: computer.bestDestination[i].distance, destinationRow: computer.bestDestination[i].row, destinationCol: computer.bestDestination[i].col,
                                                             row: pieceMovement.findPath[computer.bestDestination[i].row][computer.bestDestination[i].col].path[lastTile].fromRow, col: pieceMovement.findPath[computer.bestDestination[i].row][computer.bestDestination[i].col].path[lastTile].fromCol});
                     }
                 }
@@ -123,7 +123,8 @@ let computer = {
                 for (let i = 0; i < bestCollection.length; i+=1) {
                     lastTile = pirates.findLastActive(pieceMovement.findPath[bestCollection[i].row][bestCollection[i].col].path, 0);
                     computer.moveDecisionArray.push({ship: ship.type, shipNumber: index, moveType: 'collection', points: bestCollection[i].points, target: [bestCollection[i].resource], moveCost: bestCollection[i].moveCost, distance: bestCollection[i].distance,
-                                                        targetRow: bestCollection[i].row, targetCol: bestCollection[i].col, row: pieceMovement.findPath[bestCollection[i].row][bestCollection[i].col].path[lastTile].fromRow, col: pieceMovement.findPath[bestCollection[i].row][bestCollection[i].col].path[lastTile].fromCol});
+                                                        island: bestCollection[i].island, initial: bestCollection[i].initial, destinationRow: bestCollection[i].row, destinationCol: bestCollection[i].col, targetRow: bestCollection[i].targetRow, targetCol: bestCollection[i].targetCol,
+                                                        row: pieceMovement.findPath[bestCollection[i].row][bestCollection[i].col].path[lastTile].fromRow, col: pieceMovement.findPath[bestCollection[i].row][bestCollection[i].col].path[lastTile].fromCol});
                 }
                 // Adding best contract delivery moves to moveDecisionArray
                 // TO DO
@@ -346,6 +347,39 @@ let computer = {
         }
     },
 
+    // Method to load ship with goods once collection tile has been reached
+    // ------------------------------------------------------------------
+    loadShip: function() {
+        // check if move was a collection move
+        let finalDecisionPosition = computer.finalDecision.findIndex(fI => fI.shipNumber == computer.computerShipsTurnCount);
+        if (finalDecisionPosition != -1) {
+            let finalDecn = computer.finalDecision[finalDecisionPosition];
+            if (finalDecn.moveType == 'collection') {
+                // check if ship has arrived at collection tile
+                if (finalDecn.destinationRow == finalDecn.row && finalDecn.destinationCol == finalDecn.col) {
+                    let shipPositionInArray = stockDashboard.pieceTypes.findIndex(fI => fI.type == finalDecn.ship);
+                    // calculate amount to be loaded
+                    let amountToLoad = finalDecn.initial;
+                    amountToLoad = Math.min(amountToLoad, stockDashboard.pieceTypes[shipPositionInArray].maxHold - computer.computerShipsTurn[computer.computerShipsTurnCount].start.pieces.stock);
+                    goodsToLoad = gameBoard.boardArray[finalDecn.targetRow][finalDecn.targetCol].pieces.goods;
+                    // update game board with changes to goods
+                    gameBoard.boardArray[finalDecn.targetRow][finalDecn.targetCol].pieces.stock -= amountToLoad;
+                    if (gameBoard.boardArray[finalDecn.targetRow][finalDecn.targetCol].pieces.category == 'Settlements') {
+                        if (gameBoard.boardArray[finalDecn.targetRow][finalDecn.targetCol].pieces.stock == 0) {
+                            gameBoard.boardArray[finalDecn.targetRow][finalDecn.targetCol].pieces.goods = 'none';
+                        }
+                    }
+                    gameBoard.boardArray[finalDecn.row][finalDecn.col].pieces.stock += amountToLoad;
+                    gameBoard.boardArray[finalDecn.row][finalDecn.col].pieces.goods = goodsToLoad;
+                    amountToLoad = 0;
+                    // Update stock take and stock dashboard before next move
+                    stockDashboard.stockTake();
+                    stockDashboard.drawStock();
+                }
+            }
+        }
+    },
+
     // Method to check whether a ship can be built and decide whether to build a ship and which ship
     // ---------------------------------------------------------------------------------------------
     decideBuild: function() {
@@ -547,7 +581,9 @@ let computer = {
                     if (movesArray[i].resourceHarbour[j].detail == gameManagement.turn) {
                         contractStatsArray.forEach(function(contract, index) {
                             if (contract.resource == movesArray[i].resourceHarbour[j].type) {
-                                optionsCollection.push({row: movesArray[i].row, col: movesArray[i].col, resource: movesArray[i].resourceHarbour[j].type, points: [0, 0, 0], moveCost: movesArray[i].moveCost, activeStatus: movesArray[i].activeStatus, distance: movesArray[i].distance, move: movesArray[i], contract: contract})
+                                optionsCollection.push({row: movesArray[i].row, col: movesArray[i].col, resource: movesArray[i].resourceHarbour[j].type,
+                                                          points: [0, 0, 0], moveCost: movesArray[i].moveCost, activeStatus: movesArray[i].activeStatus,
+                                                            distance: movesArray[i].distance, move: movesArray[i], contract: contract})
                             }
                         });
                     }
@@ -590,7 +626,9 @@ let computer = {
         for (let option of optionsCollection) {
             // Array built up of highest scoring option for each resource
             if (option.points[0] > 0 && !bestCollection.some(best => best.resource == option.contract.resource)) {
-                bestCollection.push({ship: option.ship, moveType: option.moveType, points: option.points, moveCost: option.moveCost, distance: option.distance, resource: option.contract.resource, row: option.row, col: option.col});
+                bestCollection.push({ship: option.ship, moveType: option.moveType, points: option.points, moveCost: option.moveCost,
+                                        distance: option.distance, resource: option.contract.resource, island: option.contract.island, initial: option.contract.initial,
+                                           targetRow: Number(option.move.resourceHarbour[0].ref.split("-")[0]), targetCol: Number(option.move.resourceHarbour[0].ref.split("-")[1]), row: option.row, col: option.col});
             }
         }
 

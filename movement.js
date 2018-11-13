@@ -511,7 +511,9 @@ let pieceMovement = {
             if(this.movementArray.start.pieces.damageStatus == 5) {
                 pieceMovement.landDiscovery();
             }
+            gameBoard.drawActiveTiles();
             computer.decideClaimResource();
+            computer.loadShip();
             pieceMovement.harbourRepairArrival(chosenPiece);
             pieceMovement.moveCompletion();
         }
@@ -537,7 +539,6 @@ let pieceMovement = {
             startEnd = 'start';
             pirates.automatePirates();
         } else if (gameManagement.type == 'computer') {
-
             // Resetting movement array once second click has been made (if move valid)
             pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
             startEnd = 'start';
