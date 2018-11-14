@@ -224,7 +224,7 @@ let gameBoard = {
 
       // TEST AREA
 
-        /*
+
         // Resources for building / contracts
         this.boardArray[boardCenter-1][boardCenter].pieces = {populatedSquare: true, category: 'Resources', type: 'forest', direction: '0', used: 'unused', damageStatus: 5, team: 'Blue Team', goods: 'wood', stock: 20, production: 2};
         this.boardArray[boardCenter][boardCenter+1].pieces = {populatedSquare: true, category: 'Resources', type: 'ironworks', direction: '0', used: 'unused', damageStatus: 5, team: 'Blue Team', goods: 'iron', stock: 20, production: 2};
@@ -239,7 +239,7 @@ let gameBoard = {
         this.boardArray[boardCenter-4][boardCenter].pieces = {populatedSquare: true, category: 'Resources', type: 'flax', direction: '0', used: 'unused', damageStatus: 5, team: 'Orange Team', goods: 'cloth', stock: 20, production: 2};
 
         // Extra Ships
-        this.boardArray[boardCenter-3][col-9].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-90', used: 'unused', damageStatus: 5, team: 'Orange Team', goods: 'none', stock: 0, production: 0, homeRow: boardCenter-1, homeCol: col-1};
+    /*  this.boardArray[boardCenter-3][col-9].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-90', used: 'unused', damageStatus: 5, team: 'Orange Team', goods: 'none', stock: 0, production: 0, homeRow: boardCenter-1, homeCol: col-1};
         this.boardArray[boardCenter-2][col-9].pieces = {populatedSquare: true, category: 'Transport', type: 'catamaran', direction: '-90', used: 'unused', damageStatus: 5, team: 'Orange Team', goods: 'none', stock: 0, production: 0, homeRow: boardCenter-1, homeCol: col-1};
         this.boardArray[boardCenter-3][col-10].pieces = {populatedSquare: true, category: 'Transport', type: 'warship', direction: '-90', used: 'unused', damageStatus: 5, team: 'Orange Team', goods: 'none', stock: 0, production: 0, homeRow: boardCenter-1, homeCol: col-1};
         this.boardArray[boardCenter-2][col-10].pieces = {populatedSquare: true, category: 'Transport', type: 'catamaran', direction: '180', used: 'unused', damageStatus: 5, team: 'Red Team', goods: 'none', stock: 0, production: 0, homeRow: boardCenter-1, homeCol: col-1};

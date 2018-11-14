@@ -11,9 +11,9 @@ let stockDashboard = {
     // -------------------------------------
     // Pieces must be added in the order: Settlements, Transport, Resources
     pieceTypes: [ {type: 'fort', category: 'Settlements', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 0, maxHold: 20, battlePerc: 0, deckNumber: 0},
-                  {type: 'catamaran', category: 'Transport', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 6, maxHold: 5, battlePerc: 0.1, deckNumber: 0},
+                  {type: 'catamaran', category: 'Transport', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 16, maxHold: 5, battlePerc: 0.1, deckNumber: 0},
                   {type: 'warship', category: 'Transport', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 5, maxHold: 10, battlePerc: 0.4, deckNumber: 0},
-                  {type: 'cargo ship', category: 'Transport', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 4, maxHold: 20, battlePerc: 0.6, deckNumber: 0},
+                  {type: 'cargo ship', category: 'Transport', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 14, maxHold: 20, battlePerc: 0.6, deckNumber: 0},
                   {type: 'forest', category: 'Resources', maxNo: 1, goods: 'wood', maxProduction: 2, maxMove: 0, maxHold: 20, battlePerc: 0, deckNumber: 4},
                   {type: 'ironworks', category: 'Resources', maxNo: 1, goods: 'iron', maxProduction: 2, maxMove: 0, maxHold: 20, battlePerc: 0, deckNumber: 4},
                   {type: 'quarry', category: 'Resources', maxNo: 1, goods: 'stone', maxProduction: 2, maxMove: 0, maxHold: 20, battlePerc: 0, deckNumber: 4},
@@ -169,7 +169,7 @@ let stockDashboard = {
 
                             // calculate estimated points for fulfilling the delivery and pushes stats for each potential contract to array
                             tradeRouteInfo = tradeContracts.discoverPath(island.row, island.col, good);
-                            stats.push({island: island.name, goods: good, stock: stockAmount, resource: pieceType, netProduction: netStockProduction, initial: island.contracts[good].initial, phasesToInitial: phasesToInitial, distancePoints: tradeRouteInfo[3], firstPoints: gameScore.pointsArray.tradeFirst});
+                            stats.push({island: island.name, ref: island.row+'-'+island.col, goods: good, stock: stockAmount, resource: pieceType, netProduction: netStockProduction, initial: island.contracts[good].initial, phasesToInitial: phasesToInitial, distancePoints: tradeRouteInfo[3], firstPoints: gameScore.pointsArray.tradeFirst});
                         }
                     }
                 });
@@ -412,6 +412,17 @@ let stockDashboard = {
             }
         }
     },
+
+    // HELPER FUNCTIONS
+    // ----------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------
+    shipDetails: function(shipType) {
+        let shipPositionInArray = stockDashboard.pieceTypes.findIndex(fI => fI.type == shipType);
+        return stockDashboard.pieceTypes[shipPositionInArray];
+    },
+
+
+
 
 // LAST BRACKET OF OBJECT
 }

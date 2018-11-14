@@ -203,9 +203,9 @@ let pieceMovement = {
                 if ((gameBoard.boardArray[i][j].terrain == 'land' && !gameBoard.boardArray[i][j].pieces.populatedSquare) ||
                         (gameBoard.boardArray[i][j].pieces.category == 'Resources' && gameBoard.boardArray[i][j].pieces.type != 'desert')) {
                     // Single tile search around the island
-                    for (var k = -1; k < 2; k+=1) {
+                    for (let k = -1; k < 2; k+=1) {
                         if(i + k >=0 && i + k <row) {
-                            for (var l = -1; l < 2; l+=1) {
+                            for (let l = -1; l < 2; l+=1) {
                                 if(j + l >=0 && j + l <col) {
                                     // Reduces search to exclude diagonals
                                     if(k == 0 || l == 0) {
@@ -225,14 +225,36 @@ let pieceMovement = {
 
                 // Safe harbour for ship repair or hiding
                 if (gameBoard.boardArray[i][j].subTerrain == 'harbour') {
-                    this.findPath[i][j].harbour = [{type: [gameBoard.boardArray[i][j].subTerrain], team: ''}];
+                    // Single tile search around the harbour for fort reference
+                    for (let k = -1; k < 2; k+=1) {
+                        if(i + k >=0 && i + k <row) {
+                            for (let l = -1; l < 2; l+=1) {
+                                if(j + l >=0 && j + l <col) {
+                                    if (gameBoard.boardArray[i+k][j+l].pieces.type == 'fort') {
+                                        this.findPath[i][j].harbour.push({type: gameBoard.boardArray[i][j].subTerrain, team: gameBoard.boardArray[i][j].subTerrainTeam, ref: (i+k)+'-'+(j+l)});
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
 
                 // Tiles where path must end
                 if (gameBoard.boardArray[i][j].pieces.category == 'Transport') {
-                    this.findPath[i][j].pathStop = [{type: [gameBoard.boardArray[i][j].pieces.type], team: [gameBoard.boardArray[i][j].pieces.team]}];
+                    this.findPath[i][j].pathStop = [{type: gameBoard.boardArray[i][j].pieces.type, team: gameBoard.boardArray[i][j].pieces.team}];
                 } else if (gameBoard.boardArray[i][j].subTerrain == 'harbour') {
-                    this.findPath[i][j].pathStop = [{type: [gameBoard.boardArray[i][j].subTerrain], team: []}];
+                    // Single tile search around the harbour for fort reference
+                    for (let k = -1; k < 2; k+=1) {
+                        if(i + k >=0 && i + k <row) {
+                            for (let l = -1; l < 2; l+=1) {
+                                if(j + l >=0 && j + l <col) {
+                                    if (gameBoard.boardArray[i+k][j+l].pieces.type == 'fort') {
+                                        this.findPath[i][j].pathStop = [{type: gameBoard.boardArray[i][j].subTerrain, team: gameBoard.boardArray[i][j].subTerrainTeam, ref: (i+k)+'-'+(j+l)}];
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
 
                 // Pirate ships
@@ -513,7 +535,6 @@ let pieceMovement = {
             }
             gameBoard.drawActiveTiles();
             computer.decideClaimResource();
-            computer.loadShip();
             pieceMovement.harbourRepairArrival(chosenPiece);
             pieceMovement.moveCompletion();
         }
