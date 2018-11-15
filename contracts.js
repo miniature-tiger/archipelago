@@ -35,7 +35,7 @@ let tradeContracts = {
     newContract: function() {
         if(workFlow == 1) {console.log('New contract issuance assessed: ' + (Date.now() - launchTime)); }
         // x% chance that a new contract is generated
-        if (Math.random() > 0 && gameManagement.gameDate >= 1) { // should be >=9, set to 1 for testing
+        if (Math.random() > 0.75 && gameManagement.gameDate >= 9) { // should be >=9, set to 1 for testing
             // Chooses a kingdom settlement at random
             let settlementNumber = Math.floor((Math.random() * this.contractsArray.length));
             let contractIsland = this.contractsArray[settlementNumber];
@@ -127,7 +127,7 @@ let tradeContracts = {
 
     // Method to complete contract delivery
     // ------------------------------------
-    fulfilDelivery: function(localGoods, localTradeRouteInfo) {
+    fulfilDelivery: function(localGoods, localTradeRouteInfo, shipRow, shipCol, islandRow, islandCol) {
 
         let localPath = localTradeRouteInfo[0];
         let localStartRow = localTradeRouteInfo[1];
@@ -136,8 +136,10 @@ let tradeContracts = {
 
         // Add path and Resource tile to contract array
         let chosenFort = -1;
+
         for (var k = 0; k < this.contractsArray.length; k++) {
-            if(this.contractsArray[k].row == pieceMovement.movementArray.end.row && this.contractsArray[k].col == pieceMovement.movementArray.end.col) {
+
+            if(this.contractsArray[k].row == islandRow && this.contractsArray[k].col == islandCol) {
                 chosenFort = k;
             }
         }
@@ -152,11 +154,11 @@ let tradeContracts = {
         gameScore.workScores('Trading', gameManagement.turn, this.contractsArray[chosenFort].name, localDistance);
 
         // Updates game board based on delivery
-        deliveryGoods = gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.goods;
+        deliveryGoods = gameBoard.boardArray[shipRow][shipCol].pieces.goods;
         deliveryStock = this.contractsArray[chosenFort].contracts[deliveryGoods].initial;
-        gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.stock -= deliveryStock;
-        if (gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.stock == 0) {
-            gameBoard.boardArray[pieceMovement.movementArray.start.row][pieceMovement.movementArray.start.col].pieces.goods = 'none';
+        gameBoard.boardArray[shipRow][shipCol].pieces.stock -= deliveryStock;
+        if (gameBoard.boardArray[shipRow][shipCol].pieces.stock == 0) {
+            gameBoard.boardArray[shipRow][shipCol].pieces.goods = 'none';
         }
 
         // Updates contracts array based on delivery

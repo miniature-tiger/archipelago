@@ -562,8 +562,8 @@ function boardHandler(event) {
               } else if (pieceMovement.movementArray.start.pieces.category == 'Transport' && pieceMovement.movementArray.end.pieces.team == 'Kingdom' && pieceMovement.movementArray.end.pieces.type == 'fort') {
                     pieceMovement.deactivateTiles();
                     gameBoard.drawActiveTiles();
-                    tradeRouteInfo = tradeContracts.discoverPath(pieceMovement.movementArray.end.row, pieceMovement.movementArray.end.col, pieceMovement.movementArray.start.pieces.goods);
-                    tradeContracts.fulfilDelivery(pieceMovement.movementArray.start.pieces.goods, tradeRouteInfo);
+                    let tradeRouteInfo = tradeContracts.discoverPath(pieceMovement.movementArray.end.row, pieceMovement.movementArray.end.col, pieceMovement.movementArray.start.pieces.goods);
+                    tradeContracts.fulfilDelivery(pieceMovement.movementArray.start.pieces.goods, tradeRouteInfo, pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col, pieceMovement.movementArray.end.row, pieceMovement.movementArray.end.col);
                     tradeContracts.drawContracts();
 
                 // Unloading to own team fort or resource tile

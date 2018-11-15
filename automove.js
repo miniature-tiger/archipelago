@@ -419,6 +419,23 @@ let computer = {
 
     // Method to check whether a ship can be built and decide whether to build a ship and which ship
     // ---------------------------------------------------------------------------------------------
+    goodsDelivery: function() {
+        // gather info on ship that is moving and on move being made
+        let shipDetails = computer.computerShipsTurn[computer.computerShipsTurnCount];
+        let finalDecisionPosition = computer.finalDecision.findIndex(fI => fI.shipNumber == computer.computerShipsTurnCount);
+        if (finalDecisionPosition != -1) {
+            let finalDecn = computer.finalDecision[finalDecisionPosition];
+            // check if move is a delivery move requiring loading
+            if (finalDecn.moveType == 'delivery' && shipDetails.end.row == finalDecn.destinationRow && shipDetails.end.col == finalDecn.destinationCol) {
+                let tradeRouteInfo = tradeContracts.discoverPath(finalDecn.targetRow, finalDecn.targetCol, shipDetails.start.pieces.goods);
+                tradeContracts.fulfilDelivery(shipDetails.start.pieces.goods, tradeRouteInfo, shipDetails.end.row, shipDetails.end.col, finalDecn.targetRow, finalDecn.targetCol);
+                tradeContracts.drawContracts();
+            }
+        }
+    },
+
+    // Method to check whether a ship can be built and decide whether to build a ship and which ship
+    // ---------------------------------------------------------------------------------------------
     decideBuild: function() {
         let teamPosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == gameManagement.turn);
         let buildStats = stockDashboard.buildStats(gameManagement.turn);

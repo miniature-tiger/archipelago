@@ -535,6 +535,7 @@ let pieceMovement = {
             }
             gameBoard.drawActiveTiles();
             computer.decideClaimResource();
+            computer.goodsDelivery();
             pieceMovement.harbourRepairArrival(chosenPiece);
             pieceMovement.moveCompletion();
         }
