@@ -417,8 +417,8 @@ let computer = {
         }
     },
 
-    // Method to check whether a ship can be built and decide whether to build a ship and which ship
-    // ---------------------------------------------------------------------------------------------
+    // Method to check where delivery can be completed
+    // -------------------------------------------------
     goodsDelivery: function() {
         // gather info on ship that is moving and on move being made
         let shipDetails = computer.computerShipsTurn[computer.computerShipsTurnCount];
@@ -629,7 +629,7 @@ let computer = {
         // Loops through all potential map moves and finds team resource harbours
         for (let i = 0; i < movesArray.length; i+=1) {
             movesArray[i].points = [0, 0, 0];
-            if (movesArray[i].distance > 0) {
+            if (movesArray[i].distance > 1) {
                 if (movesArray[i].pathStop.length == 0 || movesArray[i].activeStatus != 'active') {
                     for (var j = 0; j < movesArray[i].resourceHarbour.length; j+=1) {
                         // Only adding scores for harbours of resources discovered by team
@@ -720,7 +720,6 @@ let computer = {
             if ((shipDetails.start.pieces.goods == contract.goods && shipDetails.start.pieces.stock >= contract.initial) || (shipDetails.start.pieces.stock == 0 && loadableGoods.stock >= contract.initial)) {
                 console.log(contract)
                 for (let i = 0; i < deliveryMoves.length; i+=1) {
-                    console.log(deliveryMoves[i].pathStop[0].ref , deliveryMoves[i].harbour[0].ref)
                     if (deliveryMoves[i].pathStop.length == 0 || deliveryMoves[i].pathStop[0].ref == deliveryMoves[i].harbour[0].ref || deliveryMoves[i].activeStatus != 'active') {
                         // Constructs potential deliver moves
                         if (contract.ref == deliveryMoves[i].harbour[0].ref) {
@@ -748,7 +747,6 @@ let computer = {
             option.points[0] = option.contract.firstPoints + option.contract.distancePoints;
 
             // Deduction for pirate ships in range of move active tile (not final destination tile)
-            console.log(option.move.pirateRange)
             for (var k = 0; k < option.move.pirateRange.length; k+=1) {
                 option.points[1] += this.piratesFactor(option.move.pirateRange[k]);
             }

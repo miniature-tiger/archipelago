@@ -91,6 +91,11 @@ let gameManagement = {
         building.style.bottom = '-15%';
         scoreHeader.style.top = '-15%';
 
+        // Players eliminated at the end of moon 4 / start of moon 5 and end of moon 6 / start of moon 7
+        if ((gameManagement.gameDate == (4 * gameManagement.phaseCount) || gameManagement.gameDate == (6 * gameManagement.phaseCount)) && gameManagement.turn == 'Pirate') {
+            gameManagement.eliminatePlayer(gameManagement.firstLastPlayer());
+        }
+
         // Game date updated after all players have moved
         if (gameManagement.turn == 'Pirate') {
             gameManagement.gameDate += 1;
@@ -110,11 +115,6 @@ let gameManagement = {
 
         // Moon is redrawn for next turn
         gameBoard.drawMoonLayer();
-
-        // Players eliminated at the end of moon 4 / start of moon 5 and end of moon 6 / start of moon 7
-        if ((gameManagement.gameDate == (4 * gameManagement.phaseCount + 1) || gameManagement.gameDate == (6 * gameManagement.phaseCount + 1)) && gameManagement.turn == gameManagement.teamArray[1]) {
-            gameManagement.eliminatePlayer(gameManagement.firstLastPlayer());
-        }
 
         // Check whether player has completed all tasks necessary to end game
         let countClosedContracts = tradeContracts.countClosed();
@@ -273,12 +273,13 @@ let gameManagement = {
     // Method to remove a player's pieces from the game on elimination
     // ---------------------------------------------------------------
     eliminatePlayer: function(localFirstLast) {
-        if(workFlow == 1) {console.log('Eliminating player: ' + localTeam + ' : ' + (Date.now() - launchTime)); }
-        for (var i = 0; i < gameBoard.boardArray.length; i++) {
-            // Loop through all board tiles
-            for (var j = 0; j < gameBoard.boardArray[i].length; j++) {
-                if (gameBoard.boardArray[i][j].pieces.team == localFirstLast[1]) {
+        let eliminatedTeam = localFirstLast[1];
 
+        if(workFlow == 1) {console.log('Eliminating player: ' + localTeam + ' : ' + (Date.now() - launchTime)); }
+        for (var i = 0; i < gameBoard.boardArray.length; i+=1) {
+            // Loop through all board tiles
+            for (var j = 0; j < gameBoard.boardArray[i].length; j+=1) {
+                if (gameBoard.boardArray[i][j].pieces.team == eliminatedTeam) {
                     // Remove all transport ships
                     if (gameBoard.boardArray[i][j].pieces.category == 'Transport') {
                         let IDPiece = 'tile' + Number(i*1000 + j);
@@ -296,19 +297,38 @@ let gameManagement = {
             }
         }
 
+        // Remove all existing trade routes for eliminated player
+        for (var k = 0; k < tradeContracts.contractsArray.length; k+=1) {
+            for (var l = 0; l < resourceManagement.resourcePieces.length; l+=1) {
+                if (tradeContracts.contractsArray[k].contracts[resourceManagement.resourcePieces[l].goods].team == eliminatedTeam) {
+                    if (tradeContracts.contractsArray[k].contracts[resourceManagement.resourcePieces[l].goods].struck == 'active') {
+                        // Remove trade route from board
+                        IDtradeRoute = resourceManagement.resourcePieces[l].goods + '_' + k;
+                        let closedTradeRoute = document.getElementById(IDtradeRoute);
+                        closedTradeRoute.remove();
+                        gameScore.workScores('Trading', eliminatedTeam, tradeContracts.contractsArray[k].name, ((tradeContracts.contractsArray[k].contracts[resourceManagement.resourcePieces[l].goods].contractPath.length - 1) * -1) );
+                        // Reset contractsArray as these contracts were not completed
+                        tradeContracts.contractsArray[k].contracts[resourceManagement.resourcePieces[l].goods] = {created: false, struck: 'unopen', team: 'none', initial: 0, renewal: 0, timeRemaining: 0};
+                        tradeContracts.contractsArray[k].totalActive -=1;
+                        tradeContracts.contractsArray[k].totalUnopen +=1;
+                    }
+                }
+            }
+        }
+
         // Update marker for competing player / eliminated player in player listing
-        index = this.playerListing.findIndex(fI => fI.teamColour == localFirstLast[1]);
+        index = this.playerListing.findIndex(fI => fI.teamColour == eliminatedTeam);
         this.playerListing[index].status = 'eliminated';
 
         // Remove player from teamArray
-        let index2 = this.teamArray.indexOf(localFirstLast[1]);
+        let index2 = this.teamArray.indexOf(eliminatedTeam);
         if (index2 != -1) {
             this.teamArray.splice(index2, 1);
         }
 
         // Update scrollTextArray
         let eliminationDate = this.moonDate(this.gameDate).moonMonth;
-        this.scrollTextArray[eliminationDate-1][0] = this.playerListing[index].teamColour + ' has been eliminated.'
+        this.scrollTextArray[eliminationDate][0] = this.playerListing[index].teamColour + ' has been eliminated.'
     },
 
 
