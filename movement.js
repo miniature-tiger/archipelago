@@ -387,7 +387,7 @@ let pieceMovement = {
 
     // Method for ship movement and transition
     // ---------------------------------------
-    shipTransition: function(gameSpeed) {
+    shipTransition: async function(gameSpeed) {
         if(workFlow == 1) {console.log('----- Ship transition -----: ' + (Date.now() - launchTime)); }
         // Variables for transition movements
         let topDirection = 0;
@@ -400,13 +400,49 @@ let pieceMovement = {
 
         // Calculate placement on board of start tile for move
         IDPieceStart = 'tile' + Number(this.movementArray.start.row*1000 + this.movementArray.start.col);
-        //console.log(IDPieceStart);
         let chosenPiece = document.getElementById(IDPieceStart);
 
-        // Allowing ship to overflow edges of its tile on transition
-        // console.log(chosenPiece);
-        //chosenSquare.start = chosenHolding.start.parentElement;
-        //chosenSquare.start.style.overflow = 'visible';
+        // Scroll to move being made if not a human player
+        if (gameManagement.type != 'human') {
+            let minScroll = boardSurround - gridSize;
+            let maxScroll = mapWidth - innerHeight - minScroll;
+
+            let startScroll = window.pageYOffset;
+            let endScroll = Math.min(Math.max(boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * (this.movementArray.start.row + 0.5) - innerHeight/2 , minScroll), maxScroll);
+
+            // No scroll if scroll distance is smaller than 5 tiles to prevent jumpiness
+            if (Math.abs(startScroll - endScroll) > gridSize*5) {
+                await frameScroll(startScroll, endScroll, 1);
+            }
+
+            async function frameScroll(localStartScroll, localEndScroll, speedScroll) {
+                // delay at start of scrolling
+                await new Promise(resolve => setTimeout(resolve, 200));
+                let scrollStep = -8 * (localStartScroll - localEndScroll) / Math.abs((localStartScroll - localEndScroll));
+                let numberOfSteps = Math.ceil((localEndScroll - localStartScroll)/scrollStep);
+
+                // scrolling speed is constant so longer scrolls will take longer
+                for (let i = 0; i < numberOfSteps-1; i+=1) {
+                    window.scrollTo({
+                        top: localStartScroll + i * scrollStep,
+                        // behavior: 'smooth'
+                    });
+                    await new Promise(resolve => setTimeout(resolve, 4));
+                }
+                // final scroll makes the scroll movement exact
+                window.scrollTo({
+                    top: localEndScroll
+                });
+
+                // delay at start of scrolling before tiles activated
+                await new Promise(resolve => setTimeout(resolve, 200));
+                return;
+            }
+        }
+
+        // Redraw active tile layer after activation to show activated tiles
+        gameBoard.drawActiveTiles();
+        await new Promise(resolve => setTimeout(resolve, 200));
 
         // Obtaining path of piece that leads to end tile of move from findPath array
         let localPath = this.findPath[this.movementArray.end.row][this.movementArray.end.col].path;
@@ -533,6 +569,7 @@ let pieceMovement = {
             if(this.movementArray.start.pieces.damageStatus == 5) {
                 pieceMovement.landDiscovery();
             }
+            pieceMovement.deactivateTiles();
             gameBoard.drawActiveTiles();
             computer.decideClaimResource();
             computer.goodsDelivery();

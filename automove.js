@@ -209,8 +209,6 @@ let computer = {
             } else {
                 pieceMovement.initialisefindPath(pieceMovement.movementArray.start.row, pieceMovement.movementArray.start.col);
             }
-            // Redraw active tile layer after activation to show activated tiles
-            gameBoard.drawActiveTiles();
 
             // -------------- DECIDING MOVE (equivalent of END of move) -----------------
             // Deciding move for damaged ships at sea (damageStatus is set to 0 after battle loss)
@@ -285,7 +283,7 @@ let computer = {
             }
             computer.computerShipsTurn[computer.computerShipsTurnCount].moveStatus = true;
             if(arrayFlow == 1) {console.log('computerShipsTurn', JSON.parse(JSON.stringify(this.computerShipsTurn)));}
-            pieceMovement.deactivateTiles();
+            //pieceMovement.deactivateTiles();
             computer.loadShip();
             pieceMovement.shipTransition(gameSpeed);
         }

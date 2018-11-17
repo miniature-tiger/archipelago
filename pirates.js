@@ -4,9 +4,10 @@ let pirates = {
 
     pirateShips: [
                   {manifest: {ref: 0, homeRow: 5, homeCol: 5, returnRow: 11, returnCol: 11}, start: {row: '', col: ''}, end: {row: '', col: ''}},
-                  {manifest: {ref: 1, homeRow: 25, homeCol: 5, returnRow: 19, returnCol: 11}, start: {row: '', col: ''}, end: {row: '', col: ''}},
-                  {manifest: {ref: 2, homeRow: 25, homeCol: 25, returnRow: 19, returnCol: 19}, start: {row: '', col: ''}, end: {row: '', col: ''}},
-                  {manifest: {ref: 3, homeRow: 5, homeCol: 25, returnRow: 11, returnCol: 19}, start: {row: '', col: ''}, end: {row: '', col: ''}},
+                  {manifest: {ref: 1, homeRow: 5, homeCol: 25, returnRow: 11, returnCol: 19}, start: {row: '', col: ''}, end: {row: '', col: ''}},
+                  {manifest: {ref: 2, homeRow: 25, homeCol: 5, returnRow: 19, returnCol: 11}, start: {row: '', col: ''}, end: {row: '', col: ''}},
+                  {manifest: {ref: 3, homeRow: 25, homeCol: 25, returnRow: 19, returnCol: 19}, start: {row: '', col: ''}, end: {row: '', col: ''}},
+
     ],
 
     pirateCount: -1,
@@ -219,7 +220,7 @@ let pirates = {
             for (var j = Math.max(pieceMovement.movementArray.start.col - searchRange, 0); j < Math.min(pieceMovement.movementArray.start.col + searchRange + 1, col); j++) {
                 if (findPiece = 'All') {
                     if (pieceMovement.findPath[i][j][localKey].length > 0 && pieceMovement.findPath[i][j].pathStatus == true) {
-                        // Pirate range is based on last tile of active path i.e. where the ship will stop not the final destination - this differs from findpath 
+                        // Pirate range is based on last tile of active path i.e. where the ship will stop not the final destination - this differs from findpath
                         searchResult.push({row: i, col: j, distance: pieceMovement.findPath[i][j].distance, moveCost: pieceMovement.findPath[i][j].moveCost, activeStatus: pieceMovement.findPath[i][j].activeStatus, pathStop: pieceMovement.findPath[i][j].pathStop, pirateRange: pieceMovement.findPath[pieceMovement.findPath[i][j].lastTile.row][pieceMovement.findPath[i][j].lastTile.col].pirateRange});
                         searchResult[searchResult.length-1][localKey] = pieceMovement.findPath[i][j][localKey];
                     }

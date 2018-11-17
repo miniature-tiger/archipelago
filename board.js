@@ -198,15 +198,15 @@ let gameBoard = {
         //this.boardArray[4][6].terrain = 'sea';
         //this.boardArray[4][6].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '135', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0};
 
-        this.boardArray[row-6][5] = {xpos: row-6, ypos: 5, terrain: 'sea', subTerrain: 'pirateHarbour', subTerrainTeam: 'Pirate', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'warship', direction: '45', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0, ref: 1}};
+        this.boardArray[row-6][5] = {xpos: row-6, ypos: 5, terrain: 'sea', subTerrain: 'pirateHarbour', subTerrainTeam: 'Pirate', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'warship', direction: '45', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0, ref: 2}};
         //this.boardArray[row-7][4].terrain = 'sea';
         //this.boardArray[row-7][4].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '45', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0};
 
-        this.boardArray[row-6][col-6] = {xpos: row-5, ypos: col-7, terrain: 'sea', subTerrain: 'pirateHarbour',  subTerrainTeam: 'Pirate', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'warship', direction: '-45', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0, ref: 2}};
+        this.boardArray[row-6][col-6] = {xpos: row-5, ypos: col-7, terrain: 'sea', subTerrain: 'pirateHarbour',  subTerrainTeam: 'Pirate', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'warship', direction: '-45', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0, ref: 3}};
         //this.boardArray[row-5][col-7].terrain = 'sea';
         //this.boardArray[row-5][col-7].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-45', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0};
 
-        this.boardArray[5][col-6] = {xpos: 6, ypos: col-5, terrain: 'sea', subTerrain: 'pirateHarbour',  subTerrainTeam: 'Pirate', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'warship', direction: '-135', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0, ref: 3}};
+        this.boardArray[5][col-6] = {xpos: 6, ypos: col-5, terrain: 'sea', subTerrain: 'pirateHarbour',  subTerrainTeam: 'Pirate', activeStatus: 'inactive', pieces: {populatedSquare: true, category: 'Transport', type: 'warship', direction: '-135', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0, ref: 1}};
         //this.boardArray[6][col-5].terrain = 'sea';
         //this.boardArray[6][col-5].pieces = {populatedSquare: true, category: 'Transport', type: 'cargo ship', direction: '-135', used: 'unused', damageStatus: 5, team: 'Pirate', goods: 'none', stock: 0};
 
