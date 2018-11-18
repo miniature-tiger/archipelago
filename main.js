@@ -4,10 +4,6 @@
 // --------------------------
 // --------------------------
 
-window.addEventListener("error", function(e) {
-    console.log('error: ' + e.message + ' at linenumber: ' + e.lineno + ' of file: ' +e.filename);
-});
-
 
 const launchTime = Date.now();
 
@@ -15,9 +11,6 @@ let workFlow = gameManagement.optionsArray[1].options[0].active;
 let gameBoardTrack = 0;
 let arrayFlow = gameManagement.optionsArray[1].options[1].active;
 let transitionMonitor = gameManagement.optionsArray[1].options[2].active;
-
-
-
 
 
 
@@ -116,7 +109,7 @@ boardMarkNode.appendChild(moonLayer);
 
 // Setting up next turn icon
 
-var endTurn = document.querySelector('.endturnmark');
+let endTurn = document.querySelector('.endturnmark');
 endTurn.setAttribute('class', gameManagement.turn + ' team_fill team_stroke');
 gameManagement.createTurnCircle(false, 0.6*surroundSize/100, 0*screenReduction, 0.18*surroundSize, endTurn, 'icon_holder');
 
@@ -255,7 +248,7 @@ function popRunClose(e) {
 
 // Switching of next turn listener
 // -------------------------------
-endTurn.addEventListener('click', gameManagement.nextTurn);
+//endTurn.addEventListener('click', gameManagement.nextTurn);
 
 
 // Set up of building event listener
@@ -272,7 +265,7 @@ secondBuildLine.style.left = '7%';
 thirdBuildLine.style.left = '7%';
 
 // Event listener added to stock dashboard
-stockDashboardNode.addEventListener('click', buildItem.clickStock);
+//stockDashboardNode.addEventListener('click', buildItem.clickStock);
 
 // Set up of stock dashboard event listener
 // ----------------------------------------
@@ -588,14 +581,16 @@ function boardHandler(event) {
                     gameScore.workScores('Building', gameManagement.turn, pieceMovement.movementArray.start.pieces.type);
                 // Piece movement
               } else if (pieceMovement.movementArray.start.pieces.category == 'Transport') {
+                    // Main action event listeners are switched off whilst move transitions are shown
                     endTurn.removeEventListener('click', gameManagement.nextTurn);
                     boardMarkNode.removeEventListener('click', boardHandler);
                     stockDashboardNode.removeEventListener('click', buildItem.clickStock);
                     stockDashboardNode.removeEventListener('mouseover', stockDashboard.hoverPieceOn);
                     stockDashboardNode.removeEventListener('mouseleave', gameBoard.clearHighlightTiles);
-                    pieceMovement.deactivateTiles();
                     // Redraw active tile layer after deactivation to remove activated tiles
+                    pieceMovement.deactivateTiles();
                     gameBoard.drawActiveTiles();
+                    // Graphics of move transitions
                     pieceMovement.shipTransition(gameSpeed);
 
                 }
@@ -629,4 +624,3 @@ let boardMarkLeft = boardMarkNode.offsetLeft;
 let boardMarkTop = boardMarkNode.offsetTop;
 
 gameManagement.nextTurn();
-boardMarkNode.addEventListener('click', boardHandler);

@@ -153,11 +153,7 @@ let pirates = {
                 this.pirateShips[i].end = {row: '', col: ''};
             }
             pirates.pirateCount = -1;
-            endTurn.addEventListener('click', gameManagement.nextTurn);
-            boardMarkNode.addEventListener('click', boardHandler);
-            stockDashboardNode.addEventListener('click', buildItem.clickStock);
-            stockDashboardNode.addEventListener('mouseover', stockDashboard.hoverPieceOn);
-            stockDashboardNode.addEventListener('mouseleave', gameBoard.clearHighlightTiles);
+            gameManagement.nextTurn();
         }
 
     },

@@ -66,20 +66,29 @@ let gameManagement = {
         // Used pieces are resert to unused
         if(workFlow == 1) {console.log(' ------ Next turn: ---------: ' + (Date.now() - launchTime)); }
 
-        // Removing the next turn event listener whilst the next turn functions are run
+        // Removing the action event listeners whilst the next turn functions are run
+        // these remain switched off until a human turn is started
         endTurn.removeEventListener('click', gameManagement.nextTurn);
+        boardMarkNode.removeEventListener('click', boardHandler);
+        stockDashboardNode.removeEventListener('click', buildItem.clickStock);
+        stockDashboardNode.removeEventListener('mouseover', stockDashboard.hoverPieceOn); // turned off as they do not show the right squares during transitions
+        stockDashboardNode.removeEventListener('mouseleave', gameBoard.clearHighlightTiles);
 
-        // Resetting if second click not applied
+        // Removing commentary goods event handler and clearing commentary
+        commentary.removeEventListener('click', clickGoods);
+        clearCommentary();
+
+        // Other event listeners remain on at all times:
+        // theHeader - event listeners mouseenter, mouseleave for scoreboard dropdown
+        // settingsIcon, window - event listeners for opening and closing of settings
+
+        // Resetting any active tiles
         pieceMovement.deactivateTiles();
         gameBoard.drawActiveTiles();
 
         // Resetting movement array in case second click has not been made
         pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
         startEnd = 'start';
-
-        // Removing commentary goods event handler
-        commentary.removeEventListener('click', clickGoods);
-        clearCommentary();
 
         buildItem.clearBuilding();
 
@@ -166,11 +175,10 @@ let gameManagement = {
         // Repair ships
         pieceMovement.harbourRepair();
 
-        // Re-establish next turn listener
-        endTurn.addEventListener('click', gameManagement.nextTurn);
-
         // Automated movement for pirates
         if (gameManagement.type == 'Pirate') {
+            // Event listeners are not turned on for pirate moves - no code required
+            // Run pirate automation
             pirates.automatePirates();
         } else {
             // Chance of new trade contract
@@ -195,13 +203,16 @@ let gameManagement = {
         }
 
         if (gameManagement.type == 'computer') {
-            // Remove event handlers to prevent manual moves
-            endTurn.removeEventListener('click', gameManagement.nextTurn);
-            boardMarkNode.removeEventListener('click', boardHandler);
+            // Event listeners are not turned on for computer moves - no code required
             // Automates moves of computer opponents
             computer.automatePlayer();
-        } else {
+        } else { // human
+            // Main action event listeners are switched on
             boardMarkNode.addEventListener('click', boardHandler);
+            stockDashboardNode.addEventListener('click', buildItem.clickStock);
+            endTurn.addEventListener('click', gameManagement.nextTurn);
+            stockDashboardNode.addEventListener('mouseover', stockDashboard.hoverPieceOn);
+            stockDashboardNode.addEventListener('mouseleave', gameBoard.clearHighlightTiles);
         }
     },
 
