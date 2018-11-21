@@ -169,7 +169,7 @@ let stockDashboard = {
 
                             // calculate estimated points for fulfilling the delivery and pushes stats for each potential contract to array
                             tradeRouteInfo = tradeContracts.discoverPath(island.row, island.col, good);
-                            stats.push({island: island.name, goods: good, stock: stockAmount, resource: pieceType, netProduction: netStockProduction, initial: island.contracts[good].initial, phasesToInitial: phasesToInitial, distancePoints: tradeRouteInfo[3], firstPoints: gameScore.pointsArray.tradeFirst});
+                            stats.push({island: island.name, ref: island.row+'-'+island.col, goods: good, stock: stockAmount, resource: pieceType, netProduction: netStockProduction, initial: island.contracts[good].initial, phasesToInitial: phasesToInitial, distancePoints: tradeRouteInfo[3], firstPoints: gameScore.pointsArray.tradeFirst});
                         }
                     }
                 });
@@ -412,6 +412,17 @@ let stockDashboard = {
             }
         }
     },
+
+    // HELPER FUNCTIONS
+    // ----------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------
+    shipDetails: function(shipType) {
+        let shipPositionInArray = stockDashboard.pieceTypes.findIndex(fI => fI.type == shipType);
+        return stockDashboard.pieceTypes[shipPositionInArray];
+    },
+
+
+
 
 // LAST BRACKET OF OBJECT
 }
