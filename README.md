@@ -114,7 +114,7 @@ Conflicts:
 
 Contracts for delivery:
 * Automate collection of goods - COMPLETE
-* Automate delivery of goods
+* Automate delivery of goods - COMPLETE
 * Automate choice of contracts to fulfil - COMPLETE
 
 Shipbuilding
