@@ -588,7 +588,7 @@ let pieceMovement = {
             pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
             startEnd = 'start';
             endTurn.addEventListener('click', gameManagement.nextTurn);
-            boardMarkNode.addEventListener('click', boardHandler);
+            boardMarkNode.addEventListener('click', human.boardHandler);
             stockDashboardNode.addEventListener('click', buildItem.clickStock);
             stockDashboardNode.addEventListener('mouseover', stockDashboard.hoverPieceOn);
             stockDashboardNode.addEventListener('mouseleave', gameBoard.clearHighlightTiles);

@@ -8,6 +8,13 @@ let buildItem = {
                   {type: 'cargo ship', recipe: [{goods: 'wood', quantity: 15}, {goods: 'iron', quantity: 10}, {goods: 'cloth', quantity: 8}]},
                   ],
 
+    // Set up of building slider elements
+    // ---------------------------------
+    building: document.querySelector('.building'),
+    firstBuildLine: document.querySelector('#firstBuildLine'),
+    secondBuildLine: document.querySelector('#secondBuildLine'),
+    thirdBuildLine: document.querySelector('#thirdBuildLine'),
+
     // Method to handle clicks on stock dashboard
     // ------------------------------------------
     // Only build actions currently operational from clicking on stock dashboard
@@ -34,14 +41,14 @@ let buildItem = {
     // -----------------------------------------------------------------------
     clickBuild: function(stockElement, localBuild) {
         // Resets any half-made board moves and deactivates tiles
-        resetMove();
+        human.resetMove();
 
         // Clears building slider for use
         buildItem.clearBuilding();
 
         // Slides building slider up and commentary down
-        commentary.style.bottom = '-10%';
-        building.style.bottom = 0;
+        commentary.commentaryBox.style.bottom = '-10%';
+        buildItem.building.style.bottom = 0;
 
         // Refreshes amount of stock held by players and set up variables
         stockDashboard.goodsStockTake();
@@ -49,7 +56,7 @@ let buildItem = {
         let buildNo = buildItem.buildRecipe.findIndex(y => y.type == localBuild);
 
         // Add icon of ship clicked on
-        let buildIcon = building.appendChild(gameBoard.createActionTile(0, 0, localBuild, gameManagement.turn, 'buildPiece', 10, (screenWidth - 2*surroundSize) * 0.04 - (gridSize + 2*tileBorder)/2, 1.5, 0));
+        let buildIcon = buildItem.building.appendChild(gameBoard.createActionTile(0, 0, localBuild, gameManagement.turn, 'buildPiece', 10, (screenWidth - 2*surroundSize) * 0.04 - (gridSize + 2*tileBorder)/2, 1.5, 0));
 
         // Check enough goods to build chosen ship
         let allowConstruction = this.enoughGoodsToBuild(buildNo, teamNo);
@@ -57,29 +64,29 @@ let buildItem = {
         // Adds goods icons to illustrate quantity held vs quantity required
         for (var k = 0; k < buildItem.buildRecipe[buildNo].recipe.length; k++) {
             for (var i = 0; i < Math.min(stockDashboard.goodsTotals[teamNo].land[buildItem.buildRecipe[buildNo].recipe[k].goods], buildItem.buildRecipe[buildNo].recipe[k].quantity); i++) {
-                building.appendChild(gameBoard.createIcon(buildItem.buildRecipe[buildNo].recipe[k].goods + i, 1.5, buildItem.buildRecipe[buildNo].recipe[k].goods, (screenWidth - 2*surroundSize) * ((k+2) * 0.20) - tileBorder/2 + (((i % 10) - 0.5) * (gridSize + tileBorder) / 1.5), 10 + Math.floor(i/10) * ((gridSize + tileBorder) / 1.5)));
-                for (var z = 0; z < building.lastChild.children.length; z++) {
-                    let nextChild = building.lastChild.children[z];
-                    nextChild.setAttribute('class', building.lastChild.children[z].baseVal + ' ' + gameManagement.turn + ' team_stroke team_fill');
+                buildItem.building.appendChild(gameBoard.createIcon(buildItem.buildRecipe[buildNo].recipe[k].goods + i, 1.5, buildItem.buildRecipe[buildNo].recipe[k].goods, (screenWidth - 2*surroundSize) * ((k+2) * 0.20) - tileBorder/2 + (((i % 10) - 0.5) * (gridSize + tileBorder) / 1.5), 10 + Math.floor(i/10) * ((gridSize + tileBorder) / 1.5)));
+                for (var z = 0; z < buildItem.building.lastChild.children.length; z++) {
+                    let nextChild = buildItem.building.lastChild.children[z];
+                    nextChild.setAttribute('class', buildItem.building.lastChild.children[z].baseVal + ' ' + gameManagement.turn + ' team_stroke team_fill');
                 }
             }
             for (var j = stockDashboard.goodsTotals[teamNo].land[buildItem.buildRecipe[buildNo].recipe[k].goods]; i < buildItem.buildRecipe[buildNo].recipe[k].quantity; i++) {
-                building.appendChild(gameBoard.createIcon('stock' + i, 1.5, buildItem.buildRecipe[buildNo].recipe[k].goods, (screenWidth - 2*surroundSize) * ((k+2) * 0.20) - tileBorder/2 + (((i % 10) - 0.5) * (gridSize + tileBorder) / 1.5), 10 + Math.floor(i/10) * ((gridSize + tileBorder) / 1.5)));
+                buildItem.building.appendChild(gameBoard.createIcon('stock' + i, 1.5, buildItem.buildRecipe[buildNo].recipe[k].goods, (screenWidth - 2*surroundSize) * ((k+2) * 0.20) - tileBorder/2 + (((i % 10) - 0.5) * (gridSize + tileBorder) / 1.5), 10 + Math.floor(i/10) * ((gridSize + tileBorder) / 1.5)));
             }
         }
 
         // Adds ship construction details to building slider
-        firstBuildLine.innerText = 'Construction of ' + localBuild + ' requires:';
-        secondBuildLine.innerText = buildItem.buildRecipe[buildNo].recipe[0].goods + ' ' + buildItem.buildRecipe[buildNo].recipe[0].quantity + ', ' + buildItem.buildRecipe[buildNo].recipe[1].goods + ' ' + buildItem.buildRecipe[buildNo].recipe[1].quantity + ', ' + buildItem.buildRecipe[buildNo].recipe[2].goods + ' ' + buildItem.buildRecipe[buildNo].recipe[2].quantity ;
+        buildItem.firstBuildLine.innerText = 'Construction of ' + localBuild + ' requires:';
+        buildItem.secondBuildLine.innerText = buildItem.buildRecipe[buildNo].recipe[0].goods + ' ' + buildItem.buildRecipe[buildNo].recipe[0].quantity + ', ' + buildItem.buildRecipe[buildNo].recipe[1].goods + ' ' + buildItem.buildRecipe[buildNo].recipe[1].quantity + ', ' + buildItem.buildRecipe[buildNo].recipe[2].goods + ' ' + buildItem.buildRecipe[buildNo].recipe[2].quantity ;
         // Sets up piece movement array and adds ship type and launches construction
         if (allowConstruction == true) {
-            thirdBuildLine.innerText = 'Click ship icon to confirm construction.';
+            buildItem.thirdBuildLine.innerText = 'Click ship icon to confirm construction.';
             pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
             pieceMovement.movementArray.start.pieces = {type: localBuild};
             buildIcon.addEventListener('click', buildItem.startConstruction);
         // Does not launch construction if insufficient stock
         } else {
-            thirdBuildLine.innerText = 'Insufficient goods available to build ' + localBuild + '.';
+            buildItem.thirdBuildLine.innerText = 'Insufficient goods available to build ' + localBuild + '.';
         }
     },
 
@@ -108,8 +115,8 @@ let buildItem = {
         startEnd = 'end';
 
         // Changing building text
-        firstBuildLine.innerText = 'Select harbour for construction.';
-        secondBuildLine.innerText = '';
+        buildItem.firstBuildLine.innerText = 'Select harbour for construction.';
+        buildItem.secondBuildLine.innerText = '';
         thirdBuildLine.innerText = '';
 
         return shipBuildLocation;
@@ -177,11 +184,11 @@ let buildItem = {
     // ----------------------
     clearBuilding: function() {
         if(workFlow == 1) {console.log('Clearing building slider: ' + (Date.now() - launchTime)); }
-        for (var i = building.children.length - 1; i > -1; i--) {
-            if (building.children[i].id == 'firstBuildLine' || building.children[i].id == 'secondBuildLine' || building.children[i].id == 'thirdBuildLine') {
-                building.children[i].innerText = '';
+        for (var i = buildItem.building.children.length - 1; i > -1; i--) {
+            if (buildItem.building.children[i].id == 'firstBuildLine' || buildItem.building.children[i].id == 'secondBuildLine' || buildItem.building.children[i].id == 'thirdBuildLine') {
+                buildItem.building.children[i].innerText = '';
             } else {
-                building.children[i].remove();
+                buildItem.building.children[i].remove();
             }
         }
     },

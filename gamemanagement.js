@@ -69,14 +69,14 @@ let gameManagement = {
         // Removing the action event listeners whilst the next turn functions are run
         // these remain switched off until a human turn is started
         endTurn.removeEventListener('click', gameManagement.nextTurn);
-        boardMarkNode.removeEventListener('click', boardHandler);
+        boardMarkNode.removeEventListener('click', human.boardHandler);
         stockDashboardNode.removeEventListener('click', buildItem.clickStock);
         stockDashboardNode.removeEventListener('mouseover', stockDashboard.hoverPieceOn); // turned off as they do not show the right squares during transitions
         stockDashboardNode.removeEventListener('mouseleave', gameBoard.clearHighlightTiles);
 
         // Removing commentary goods event handler and clearing commentary
-        commentary.removeEventListener('click', clickGoods);
-        clearCommentary();
+        commentary.commentaryBox.removeEventListener('click', commentary.clickGoods);
+        commentary.clearCommentary();
 
         // Other event listeners remain on at all times:
         // theHeader - event listeners mouseenter, mouseleave for scoreboard dropdown
@@ -96,8 +96,8 @@ let gameManagement = {
         pieceMovement.usedPiecesReset();
 
         // Comment and building and scoreboard bars reset
-        commentary.style.bottom = '-10%';
-        building.style.bottom = '-15%';
+        commentary.commentaryBox.style.bottom = '-10%';
+        buildItem.building.style.bottom = '-15%';
         scoreHeader.style.top = '-15%';
 
         // Players eliminated at the end of moon 4 / start of moon 5 and end of moon 6 / start of moon 7
@@ -208,7 +208,7 @@ let gameManagement = {
             computer.automatePlayer();
         } else { // human
             // Main action event listeners are switched on
-            boardMarkNode.addEventListener('click', boardHandler);
+            boardMarkNode.addEventListener('click', human.boardHandler);
             stockDashboardNode.addEventListener('click', buildItem.clickStock);
             endTurn.addEventListener('click', gameManagement.nextTurn);
             stockDashboardNode.addEventListener('mouseover', stockDashboard.hoverPieceOn);

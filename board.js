@@ -1327,7 +1327,7 @@ let gameBoard = {
                                 {type: 'land', gap: 4*screenReduction, width: 1.5*screenReduction, colour: 'rgb(138, 87, 50)', background: 'transparent'} ]
 
         for (var h = 0; h < octagonArray.length; h++) {
-            this.drawTiles (octagonArray[h].type, canvasBoard, octagonArray[h].gap, octagonArray[h].width, octagonArray[h].colour, octagonArray[h].background)
+            this.drawTiles(octagonArray[h].type, canvasBoard, octagonArray[h].gap, octagonArray[h].width, octagonArray[h].colour, octagonArray[h].background)
         }
         this.drawHarbours();
     },

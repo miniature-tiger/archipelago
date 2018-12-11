@@ -67,10 +67,10 @@ let tradeContracts = {
                 this.contractsArray[settlementNumber].contracts[resourceType] = {created: true, struck: 'open', team: 'none', initial: initialAmount, renewal: renewalAmount, timeRemaining: 8};
 
                 // Comment that a contract is generated
-                clearCommentary();
-                commentary.style.bottom = 0;
-                firstLineComment.innerText = 'Contract issued by ' + contractIsland.name + ' island for ' + resourceType + '.';
-                secondLineComment.innerText = 'Initial delivery amount: ' + initialAmount + ' + Weekly trade amount: ' + renewalAmount;
+                commentary.clearCommentary();
+                commentary.commentaryBox.style.bottom = 0;
+                commentary.firstLineComment.innerText = 'Contract issued by ' + contractIsland.name + ' island for ' + resourceType + '.';
+                commentary.secondLineComment.innerText = 'Initial delivery amount: ' + initialAmount + ' + Weekly trade amount: ' + renewalAmount;
             }
 
         } else {
@@ -113,13 +113,13 @@ let tradeContracts = {
                 if(checkTeam == false ) {
                     delivery = true;
                 } else {
-                    secondLineComment.innerText = localTeam + ' already has a contract with this island.';
+                    commentary.secondLineComment.innerText = localTeam + ' already has a contract with this island.';
                 }
             } else {
-                secondLineComment.innerText = 'Insufficient goods to comeplete contract.';
+                commentary.secondLineComment.innerText = 'Insufficient goods to comeplete contract.';
             }
         } else {
-            secondLineComment.innerText = 'No open contract for these goods.';
+            commentary.secondLineComment.innerText = 'No open contract for these goods.';
         }
 
         return delivery;
