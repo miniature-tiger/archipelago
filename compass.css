@@ -3,10 +3,9 @@
 
 /* Compass circles*/
 
-.compass {
+.compassLayer {
     position: absolute;
     background-color: rgb(246, 232, 206);
-    z-index: 1;
 }
 
 #needle2 {

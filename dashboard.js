@@ -1,81 +1,65 @@
 // Dashboard object - methods to initialise dashboards
 let stockDashboard = {
 
+    // Finds the stockDashboard holder in the left hand panel
+    node: document.querySelector('div.stockDashboard'),
 
     // Array to hold information on pieces held by each player
     // -------------------------------------------------------
     pieceTotals: [],
 
-
-    // Array to hold list of all piece types
-    // -------------------------------------
-    // Pieces must be added in the order: Settlements, Transport, Resources
-    pieceTypes: [ {type: 'fort', category: 'Settlements', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 0, maxHold: 20, battlePerc: 0, deckNumber: 0},
-                  {type: 'catamaran', category: 'Transport', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 6, maxHold: 5, battlePerc: 0.1, deckNumber: 0},
-                  {type: 'warship', category: 'Transport', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 5, maxHold: 10, battlePerc: 0.4, deckNumber: 0},
-                  {type: 'cargo ship', category: 'Transport', maxNo: 1, goods: 'none', maxProduction: 0, maxMove: 4, maxHold: 20, battlePerc: 0.6, deckNumber: 0},
-                  {type: 'forest', category: 'Resources', maxNo: 1, goods: 'wood', maxProduction: 2, maxMove: 0, maxHold: 20, battlePerc: 0, deckNumber: 4},
-                  {type: 'ironworks', category: 'Resources', maxNo: 1, goods: 'iron', maxProduction: 2, maxMove: 0, maxHold: 20, battlePerc: 0, deckNumber: 4},
-                  {type: 'quarry', category: 'Resources', maxNo: 1, goods: 'stone', maxProduction: 2, maxMove: 0, maxHold: 20, battlePerc: 0, deckNumber: 4},
-                  {type: 'plantation', category: 'Resources', maxNo: 1, goods: 'coffee', maxProduction: 2, maxMove: 0, maxHold: 20, battlePerc: 0, deckNumber: 4},
-                  {type: 'flax', category: 'Resources', maxNo: 1, goods: 'cloth', maxProduction: 2, maxMove: 0, maxHold: 20, battlePerc: 0, deckNumber: 4},
-                  {type: 'clay', category: 'Resources', maxNo: 1, goods: 'pottery', maxProduction: 2, maxMove: 0, maxHold: 20, battlePerc: 0, deckNumber: 4},
-                ],
-
-
-    // Method to count items in boardArray for leader board
-    // ----------------------------------------------------
-
+    // Method to count items in boardArray for dashboard
+    // --------------------------------------------------
     stockTake: function() {
         let counter = 0;
         let piecesGoods = 'none';
         let piecesStock = 0;
         let stockTeam = [];
-        let unclaimedPosition = gameManagement.teamArray.length;
-        let totalPosition = gameManagement.teamArray.length + 1;
+        let unclaimedPosition = game.teamArray.length;
+        let totalPosition = game.teamArray.length + 1;
 
         // Set up array of team names with Unclaimed and total added
-        for (var g = 0; g < gameManagement.teamArray.length; g++) {
-            stockTeam[g] = gameManagement.teamArray[g];
+        for (var g = 0; g < game.teamArray.length; g++) {
+            stockTeam[g] = game.teamArray[g].team;
         }
         stockTeam[unclaimedPosition] = 'Unclaimed';
         stockTeam[totalPosition] = 'Total';
 
         stockDashboard.pieceTotals[totalPosition] = {team: 'total', pieces: {}};
-
-        for (var h = 0; h < stockTeam.length - 1; h++) {
-            //console.log(gameManagement.teamArray[h]);
+        for (var h = 0; h < stockTeam.length - 1; h+=1) {
             stockDashboard.pieceTotals[h] = {team: stockTeam[h], pieces: {}};
-            for (var k = 0; k < stockDashboard.pieceTypes.length; k++) {
-                stockDashboard.pieceTotals[h].pieces[stockDashboard.pieceTypes[k].type] = {};
-                counter = 0;
-                piecesGoods = 'none';
-                piecesStock = 0;
-                piecesProduction = 0;
-                for (var i = 0; i < gameBoard.boardArray.length; i++) {
-                    for (var j = 0; j < gameBoard.boardArray[i].length; j++) {
-                        if(gameBoard.boardArray[i][j].pieces.populatedSquare) {
-                            if(gameBoard.boardArray[i][j].pieces.team == stockTeam[h]) {
-                                if(gameBoard.boardArray[i][j].pieces.type == stockDashboard.pieceTypes[k].type) {
-                                    counter += 1;
-                                    piecesGoods = gameBoard.boardArray[i][j].pieces.goods;
-                                    piecesStock = gameBoard.boardArray[i][j].pieces.stock;
-                                    piecesProduction = gameBoard.boardArray[i][j].pieces.production;
+            for (let pieceType of Object.keys(gameData.pieceTypes)) {
+                if (pieceType != 'desert') {
+                    let piece = gameData.pieceTypes[pieceType];
+                    stockDashboard.pieceTotals[h].pieces[pieceType] = {};
+                    counter = 0;
+                    piecesGoods = 'none';
+                    piecesStock = 0;
+                    piecesProduction = 0;
+                    for (var i = 0; i < game.boardArray.length; i++) {
+                        for (var j = 0; j < game.boardArray[i].length; j++) {
+                            if(game.boardArray[i][j].piece.populatedSquare) {
+                                if(game.boardArray[i][j].piece.team === stockTeam[h]) {
+                                    if(game.boardArray[i][j].piece.type === pieceType) {
+                                        counter += 1;
+                                        piecesGoods = game.boardArray[i][j].piece.goods;
+                                        piecesStock = game.boardArray[i][j].piece.stock;
+                                        piecesProduction = game.boardArray[i][j].piece.production;
+                                    }
                                 }
                             }
                         }
                     }
+                    stockDashboard.pieceTotals[h].pieces[pieceType] = {quantity: counter, goods: piecesGoods, stock: piecesStock, production: piecesProduction, category: piece.category};
+                    if(h == 0) {
+                        stockDashboard.pieceTotals[totalPosition].pieces[pieceType] = {quantity: counter, category: piece.category};
+                    } else {
+                        stockDashboard.pieceTotals[totalPosition].pieces[pieceType].quantity += counter;
+                    }
                 }
-                stockDashboard.pieceTotals[h].pieces[stockDashboard.pieceTypes[k].type] = {quantity: counter, goods: piecesGoods, stock: piecesStock, production: piecesProduction, category: stockDashboard.pieceTypes[k].category};
-                if(h == 0) {
-                    stockDashboard.pieceTotals[totalPosition].pieces[stockDashboard.pieceTypes[k].type] = {quantity: counter, category: stockDashboard.pieceTypes[k].category};
-                } else {
-                    stockDashboard.pieceTotals[totalPosition].pieces[stockDashboard.pieceTypes[k].type].quantity += counter;
-                }
-
             }
         }
-          if(arrayFlow == 1) {console.log('pieceTotals', stockDashboard.pieceTotals)};
+          if(settings.arrayFlow === true) {console.log('pieceTotals', stockDashboard.pieceTotals)};
     },
 
     // Quick calculation of Resource tiles held by player
@@ -98,33 +82,31 @@ let stockDashboard = {
         const stockTeamPosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == localTeam);
         const stockTotalPosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == 'total');
         const unclaimedPosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == 'Unclaimed');
-        const scoreTotalPosition = gameScore.scoreArray.findIndex(fI => fI.team == 'total');
         const undiscoveredIslands = resourceManagement.countIslands();
 
         let stats = {};
         let statATotal = 0, statBTotal = 0, statCTotal = 0, statDTotal =0;
 
         for (const pieceType of Object.keys(stockDashboard.pieceTotals[stockTeamPosition].pieces)) {
-            let piecePosition = stockDashboard.pieceTypes.findIndex(fI => fI.type == pieceType);
-            if (stockDashboard.pieceTotals[stockTeamPosition].pieces[pieceType].category == 'Resources') {
+            if (stockDashboard.pieceTotals[stockTeamPosition].pieces[pieceType].category === 'Resources') {
                 // Resource quantity and probability stats
                 statA = stockDashboard.pieceTotals[stockTeamPosition].pieces[pieceType].quantity;
                 statC = stockDashboard.pieceTotals[unclaimedPosition].pieces[pieceType].quantity;
                 statB = stockDashboard.pieceTotals[stockTotalPosition].pieces[pieceType].quantity - statC - statA;
-                statD = stockDashboard.pieceTypes[piecePosition].deckNumber - statA - statB - statC;
+                statD = gameData.pieceTypes[pieceType].deckNumber - statA - statB - statC;
                 statE = Number((statD * 100 / undiscoveredIslands).toFixed(1));
                 // Resource points stats
-                if (gameScore.scoreArray[scoreTotalPosition].Exploring[pieceType] == 0) {
+                if (gameScore.scoreArray.Total.Exploring[pieceType] === 0) {
                     statF = gameScore.pointsArray.discoveryFirst;
                 } else {
                     statF = gameScore.pointsArray.discoveryLater;
                 }
-                if (gameScore.scoreArray[scoreTotalPosition].Exploring.half == 0) {
+                if (gameScore.scoreArray.Total.Exploring.half == 0) {
                     statG = gameScore.pointsArray.discoveryHalf;
                 } else {
                     statG = 0;
                 }
-                if (gameScore.scoreArray[scoreTotalPosition].Exploring.all == 0) {
+                if (gameScore.scoreArray.Total.Exploring.all == 0) {
                     statH = gameScore.pointsArray.discoveryComplete;
                 } else {
                     statH = 0;
@@ -145,19 +127,18 @@ let stockDashboard = {
     // Method to produce array of contracts that can be fulfilled by players with associated stats
     // --------------------------------------------------------------------------------------------
     contractStats: function() {
-        const stockTeamPosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == gameManagement.turn);
+        const stockTeamPosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == game.turn);
         let stats = [];
 
         // contract information for all islands and all resources is held in tradeContracts.contractsArray
         tradeContracts.contractsArray.forEach(function(island, index) {
             // check whether a player already has a contract with an island to narrow down contracts to be assessed
-            let checkTeam = tradeContracts.hasContract(index, gameManagement.turn);
+            let checkTeam = tradeContracts.hasContract(index, game.turn);
             if (!checkTeam) {
                 Object.keys(island.contracts).forEach(function(good) {
                     // Only need to examine contracts that are open (so not unopen, active or closed)
                     if (island.contracts[good].struck == 'open') {
-                        let piecePosition = stockDashboard.pieceTypes.findIndex(fI => fI.goods == good);
-                        pieceType = stockDashboard.pieceTypes[piecePosition].type;
+                        let pieceType = Object.keys(gameData.pieceTypes).find(type => gameData.pieceTypes[type].goods === good);
                         // check whether player has resource
                         if (stockDashboard.pieceTotals[stockTeamPosition].pieces[pieceType].quantity > 0) {
                             stockAmount = stockDashboard.pieceTotals[stockTeamPosition].pieces[pieceType].stock;
@@ -182,16 +163,13 @@ let stockDashboard = {
     // All the useful building stats for a team
     // ----------------------------------------
     buildStats: function(localTeam) {
-
         const stockTeamPosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == localTeam);
         const stockTotalPosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == 'total');
         const stockPiratePosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == 'Pirate');
 
         let stats = {};
         //let statATotal = 0, statBTotal = 0;
-
         for (const pieceType of Object.keys(stockDashboard.pieceTotals[stockTeamPosition].pieces)) {
-            let piecePosition = stockDashboard.pieceTypes.findIndex(fI => fI.type == pieceType);
             if (stockDashboard.pieceTotals[stockTeamPosition].pieces[pieceType].category == 'Transport') {
                 // Ship quantity stats
                 statA = stockDashboard.pieceTotals[stockTeamPosition].pieces[pieceType].quantity; // player
@@ -212,7 +190,6 @@ let stockDashboard = {
             }
             //stats.total = {player: statATotal, otherPlayer: statBTotal};
         }
-
         return(stats);
     },
 
@@ -220,11 +197,11 @@ let stockDashboard = {
     // -----------------------------------------------------
     drawStock: function() {
         // Any existing dashboard is deleted
-        while (stockDashboardNode.firstChild) {
-            stockDashboardNode.removeChild(stockDashboardNode.firstChild);
+        while (this.node.firstChild) {
+            this.node.removeChild(this.node.firstChild);
         }
 
-        if (gameManagement.turn != 'Pirate') {
+        if (game.turn != 'Pirate') {
             // Variable to hold current category being added to the dashboard
             let stockCategory = '';
 
@@ -232,112 +209,114 @@ let stockDashboard = {
             let xPosition = 0;
 
             // Loops through all the piece types in pieceTypes array - dashboard is created one piece type at a time - k is each piece type
-            for (var k = 0; k < this.pieceTypes.length; k++) {
-                //Sets counter to zero
-                let counter = 0;
-                // Icon setting base on piece type
-                if (this.pieceTypes[k].category == 'Transport') {
-                    rotateIcon = 90;
-                    xPosition = -8;
-                } else {
-                    rotateIcon = 0;
-                    xPosition = 0;
-                }
-                // Check if a new category is to be created
-                if (this.pieceTypes[k].category != stockCategory) {
-                    stockCategory = this.pieceTypes[k].category;
+            for (let pieceType of Object.keys(gameData.pieceTypes)) {
+                if (pieceType != 'desert') {
+                    let pieceData = gameData.pieceTypes[pieceType];
+                    //Sets counter to zero
+                    let counter = 0;
+                    // Icon setting base on piece type
+                    if (pieceData.category == 'Transport') {
+                        rotateIcon = 90;
+                        xPosition = -8;
+                    } else {
+                        rotateIcon = 0;
+                        xPosition = 0;
+                    }
+                    // Check if a new category is to be created
+                    if (pieceData.category != stockCategory) {
+                        stockCategory = pieceData.category;
 
-                    // Div to hold category is created and category title added
-                    var divCat = document.createElement('div');
-                    divCat.setAttribute('class', 'item_holder');
-                    stockDashboardNode.appendChild(divCat);
-                    var divCatTitle = document.createTextNode(stockCategory);
-                    divCat.appendChild(divCatTitle);
-                }
+                        // Div to hold category is created and category title added
+                        var divCat = document.createElement('div');
+                        divCat.setAttribute('class', 'item_holder');
+                        this.node.appendChild(divCat);
+                        var divCatTitle = document.createTextNode(stockCategory);
+                        divCat.appendChild(divCatTitle);
+                    }
 
-                // Loop through boardArray - looks for pieces for current turn team and piece type k
-                for (var i = 0; i < gameBoard.boardArray.length; i++) {
-                    for (var j = 0; j < gameBoard.boardArray[i].length; j++) {
-                        if(gameBoard.boardArray[i][j].pieces.team == gameManagement.turn) {
-                            if(gameBoard.boardArray[i][j].pieces.type == stockDashboard.pieceTypes[k].type) {
-                                // Div to hold piece type is created and icon added
-                                let divType = document.createElement('div');
-                                divType.setAttribute('class', 'inner_item_holder');
-                                divCat.appendChild(divType);
-                                // Icon added
-                                let divTypeIcon = gameBoard.createActionTile(0, 0, this.pieceTypes[k].type, gameManagement.turn, 'dash_' + this.pieceTypes[k].type, 2, xPosition, 1.5, rotateIcon);
-                                divType.appendChild(divTypeIcon);
+                    // Loop through boardArray - looks for pieces for current turn team and piece type k
+                    for (let i = 0; i < game.boardArray.length; i+=1) {
+                        for (let j = 0; j < game.boardArray[i].length; j+=1) {
+                            if(game.boardArray[i][j].piece.team == game.turn) {
+                                if(game.boardArray[i][j].piece.type == pieceType) {
+                                    // Div to hold piece type is created and icon added
+                                    let divType = document.createElement('div');
+                                    divType.setAttribute('class', 'inner_item_holder');
+                                    divCat.appendChild(divType);
+                                    // Icon added
+                                    divType.appendChild(new PieceSVG(pieceType, game.turn, 'dash_' + pieceType, 2, xPosition, 1.5, rotateIcon, 5, game.gridSize, game.tileBorder, game.boardSurround).svg);
+                                    let divForText = document.createElement('div');
+                                    divForText.setAttribute('class', 'dashboard_text');
+                                    divType.appendChild(divForText);
 
-                                let divForText = document.createElement('div');
-                                divForText.setAttribute('class', 'dashboard_text');
-                                divType.appendChild(divForText);
+                                    //let divTypeTitle = document.createTextNode(' ' + this.pieceTypes[i].type + ': ' + this.pieceTotals[0].pieces[this.pieceTypes[i].type]);
+                                    // Adds x2 (or equivalent) indicator if production greater than 1
+                                    if (pieceData.category == 'Resources' && game.boardArray[i][j].piece.production > 1) {
+                                        let divTypeTitle = document.createTextNode('x' + game.boardArray[i][j].piece.production);
+                                        divForText.style.fontWeight = 'bold';
+                                        divForText.appendChild(divTypeTitle);
+                                    } else {
+                                        let divTypeTitle = document.createTextNode('');
+                                        divForText.appendChild(divTypeTitle);
+                                    }
 
-                                //let divTypeTitle = document.createTextNode(' ' + this.pieceTypes[i].type + ': ' + this.pieceTotals[0].pieces[this.pieceTypes[i].type]);
-                                // Adds x2 (or equivalent) indicator if production greater than 1
-                                if (this.pieceTypes[k].category == 'Resources' && gameBoard.boardArray[i][j].pieces.production > 1) {
-                                    let divTypeTitle = document.createTextNode('x' + gameBoard.boardArray[i][j].pieces.production);
-                                    divForText.style.fontWeight = 'bold';
-                                    divForText.appendChild(divTypeTitle);
-                                } else {
-                                    let divTypeTitle = document.createTextNode('');
-                                    divForText.appendChild(divTypeTitle);
+                                    let divForStock = document.createElement('div');
+                                    divForStock.setAttribute('class', 'stock_item_holder');
+                                    divType.appendChild(divForStock);
+
+                                    if (pieceData.category != 'Resources' && game.boardArray[i][j].piece.stock == 0) {
+                                        let divStockTitle = document.createTextNode('no cargo');
+                                        divForStock.appendChild(divStockTitle);
+                                    } else {
+                                        let divStockTitle = document.createTextNode(game.boardArray[i][j].piece.goods + ': ' + game.boardArray[i][j].piece.stock + '/' + pieceData.maxHold);
+                                        divForStock.appendChild(divStockTitle);
+                                    }
+                                    counter += 1;
                                 }
-
-                                let divForStock = document.createElement('div');
-                                divForStock.setAttribute('class', 'stock_item_holder');
-                                divType.appendChild(divForStock);
-
-                                if (this.pieceTypes[k].category != 'Resources' && gameBoard.boardArray[i][j].pieces.stock == 0) {
-                                    let divStockTitle = document.createTextNode('no cargo');
-                                    divForStock.appendChild(divStockTitle);
-                                } else {
-                                    let divStockTitle = document.createTextNode(gameBoard.boardArray[i][j].pieces.goods + ': ' + gameBoard.boardArray[i][j].pieces.stock + '/' + this.pieceTypes[k].maxHold);
-                                    divForStock.appendChild(divStockTitle);
-                                }
-                                counter += 1;
                             }
                         }
                     }
-                }
-                // If no pieces of type k found:
-                if (counter == 0) {
-                    let additionalClass = '';
-                    if (this.pieceTypes[k].type == 'cargo ship') {
-                        additionalClass = 'buildcargo';
-                    } else if (this.pieceTypes[k].category == 'Transport') {
-                        additionalClass = 'build' + this.pieceTypes[k].type;
-                    }
+                    // If no pieces of type k found:
+                    if (counter == 0) {
+                        let additionalClass = '';
+                        if (pieceType == 'cargoship') {
+                            additionalClass = 'buildcargo';
+                        } else if (pieceData.category == 'Transport') {
+                            additionalClass = 'build' + pieceType;
+                        }
 
-                    // Div to hold piece type is created and icon added
-                    let divType = document.createElement('div');
-                    divType.setAttribute('class', 'inner_item_holder ' + additionalClass);
-                    divCat.appendChild(divType);
-                    // Icon added
-                    let divTypeIcon = gameBoard.createActionTile(0, 0, this.pieceTypes[k].type, 'Unclaimed', 'dash_' + this.pieceTypes[k].type, 2, xPosition, 1.5, rotateIcon);
-                    if (this.pieceTypes[k].category == 'Transport') {
-                        //divTypeIcon.setAttribute('class', additionalClass);
-                        divTypeIcon.classList.add(additionalClass);
-                    }
-                    divType.appendChild(divTypeIcon);
+                        // Div to hold piece type is created and icon added
+                        let divType = document.createElement('div');
+                        divType.setAttribute('class', 'inner_item_holder ' + additionalClass);
+                        divCat.appendChild(divType);
+                        // Icon added
+                        let divTypeIcon = new PieceSVG(pieceType, 'Unclaimed', 'dash_' + pieceType, 2, xPosition, 1.5, rotateIcon, 5, game.gridSize, game.tileBorder, game.boardSurround).svg;
 
-                    let divForText = document.createElement('div');
-                    divForText.setAttribute('class', 'dashboard_text ' + additionalClass);
-                    divType.appendChild(divForText);
+                        if (pieceData.category == 'Transport') {
+                            //divTypeIcon.setAttribute('class', additionalClass);
+                            divTypeIcon.classList.add(additionalClass);
+                        }
+                        divType.appendChild(divTypeIcon);
 
-                    //let divTypeTitle = document.createTextNode(' ' + this.pieceTypes[i].type + ': ' + this.pieceTotals[0].pieces[this.pieceTypes[i].type]);
-                    let divTypeTitle = document.createTextNode('');
-                    divForText.appendChild(divTypeTitle);
+                        let divForText = document.createElement('div');
+                        divForText.setAttribute('class', 'dashboard_text ' + additionalClass);
+                        divType.appendChild(divForText);
 
-                    let divForStock = document.createElement('div');
-                    divForStock.setAttribute('class', 'stock_item_holder ' + additionalClass);
-                    divType.appendChild(divForStock);
+                        //let divTypeTitle = document.createTextNode(' ' + this.pieceTypes[i].type + ': ' + this.pieceTotals[0].pieces[this.pieceTypes[i].type]);
+                        let divTypeTitle = document.createTextNode('');
+                        divForText.appendChild(divTypeTitle);
 
-                    if (this.pieceTypes[k].category == 'Resources') {
-                        let divStockTitle = document.createTextNode('no ' + this.pieceTypes[k].goods);
-                        divForStock.appendChild(divStockTitle);
-                    } else if (this.pieceTypes[k].category == 'Transport') {
-                        let divStockTitle = document.createTextNode('build');
-                        divForStock.appendChild(divStockTitle);
+                        let divForStock = document.createElement('div');
+                        divForStock.setAttribute('class', 'stock_item_holder ' + additionalClass);
+                        divType.appendChild(divForStock);
+
+                        if (pieceData.category == 'Resources') {
+                            let divStockTitle = document.createTextNode('no ' + pieceData.goods);
+                            divForStock.appendChild(divStockTitle);
+                        } else if (pieceData.category == 'Transport') {
+                            let divStockTitle = document.createTextNode('build');
+                            divForStock.appendChild(divStockTitle);
+                        }
                     }
                 }
             }
@@ -345,53 +324,54 @@ let stockDashboard = {
     },
 
 
-    goodsTotals: [],
+    goodsTotals: {},
 
     goodsStockTake: function() {
         let counter = 0;
-        for (var h = 0; h < gameManagement.teamArray.length; h++) {
-            //console.log(gameManagement.teamArray[h]);
-            this.goodsTotals[h] = {team: gameManagement.teamArray[h], land: {}, sea: {}, total: {}};
-            for (var k = 0; k < this.pieceTypes.length; k++) {
-                //console.log(stockDashboard.pieceTypes[k].type);
-                this.goodsTotals[h].land[this.pieceTypes[k].goods] = 0;
-                this.goodsTotals[h].sea[this.pieceTypes[k].goods] = 0;
-                this.goodsTotals[h].total[this.pieceTypes[k].goods] = 0;
-                counterLand = 0;
-                counterSea = 0;
-                for (var i = 0; i < gameBoard.boardArray.length; i++) {
-                    for (var j = 0; j < gameBoard.boardArray[i].length; j++) {
-                        if(gameBoard.boardArray[i][j].pieces.populatedSquare) {
-                            if(gameBoard.boardArray[i][j].pieces.team == gameManagement.teamArray[h]) {
-                                if(gameBoard.boardArray[i][j].pieces.goods == this.pieceTypes[k].goods) {
-                                    if (gameBoard.boardArray[i][j].terrain == 'land') {
-                                        counterLand += gameBoard.boardArray[i][j].pieces.stock;
-                                    } else if (gameBoard.boardArray[i][j].terrain == 'sea') {
-                                        counterSea += gameBoard.boardArray[i][j].pieces.stock;
+        for (let teamDetails of game.teamArray) {
+            let team = teamDetails.team;
+            this.goodsTotals[team] = {team: team, land: {}, sea: {}, total: {}};
+            for (let pieceType of Object.keys(gameData.pieceTypes)) {
+                if (pieceType != 'desert') {
+                    let pieceData = gameData.pieceTypes[pieceType];
+                    this.goodsTotals[team].land[pieceData.goods] = 0;
+                    this.goodsTotals[team].sea[pieceData.goods] = 0;
+                    this.goodsTotals[team].total[pieceData.goods] = 0;
+                    counterLand = 0;
+                    counterSea = 0;
+                    for (let i = 0; i < game.boardArray.length; i+=1) {
+                        for (let j = 0; j < game.boardArray[i].length; j+=1) {
+                            if (game.boardArray[i][j].piece.populatedSquare) {
+                                if (game.boardArray[i][j].piece.team === team) {
+                                    if(game.boardArray[i][j].piece.goods === pieceData.goods) {
+                                        if (game.boardArray[i][j].tile.terrain === 'land') {
+                                            counterLand += game.boardArray[i][j].piece.stock;
+                                        } else if (game.boardArray[i][j].tile.terrain === 'sea') {
+                                            counterSea += game.boardArray[i][j].piece.stock;
+                                        }
                                     }
                                 }
                             }
                         }
                     }
+                    this.goodsTotals[team].land[pieceData.goods] = counterLand;
+                    this.goodsTotals[team].sea[pieceData.goods] = counterSea;
+                    this.goodsTotals[team].total[pieceData.goods] = counterLand + counterSea;
                 }
-                this.goodsTotals[h].land[this.pieceTypes[k].goods] = counterLand;
-                this.goodsTotals[h].sea[this.pieceTypes[k].goods] = counterSea;
-                this.goodsTotals[h].total[this.pieceTypes[k].goods] = counterLand + counterSea;
             }
         }
-        if (arrayFlow == 1) {console.log('goodsTotals', this.goodsTotals);}
+        if (settings.arrayFlow === true) {console.log('goodsTotals', this.goodsTotals);}
     },
 
     // Method to add new goods each turn
     // ---------------------------------
     newTurnGoods: function() {
-        for (var i = 0; i < gameBoard.boardArray.length; i++) {
-            for (var j = 0; j < gameBoard.boardArray[i].length; j++) {
-                if(gameBoard.boardArray[i][j].pieces.team == gameManagement.turn) {
-                    if(gameBoard.boardArray[i][j].pieces.category == 'Resources') {
-                        let arrayPosition = stockDashboard.pieceTypes.findIndex(k => k.goods == gameBoard.boardArray[i][j].pieces.goods);
+        for (var i = 0; i < game.boardArray.length; i++) {
+            for (var j = 0; j < game.boardArray[i].length; j++) {
+                if(game.boardArray[i][j].piece.team == game.turn) {
+                    if(game.boardArray[i][j].piece.category == 'Resources') {
                         // Maximum goods set to 20
-                        gameBoard.boardArray[i][j].pieces.stock = Math.min(gameBoard.boardArray[i][j].pieces.stock + gameBoard.boardArray[i][j].pieces.production, 20);
+                        game.boardArray[i][j].piece.stock = Math.min(game.boardArray[i][j].piece.stock + game.boardArray[i][j].piece.production, 20);
                     }
                 }
             }
@@ -403,14 +383,20 @@ let stockDashboard = {
     hoverPieceOn: function(e) {
         let chosenPiece = '';
         // Determines piece type of icon on sidebar based on id
-        if(e.target.id != '') {
-            for (var i = 0; i < stockDashboard.pieceTypes.length; i+=1) {
-                if(e.target.id == 'dash_' + stockDashboard.pieceTypes[i].type) {
+        if(e.target.id !== '') {
+            for (let pieceType of Object.keys(gameData.pieceTypes)) {
+                if(e.target.id === 'dash_' + pieceType) {
                     chosenPiece = e.target.id.substring(5, e.target.id.length);
-                    gameBoard.highlightTiles(chosenPiece);
+                    game.boardDisplay.drawTiles('highlight', chosenPiece);
                 }
             }
         }
+    },
+
+    // Method to remove highlighting
+    // -----------------------------
+    hoverPieceOff: function() {
+        game.boardDisplay.clearTiles('highlight');
     },
 
     // HELPER FUNCTIONS

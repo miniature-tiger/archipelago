@@ -3,6 +3,10 @@
 
 let compass = {
 
+    windDirection: 0,
+
+    needleDirection: 0,
+
     // Array to hold wind direction
     directionArray: [ {wind: 'NW', windRow: -1, windCol: -1, needle: -45},
                       {wind: 'N', windRow: -1, windCol: 0, needle: 0},
@@ -15,13 +19,16 @@ let compass = {
 
     // Method to obtain new wind direction
     // -----------------------------------
-    // 90% of wind changes are small, 10% are large
-    newWindDirection: function (windDirection) {
-        if (Math.random() > 0.5) {
-            return this.largeWindChange();
+    // x% of wind changes are small, (1-x)% are large
+    newWindDirection: function () {
+        if (Math.random() > 0) {
+            this.windDirection = this.largeWindChange();
         } else {
-            return Math.round(((this.smallWindChange() + windDirection) + 8) % 8);
+            this.windDirection = Math.round(((this.smallWindChange() + this.windDirection) + 8) % 8);
         }
+        //compass.windDirection = compass.newWindDirection(compass.windDirection);
+        this.needleDirection = this.directionArray[this.windDirection].needle;
+        compass.needle.style.transform = 'rotate(' + compass.needleDirection + 'deg)';
     },
 
     // Method for small wind change
@@ -37,4 +44,13 @@ let compass = {
     largeWindChange: function () {
         return Math.floor(Math.random()*8);
     },
+
+    // Setup
+    // ----------------------------
+    setup: function () {
+        this.needle = document.getElementById('needle2');
+        this.windDirection = this.largeWindChange();
+        this.needle.style.transform = 'rotate(' + this.needleDirection + 'deg)';
+    },
+
 }

@@ -1,33 +1,7 @@
 /* Style for individual piece tiles. */
 /* --------------------------------- */
 
-/* cargo ship */
-.square.cargo {
-    display: inline-block;
-    vertical-align: top;
-    margin: 0px;
-    padding: 0px;
-    overflow: hidden;
-    background-color: rgb(77, 210, 255);
-    border: 1px solid rgb(77, 210, 255);
-    text-align: center;
-}
-
-.holding.cargo {
-    position: relative;
-    vertical-align: top;
-    margin: 0px;
-    padding: 0px;
-    border: 0px;
-    background-color: transparent;
-    border-radius: 50%;
-    text-align: center;
-    left: 0px;
-    top: 0px;
-    z-index: 1;
-}
-
-.cargo {
+.cargoship {
     position: absolute;
     background-color: transparent;
     z-index: 10;
@@ -45,29 +19,6 @@
     z-index: 10;
 }
 
-/*.piece.cargo {
-  /*Tile is gridsize -2
-    Inner tile is gridsize -6 (space for border 2 like in sea tiles)
-    Left border is 2, others are 1
-    So margin 1 on all borders except left*/
-    display: inline-block;
-    padding: 0px;
-    margin: 1px 1px 1px 0px;
-    transform: rotate(-90deg) scale(0.9, 0.38);
-
-    border-top-left-radius: 20%;
-    border-top-right-radius: 50%;
-    border-bottom-left-radius: 20%;
-    border-bottom-right-radius: 50%;
-    border-left: 1.5px solid rgb(89, 53, 20);
-    border-right: 1.5px solid rgb(89, 53, 20);
-    border-top: 1px solid rgb(89, 53, 20);
-    border-bottom: 1px solid rgb(89, 53, 20);
-
-    background-color: rgb(181, 110, 43);
-    text-align: center;
-    transition: transform 1s;
-}*/
 
 .detail.cargo {
     display: inline-block;

@@ -3,10 +3,6 @@
 
 let resourceManagement = {
 
-    // Array of resource piece types filtered from stockDashboard.pieceTypes
-    // ---------------------------------------------------------------------
-    resourcePieces: [],
-
     // Array of resource cards from which undiscovered land tiles are drawn on landDiscovery
     // -------------------------------------------------------------------------------------
     resourceDeck: [],
@@ -14,32 +10,31 @@ let resourceManagement = {
     // Method to populate resource pieces array and resource deck array at start of game
     // ---------------------------------------------------------------------------------
     populateResourceDeck: function() {
-        // Also populate resourcePieces
-        this.resourcePieces = stockDashboard.pieceTypes.filter(piece => piece.category == 'Resources');
-
         // finds total number of unoccupied land tiles on board at start
         let unoccupiedIslands = this.countIslands();
         // sets number of each type of resource in deck and remainder are empty land
         let unDesertCount = 0;
 
-        for (var i = 0; i < stockDashboard.pieceTypes.length; i++) {
-            if (stockDashboard.pieceTypes[i].category == 'Resources') {
-                for (var j = 0; j < stockDashboard.pieceTypes[i].deckNumber; j++) {
-                    if (j==0) {
-                        this.resourceDeck.push({type: stockDashboard.pieceTypes[i].type, goods: stockDashboard.pieceTypes[i].goods, production: stockDashboard.pieceTypes[i].maxProduction});
+        for (let pieceType of Object.keys(gameData.pieceTypes)) {
+            let piece = gameData.pieceTypes[pieceType];
+            if (piece.category === 'Resources' && pieceType != 'desert') {
+                for (let i = 0; i < piece.deckNumber; i+=1) {
+                    if (i===0) {
+                        // for first card of each resource type give maximum resource production
+                        this.resourceDeck.push({type: pieceType, goods: piece.goods, production: piece.maxProduction});
                     } else {
-                        this.resourceDeck.push({type: stockDashboard.pieceTypes[i].type, goods: stockDashboard.pieceTypes[i].goods, production: 1});
+                        this.resourceDeck.push({type: pieceType, goods: piece.goods, production: 1});
                         //this.resourceDeck.push({type: stockDashboard.pieceTypes[i].type, goods: stockDashboard.pieceTypes[i].goods, production: (Math.floor(Math.random() * (stockDashboard.pieceTypes[i].maxProduction)) + 1)});
                     }
                     unDesertCount += 1;
                 }
             }
-        }
+        };
 
         let numberDesert = unoccupiedIslands - unDesertCount;
 
-        for (var j = 0; j < numberDesert; j++) {
-            this.resourceDeck.push({type: 'desert', goods: 'none'});
+        for (let j = 0; j < numberDesert; j+=1) {
+            this.resourceDeck.push({type: 'desert', goods: 'none', production: 0});
         }
     },
 
@@ -47,9 +42,9 @@ let resourceManagement = {
     // ----------------------------------------------------------------------
     countIslands: function() {
         counter = 0;
-        for (var i = 0; i < gameBoard.boardArray.length; i++) {
-            for (var j = 0; j < gameBoard.boardArray[i].length; j++) {
-                if(gameBoard.boardArray[i][j].terrain == 'land' && !gameBoard.boardArray[i][j].pieces.populatedSquare) {
+        for (var i = 0; i < game.boardArray.length; i++) {
+            for (var j = 0; j < game.boardArray[i].length; j++) {
+                if(game.boardArray[i][j].tile.terrain == 'land' && !game.boardArray[i][j].piece.populatedSquare) {
                     counter += 1;
                 }
             }
@@ -66,19 +61,7 @@ let resourceManagement = {
         return(cardType);
     },
 
-    // Method to claim resource tile - used by both human and computer opponent game logic
-    // -----------------------------------------------------------------------------------
-    claimResource: function(localRow, localCol, localTeam) {
-        // Calculate placement on board of resource tile to be altered and remove it
-        let IDPiece = 'tile' + Number(localRow*1000 + localCol);
-        document.getElementById(IDPiece).remove();
-        // Change board array and add new SVG piece with team colour
-        gameBoard.boardArray[localRow][localCol].pieces.team = localTeam;
-        boardMarkNode.appendChild(gameBoard.createActionTile(localRow, localCol, gameBoard.boardArray[localRow][localCol].pieces.type, localTeam,
-          'tile' + Number(localRow*1000 + localCol), boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * localRow, boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * localCol, 1, gameBoard.boardArray[localRow][localCol].pieces.direction));
-        // Update score as necessary
-        gameScore.workScores('Exploring', localTeam, gameBoard.boardArray[localRow][localCol].pieces.type);
-    },
+
 
 // LAST BRACKET OF OBJECT
 }
