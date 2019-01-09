@@ -3,27 +3,32 @@ let buildItem = {
 
     // Array to hold building recipes
     // -------------------------------
-    buildRecipe: [
-                  {type: 'warship', recipe: [{goods: 'wood', quantity: 10}, {goods: 'iron', quantity: 15}, {goods: 'cloth', quantity: 4}]},
-                  {type: 'cargo ship', recipe: [{goods: 'wood', quantity: 15}, {goods: 'iron', quantity: 10}, {goods: 'cloth', quantity: 8}]},
-                  ],
+    buildRecipe: [{type: 'warship', recipe: [{goods: 'wood', quantity: 8}, {goods: 'iron', quantity: 12}, {goods: 'cloth', quantity: 4}]},
+                  {type: 'cargoship', recipe: [{goods: 'wood', quantity: 15}, {goods: 'iron', quantity: 10}, {goods: 'cloth', quantity: 5}]} ],
+
+    // Set up of building slider elements
+    // ---------------------------------
+    building: document.querySelector('.building'),
+    firstBuildLine: document.querySelector('#firstBuildLine'),
+    secondBuildLine: document.querySelector('#secondBuildLine'),
+    thirdBuildLine: document.querySelector('#thirdBuildLine'),
 
     // Method to handle clicks on stock dashboard
     // ------------------------------------------
     // Only build actions currently operational from clicking on stock dashboard
     clickStock: function(e) {
         if (e.target.classList.contains('buildcargo') || e.target.parentNode.classList.contains('buildcargo')) {
-            buildItem.clickBuild(e, 'cargo ship');
+            buildItem.clickBuild(e, 'cargoship');
         } else if (e.target.classList.contains('buildwarship') || e.target.parentNode.classList.contains('buildwarship')) {
             buildItem.clickBuild(e, 'warship');
         }
     },
 
-    enoughGoodsToBuild: function(localBuildNo, localTeamNo) {
+    enoughGoodsToBuild: function(buildNo, team) {
         // Loop through each goods type in build recipe and only allow construction if sufficient goods stock available
         let result = true;
-        for (var k = 0; k < buildItem.buildRecipe[localBuildNo].recipe.length; k++) {
-            if(stockDashboard.goodsTotals[localTeamNo].land[buildItem.buildRecipe[localBuildNo].recipe[k].goods] < buildItem.buildRecipe[localBuildNo].recipe[k].quantity) {
+        for (var k = 0; k < buildItem.buildRecipe[buildNo].recipe.length; k+=1) {
+            if(stockDashboard.goodsTotals[team].land[buildItem.buildRecipe[buildNo].recipe[k].goods] < buildItem.buildRecipe[buildNo].recipe[k].quantity) {
                 result = false;
             }
         }
@@ -32,111 +37,109 @@ let buildItem = {
 
     // Method to operate building slider and check if chosen ship can be built
     // -----------------------------------------------------------------------
-    clickBuild: function(stockElement, localBuild) {
+    clickBuild: function(stockElement, build) {
         // Resets any half-made board moves and deactivates tiles
-        resetMove();
+        human.resetMove();
 
         // Clears building slider for use
         buildItem.clearBuilding();
 
         // Slides building slider up and commentary down
-        commentary.style.bottom = '-10%';
-        building.style.bottom = 0;
+        commentary.commentaryBox.style.bottom = '-10%';
+        buildItem.building.style.bottom = 0;
 
         // Refreshes amount of stock held by players and set up variables
         stockDashboard.goodsStockTake();
-        let teamNo = gameManagement.teamArray.indexOf(gameManagement.turn);
-        let buildNo = buildItem.buildRecipe.findIndex(y => y.type == localBuild);
+        let buildNo = buildItem.buildRecipe.findIndex(y => y.type == build);
 
         // Add icon of ship clicked on
-        let buildIcon = building.appendChild(gameBoard.createActionTile(0, 0, localBuild, gameManagement.turn, 'buildPiece', 10, (screenWidth - 2*surroundSize) * 0.04 - (gridSize + 2*tileBorder)/2, 1.5, 0));
-
+        let buildIcon = buildItem.building.appendChild(new PieceSVG(build, 'Unclaimed', 'buildPiece', 10, (game.mapWidth - 2*game.surroundSize) * 0.04 - (game.gridSize + 2*game.tileBorder)/2, 1.5,  0, 5, game.gridSize, game.tileBorder, game.boardSurround).svg);
         // Check enough goods to build chosen ship
-        let allowConstruction = this.enoughGoodsToBuild(buildNo, teamNo);
+        let allowConstruction = this.enoughGoodsToBuild(buildNo, game.turn);
 
         // Adds goods icons to illustrate quantity held vs quantity required
-        for (var k = 0; k < buildItem.buildRecipe[buildNo].recipe.length; k++) {
-            for (var i = 0; i < Math.min(stockDashboard.goodsTotals[teamNo].land[buildItem.buildRecipe[buildNo].recipe[k].goods], buildItem.buildRecipe[buildNo].recipe[k].quantity); i++) {
-                building.appendChild(gameBoard.createIcon(buildItem.buildRecipe[buildNo].recipe[k].goods + i, 1.5, buildItem.buildRecipe[buildNo].recipe[k].goods, (screenWidth - 2*surroundSize) * ((k+2) * 0.20) - tileBorder/2 + (((i % 10) - 0.5) * (gridSize + tileBorder) / 1.5), 10 + Math.floor(i/10) * ((gridSize + tileBorder) / 1.5)));
-                for (var z = 0; z < building.lastChild.children.length; z++) {
-                    let nextChild = building.lastChild.children[z];
-                    nextChild.setAttribute('class', building.lastChild.children[z].baseVal + ' ' + gameManagement.turn + ' team_stroke team_fill');
+        for (let k = 0; k < buildItem.buildRecipe[buildNo].recipe.length; k+=1) {
+            for (let i = 0; i < Math.min(stockDashboard.goodsTotals[game.turn].land[buildItem.buildRecipe[buildNo].recipe[k].goods], buildItem.buildRecipe[buildNo].recipe[k].quantity); i+=1) {
+                buildItem.building.appendChild(game.icons.createIcon(buildItem.buildRecipe[buildNo].recipe[k].goods, 'stock' + i, 10 + Math.floor(i/10) * ((game.gridSize + game.tileBorder) / 1.5), (game.mapWidth - 2*game.surroundSize) * ((k+2) * 0.20) - game.tileBorder/2 + (((i % 10) - 0.5) * (game.gridSize + game.tileBorder) / 1.5), 1.5));
+
+                //this.commentaryBox.appendChild(gameBoardIcons.createIcon(click.pieces.goods, 'stock' + i, 10 + Math.floor(i/10) * ((gridSize + tileBorder) / 1.5), (mapWidth - 2*surroundSize) * 0.7 - tileBorder/2 + (((i % 10) - 0.5) * (gridSize + tileBorder) / 1.5), 1.5));
+                for (let z = 0; z < buildItem.building.lastChild.children.length; z+=1) {
+                    let nextChild = buildItem.building.lastChild.children[z];
+                    nextChild.setAttribute('class', buildItem.building.lastChild.children[z].baseVal + ' ' + game.turn + ' team_stroke team_fill');
                 }
             }
-            for (var j = stockDashboard.goodsTotals[teamNo].land[buildItem.buildRecipe[buildNo].recipe[k].goods]; i < buildItem.buildRecipe[buildNo].recipe[k].quantity; i++) {
-                building.appendChild(gameBoard.createIcon('stock' + i, 1.5, buildItem.buildRecipe[buildNo].recipe[k].goods, (screenWidth - 2*surroundSize) * ((k+2) * 0.20) - tileBorder/2 + (((i % 10) - 0.5) * (gridSize + tileBorder) / 1.5), 10 + Math.floor(i/10) * ((gridSize + tileBorder) / 1.5)));
+            for (let j = stockDashboard.goodsTotals[game.turn].land[buildItem.buildRecipe[buildNo].recipe[k].goods]; j < buildItem.buildRecipe[buildNo].recipe[k].quantity; j+=1) {
+                buildItem.building.appendChild(game.icons.createIcon(buildItem.buildRecipe[buildNo].recipe[k].goods, 'stock' + i, 10 + Math.floor(i/10) * ((game.gridSize + game.tileBorder) / 1.5), (game.mapWidth - 2*game.surroundSize) * ((k+2) * 0.20) - game.tileBorder/2 + (((i % 10) - 0.5) * (game.gridSize + game.tileBorder) / 1.5), 1.5));
+                                                                      //gameBoardIcons.createIcon(click.pieces.goods, 'stock' + i, 10 + Math.floor(i/10) * ((gridSize + tileBorder) / 1.5), (mapWidth - 2*surroundSize) * 0.7 - tileBorder/2 + (((i % 10) - 0.5) * (gridSize + tileBorder) / 1.5), 1.5)
             }
         }
 
         // Adds ship construction details to building slider
-        firstBuildLine.innerText = 'Construction of ' + localBuild + ' requires:';
-        secondBuildLine.innerText = buildItem.buildRecipe[buildNo].recipe[0].goods + ' ' + buildItem.buildRecipe[buildNo].recipe[0].quantity + ', ' + buildItem.buildRecipe[buildNo].recipe[1].goods + ' ' + buildItem.buildRecipe[buildNo].recipe[1].quantity + ', ' + buildItem.buildRecipe[buildNo].recipe[2].goods + ' ' + buildItem.buildRecipe[buildNo].recipe[2].quantity ;
+        buildItem.firstBuildLine.innerText = 'Construction of ' + build + ' requires:';
+        buildItem.secondBuildLine.innerText = buildItem.buildRecipe[buildNo].recipe[0].goods + ' ' + buildItem.buildRecipe[buildNo].recipe[0].quantity + ', ' + buildItem.buildRecipe[buildNo].recipe[1].goods + ' ' + buildItem.buildRecipe[buildNo].recipe[1].quantity + ', ' + buildItem.buildRecipe[buildNo].recipe[2].goods + ' ' + buildItem.buildRecipe[buildNo].recipe[2].quantity ;
         // Sets up piece movement array and adds ship type and launches construction
-        if (allowConstruction == true) {
-            thirdBuildLine.innerText = 'Click ship icon to confirm construction.';
-            pieceMovement.movementArray = {start: {row: '', col: ''}, end: {row: '', col: ''}};
-            pieceMovement.movementArray.start.pieces = {type: localBuild};
+        if (allowConstruction === true) {
+            buildItem.thirdBuildLine.innerText = 'Click ship icon to confirm construction.';
+            human.movementArray = {startEnd: 'start', start: {row: null, col: null, piece: null}, end: {row: null, col: null, piece: null}},
+            human.movementArray.start.piece = {category: 'Building', type: 'fort'};
+            human.movementArray.end.piece = {category: 'Building', type: build};
             buildIcon.addEventListener('click', buildItem.startConstruction);
         // Does not launch construction if insufficient stock
         } else {
-            thirdBuildLine.innerText = 'Insufficient goods available to build ' + localBuild + '.';
+            buildItem.thirdBuildLine.innerText = 'Insufficient goods available to build ' + build + '.';
         }
     },
+
+    // Method to determine harbours where building can take place
+    // ---------------------------------------------------------------------
+    buildLocation: function() {
+        // Array of potential harbours for computer opponent
+        let shipBuildLocation = [];
+        let fortLocation = [];
+
+        // Check boardArray for harbours
+        for (let i = 0; i < game.boardArray.length; i+=1) {
+            for (let j = 0; j < game.boardArray[i].length; j+=1) {
+                if (game.boardArray[i][j].tile.subTerrainTeam === game.turn && game.boardArray[i][j].tile.subTerrain === 'harbour' && game.boardArray[i][j].piece.populatedSquare === false) {
+                    game.boardArray[i][j].tile.activeStatus = 'active'; // harbours activated for human player
+                    shipBuildLocation.push({row: i, col: j}); // array filled for computer player
+                } else if (game.boardArray[i][j].piece.team === game.turn && game.boardArray[i][j].piece.type === 'fort') {
+                    fortLocation.push({row: i, col: j})
+                }
+            }
+        }
+        return [shipBuildLocation, fortLocation];
+    },
+
 
     // Method to activate harbours and capture start inputs of building turn
     // ---------------------------------------------------------------------
     // End inputs are captured as normal through buildMarkNode event listener
     startConstruction: function() {
-        // Array of potential harbours for computer opponent
-        let shipBuildLocation = [];
-        // Activating current team harbours
-        for (var i = 0; i < gameBoard.boardArray.length; i++) {
-            for (var j = 0; j < gameBoard.boardArray[i].length; j++) {
-                if (gameBoard.boardArray[i][j].subTerrainTeam == gameManagement.turn && gameBoard.boardArray[i][j].subTerrain == 'harbour' && gameBoard.boardArray[i][j].pieces.populatedSquare == false) {
-                    gameBoard.boardArray[i][j].activeStatus = 'active';
-                    shipBuildLocation.push({row: i, col: j});
-                } else if (gameBoard.boardArray[i][j].pieces.team == gameManagement.turn && gameBoard.boardArray[i][j].pieces.type == 'fort') {
-                    pieceMovement.movementArray.start.row = i;
-                    pieceMovement.movementArray.start.col = j;
-                }
-            }
-        }
+        let [shipBuildLocation, fortLocation] = buildItem.buildLocation();
+        human.movementArray.start.row = fortLocation[0].row;
+        human.movementArray.start.col = fortLocation[0].col;
+        human.movementArray.end.row = shipBuildLocation[0].row;
+        human.movementArray.end.col = shipBuildLocation[0].col;
 
         // Capture move inputs, since boardMarkNode has not been clicked on. Uses 'Building' as special designation for off-board action.
-        pieceMovement.movementArray.start.pieces = {populatedSquare: false, category: 'Building', type: pieceMovement.movementArray.start.pieces.type, direction: 0, used: 'unused', damageStatus: 3, team: gameManagement.turn, goods: 'none', stock: 0, production: 0};
-        gameBoard.drawActiveTiles();
-        startEnd = 'end';
+        game.boardDisplay.drawTiles('activeTiles');
+        human.movementArray.startEnd = 'end';
 
         // Changing building text
-        firstBuildLine.innerText = 'Select harbour for construction.';
-        secondBuildLine.innerText = '';
+        buildItem.firstBuildLine.innerText = 'Select harbour for construction.';
+        buildItem.secondBuildLine.innerText = '';
         thirdBuildLine.innerText = '';
-
-        return shipBuildLocation;
-    },
-
-    // Method to add ship piece to board and board game array
-    // ------------------------------------------------------
-    buildShip: function(localRow, localCol, localType, localTeam, localDirection) {
-        let newShip = boardMarkNode.appendChild(gameBoard.createActionTile(localRow, localCol, localType, localTeam,
-          'tile' + Number((localRow)*1000 + (localCol)), boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * (localRow), boardSurround + tileBorder/2 + (gridSize + tileBorder * 2) * (localCol), 1, localDirection));
-        if (localType == 'cargo ship') {
-            gameBoard.boardArray[localRow][localCol].pieces = {populatedSquare: true, category: 'Transport', type: localType, direction: '0', used: 'unused', damageStatus: 1, team: localTeam, goods: 'none', stock: 0, production: 0};
-            gameBoard.repairShip(newShip, localTeam, localType, 1);
-        } else if (localType == 'warship') {
-            gameBoard.boardArray[localRow][localCol].pieces = {populatedSquare: true, category: 'Transport', type: localType, direction: '0', used: 'unused', damageStatus: 3, team: localTeam, goods: 'none', stock: 0, production: 0};
-            gameBoard.repairShip(newShip, localTeam, localType, 3);
-        }
     },
 
     // Method to reduce stock levels of Resource and fort tiles for construction of ship
     // ---------------------------------------------------------------------------------
     // Fort stock is used prior to and Resource piece stock
-    constructionPayment: function(localBuild) {
+    constructionPayment: function(build) {
         // Updates stock numbers for use in this method
         stockDashboard.stockTake();
-        let teamArrayPosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == gameManagement.turn);
-        let buildNo = this.buildRecipe.findIndex(fI => fI.type == localBuild);
+        let teamArrayPosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == game.turn);
+        let buildNo = this.buildRecipe.findIndex(fI => fI.type == build);
 
         // Determines if any of the resources are in the team fort and reduces this balance first
         let fortPaymentGoods = 'none';
@@ -149,23 +152,23 @@ let buildItem = {
         }
 
         // Loops through each board tile and reduces the goods on Resource and fort tiles in accordance with construction costs
-        for (var i = 0; i < gameBoard.boardArray.length; i++) {
-            for (var j = 0; j < gameBoard.boardArray[i].length; j++) {
-                if (gameBoard.boardArray[i][j].pieces.team == gameManagement.turn && gameBoard.boardArray[i][j].pieces.category == 'Resources') {
+        for (var i = 0; i < game.boardArray.length; i++) {
+            for (var j = 0; j < game.boardArray[i].length; j++) {
+                if (game.boardArray[i][j].piece.team == game.turn && game.boardArray[i][j].piece.category == 'Resources') {
                     for (var k = 0; k < this.buildRecipe[buildNo].recipe.length; k++) {
-                        if (this.buildRecipe[buildNo].recipe[k].goods == gameBoard.boardArray[i][j].pieces.goods) {
-                            gameBoard.boardArray[i][j].pieces.stock -= this.buildRecipe[buildNo].recipe[k].quantity
+                        if (this.buildRecipe[buildNo].recipe[k].goods == game.boardArray[i][j].piece.goods) {
+                            game.boardArray[i][j].piece.stock -= this.buildRecipe[buildNo].recipe[k].quantity
                             // Adjustment for fort stock which is reduced below
-                            if (gameBoard.boardArray[i][j].pieces.goods == fortPaymentGoods) {
-                                gameBoard.boardArray[i][j].pieces.stock += fortPaymentQuantity;
+                            if (game.boardArray[i][j].piece.goods == fortPaymentGoods) {
+                                game.boardArray[i][j].piece.stock += fortPaymentQuantity;
                             }
                         }
                     }
                 // Use of fort stock
-                } else if (gameBoard.boardArray[i][j].pieces.team == gameManagement.turn && gameBoard.boardArray[i][j].pieces.type == 'fort') {
-                    gameBoard.boardArray[i][j].pieces.stock -= fortPaymentQuantity;
-                    if (gameBoard.boardArray[i][j].pieces.stock == fortPaymentQuantity) {
-                        gameBoard.boardArray[i][j].pieces.goods = 'none';
+                } else if (game.boardArray[i][j].piece.team == game.turn && game.boardArray[i][j].piece.type == 'fort') {
+                    game.boardArray[i][j].piece.stock -= fortPaymentQuantity;
+                    if (game.boardArray[i][j].piece.stock == fortPaymentQuantity) {
+                        game.boardArray[i][j].piece.goods = 'none';
                     }
 
                 }
@@ -176,12 +179,12 @@ let buildItem = {
     // Resets building slider
     // ----------------------
     clearBuilding: function() {
-        if(workFlow == 1) {console.log('Clearing building slider: ' + (Date.now() - launchTime)); }
-        for (var i = building.children.length - 1; i > -1; i--) {
-            if (building.children[i].id == 'firstBuildLine' || building.children[i].id == 'secondBuildLine' || building.children[i].id == 'thirdBuildLine') {
-                building.children[i].innerText = '';
+        if(settings.workFlow === true) {console.log('Clearing building slider: ' + (Date.now() - settings.launchTime)); }
+        for (var i = buildItem.building.children.length - 1; i > -1; i--) {
+            if (buildItem.building.children[i].id == 'firstBuildLine' || buildItem.building.children[i].id == 'secondBuildLine' || buildItem.building.children[i].id == 'thirdBuildLine') {
+                buildItem.building.children[i].innerText = '';
             } else {
-                building.children[i].remove();
+                buildItem.building.children[i].remove();
             }
         }
     },

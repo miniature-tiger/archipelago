@@ -126,7 +126,7 @@ html {
 }
 
 /* commentary box */
-.commentary {
+.commentaryBox {
     position: fixed;
     text-align: center;
     bottom: -10%;
@@ -142,7 +142,7 @@ html {
     transition: bottom 0.2s ease-in-out;
 }
 
-/* commentary box */
+/* building */
 .building {
     position: fixed;
     text-align: left;
@@ -161,6 +161,7 @@ html {
 
 #firstBuildLine, #secondBuildLine, #thirdBuildLine {
     position: relative;
+    left: 7%;
 }
 
 /* Header slider commentator holder formats*/
