@@ -68,6 +68,8 @@ PieceSVG.prototype.createPiece = function() {
         this.createFlaxTile();
     } else if (this.type === 'clay') {
         this.createClayTile();
+    } else if (this.type === 'whirlpool') {
+        this.createWhirlpoolTile();
     }
 
     return this.svg;
@@ -708,4 +710,35 @@ PieceSVG.prototype.createClayTile = function() {
     this.svg.appendChild(kilnFlame2);
     this.svg.appendChild(kilnFlame3);
 
+}
+
+// Method to create whirlpool tile
+// --------------------------------
+PieceSVG.prototype.createWhirlpoolTile = function() {
+    let totalDegrees = 360*3.125;
+    let startOffset = 1;
+    let width = 11;
+    let step = (width - startOffset) / totalDegrees
+    let lineDefine = '';
+
+    for (let i=0; i < totalDegrees; i+=1) {
+        let radius = i * width / totalDegrees + startOffset;
+        let angle = i * (2 * totalDegrees / 360) * Math.PI / totalDegrees;
+        if (i === 0) {
+            lineDefine = 'M ' + (12.5 + radius * Math.cos(angle)) + ' ' + (12.5 + radius * Math.sin(angle));
+        } else {
+            lineDefine += ' L ' + (12.5 + radius * Math.cos(angle)) + ' ' + (12.5 + radius * Math.sin(angle));
+        }
+    }
+
+    let spiral = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    spiral.setAttribute('d', lineDefine);
+    spiral.setAttribute('stroke-linecap', 'round');
+    spiral.setAttribute('stroke','rgb(138, 87, 50)');
+    spiral.setAttribute('fill', 'none');
+    spiral.setAttribute('fill', 'rgb(235, 215, 195)');
+    spiral.style.strokeWidth = '1.25px';
+
+    // Building the tile
+    this.svg.appendChild(spiral);
 }

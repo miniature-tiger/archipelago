@@ -267,6 +267,10 @@ Game.prototype.prePlayerEvents = function() {
         if(settings.workFlow === true) {console.log('Updating stock dashboard and contracts dashboard: ' + (Date.now() - settings.launchTime)); }
         stockDashboard.stockTake();
         stockDashboard.drawStock();
+
+        // Create whirlpools
+        this.manageWhirlpools();
+        console.log(this.boardArray)
     }
     // Repair ships
     pieceMovement.harbourRepair();
@@ -421,4 +425,16 @@ Game.prototype.eliminatePlayer = function(firstLast) {
     // Update scrollTextArray
     let eliminationDate = this.moonDate(this.gameDate).moonMonth;
     this.scrollTextArray[eliminationDate][0] = eliminatedTeam + ' team has been eliminated.'
+}
+
+// ------------------------------------------------------------------------------------
+// WHIRLPOOLS
+// ------------------------------------------------------------------------------------
+
+Game.prototype.manageWhirlpools = function() {
+    if (settings.workFlow === true) {console.log('Managing whirlpools: ' + (Date.now() - settings.launchTime)); }
+    // boardArray changes
+    this.board.addPiece([7,7], new Hazard('Hazards', 'whirlpool', 0, 'none', 'none', 0, 0, 'none', 6, 8));
+    // Display changes
+    this.boardDisplay.addPiece('whirlpool', 'none', 6, 8, '0', 5);
 }

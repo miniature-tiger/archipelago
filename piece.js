@@ -95,3 +95,12 @@ function Resources (category, type, direction, team, goods, stock, production, r
 }
 Resources.prototype = Object.create(Piece.prototype);
 Resources.prototype.constructor = Resources;
+
+// Hazards constructor - for hazard pieces
+// ----------------------------------------------------------------------------
+function Hazard (category, type, direction, team, goods, stock, production, ref, row, col) {
+    Piece.call(this, category, type, direction, team, goods, stock, production, ref, row, col);
+
+}
+Resources.prototype = Object.create(Piece.prototype);
+Resources.prototype.constructor = Resources;
