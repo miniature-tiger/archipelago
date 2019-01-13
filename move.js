@@ -105,8 +105,6 @@ Move.prototype.process = async function() {
             endPieceSVG = this.boardDisplay.pieces[endPieceID];
             endPieceSVG.repairShip(3);
         }
-
-
         buildItem.constructionPayment(this.endMove.piece.type);
         // Scoring changes
         gameScore.workScores('Building', game.turn, this.endMove.piece.type);
@@ -119,6 +117,16 @@ Move.prototype.process = async function() {
         // Graphics of move transitions
         this.boardDisplay.movePiece(this.startMove, this.endMove, startPieceSVG, endPiece, endPieceID, settings.gameSpeed);
 
-    }
+    } else if (this.moveType === 'addWhirlpool') {
+        // boardArray changes
+        this.board.addPiece([this.startMove.row, this.startMove.col], new Hazard('Hazards', 'whirlpool', 0, 'Pirate', 'none', 0, 0, 'none', this.startMove.row, this.startMove.col));
+        // Display changes
+        this.boardDisplay.addPiece('whirlpool', 'none', this.startMove.row, this.startMove.col, '0', 5);
 
+    } else if (this.moveType === 'moveWhirlpool') {
+        // boardArray changes
+        let endPiece = this.board.movePiece([this.startMove.row, this.startMove.col], [this.endMove.row, this.endMove.col]);
+        // Display changes
+        this.boardDisplay.movePieceNoTransition(startPieceSVG, endPieceID, this.endMove.row, this.endMove.col);
+    }
 }

@@ -54,7 +54,7 @@ let tradeContracts = {
     newContract: function() {
         if(settings.workFlow === true) {console.log('New contract issuance assessed: ' + (Date.now() - settings.launchTime)); }
         // x% chance that a new contract is generated
-        if (Math.random() > 0.75 && game.gameDate > game.phaseCount) { // should be >0.75 and >8
+        if (Math.random() > 0.75 && game.gameDate > 1 * game.phaseCount) { // should be >0.75 and >8
             // Chooses a kingdom settlement at random
             let settlementNumber = Math.floor((Math.random() * this.contractsArray.length));
             let contractIsland = this.contractsArray[settlementNumber];

@@ -27,6 +27,15 @@ PieceSVG.prototype.changeTeam = function(newTeam) {
     this.team = newTeam;
 }
 
+// Method to change position of a piece
+// ---------------------------------------
+PieceSVG.prototype.changePosition = function(top, left) {
+    this.top = top;
+    this.left = left;
+    this.svg.style.top = this.top + 'px';
+    this.svg.style.left = this.left + 'px';
+}
+
 // Method to create a single piece (for addition to board or as icon in dashboards)
 // --------------------------------------------------------------------------------
 PieceSVG.prototype.createPiece = function() {

@@ -51,6 +51,25 @@ BoardDisplay.prototype.movePiece = async function(startMove, endMove, startPiece
     }
 }
 
+// Method to move a single SVG piece on the screen - without transition
+// --------------------------------------------------------------------
+BoardDisplay.prototype.movePieceNoTransition = async function(startPieceSVG, endPieceID, row, col) {
+    // Change piece position
+    const top = this.boardSurround + this.tileBorder/2 + (this.gridSize + this.tileBorder * 2) * row;
+    const left = this.boardSurround + this.tileBorder/2 + (this.gridSize + this.tileBorder * 2) * col;
+    startPieceSVG.changePosition(top, left);
+
+    // Updating piece information
+    let startPieceID = startPieceSVG.pieceID;
+    if (endPieceID !== startPieceID) {
+        this.pieces[endPieceID] = startPieceSVG;
+        delete this.pieces[startPieceID];
+        this.pieces[endPieceID].pieceID = endPieceID;
+        this.pieces[endPieceID].svg.setAttribute('id', endPieceID);
+    }
+}
+
+
 
 // ------------------------------------------
 // WINDOW

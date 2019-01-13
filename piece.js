@@ -102,5 +102,5 @@ function Hazard (category, type, direction, team, goods, stock, production, ref,
     Piece.call(this, category, type, direction, team, goods, stock, production, ref, row, col);
 
 }
-Resources.prototype = Object.create(Piece.prototype);
-Resources.prototype.constructor = Resources;
+Hazard.prototype = Object.create(Piece.prototype);
+Hazard.prototype.constructor = Hazard;
