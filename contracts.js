@@ -198,7 +198,7 @@ let tradeContracts = {
             for (let resourceType of this.resourcePieces) {
                 if (island.contracts[resourceType.goods].team == game.turn) {
                     if(island.contracts[resourceType.goods].struck == 'active') {
-                        if(this.contractObstacle(island.contracts[resourceType.goods].contractPath) == true) {
+                        if(this.contractObstacle(island.contracts[resourceType.goods].contractPath) === true) {
                             IDtradeRoute = resourceType.goods + '_' + island.name;
                             let closedTradeRoute = document.getElementById(IDtradeRoute);
                             closedTradeRoute.remove();
@@ -233,8 +233,8 @@ let tradeContracts = {
     // ------------------------------------------------------------------------------------------
     contractObstacle: function(tradePath) {
         let obstacle = false;
-        for (var i = 0; i < tradePath.length; i++) {
-            if(game.boardArray[tradePath[i].fromRow][tradePath[i].fromCol].piece.team == 'Pirate') {
+        for (let i = 0; i < tradePath.length; i+=1) {
+            if (game.boardArray[tradePath[i].fromRow][tradePath[i].fromCol].piece.type == 'whirlpool') {
                 obstacle = true;
                 //console.log(tradePath[i], 'Pirate');
             } else {

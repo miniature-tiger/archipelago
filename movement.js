@@ -177,7 +177,6 @@ let pieceMovement = {
                                         game.boardArray[startRow+i][startCol+j].tile.activeStatus = 'inactive';
                                     // Prevents damaged pirate ships targeting other ships
                                     } else if (game.boardArray[startRow][startCol].piece.damageStatus === 0) {
-                                        console.log('here2')
                                         this.findPath[startRow+i][startCol+j].activeStatus = 'inactive';
                                         game.boardArray[startRow+i][startCol+j].tile.activeStatus = 'inactive';
                                     }
