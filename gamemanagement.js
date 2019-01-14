@@ -270,7 +270,8 @@ Game.prototype.prePlayerEvents = function() {
 
     } else { // pirates turn
         // Create and move whirlpools
-        if (this.gameDate > 0 * this.phaseCount) { // start at end of first moon along with contracts
+        //if (this.gameDate > 1 * this.phaseCount) { // start at end of first moon along with contracts
+        if (this.gameDate > 0 * this.phaseCount ) { // testing
             whirlpool.manageWhirlpools();
         }
     }

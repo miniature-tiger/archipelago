@@ -18,16 +18,23 @@ let whirlpool = {
         if (settings.workFlow === true) {console.log('Managing whirlpools: ' + (Date.now() - settings.launchTime)); }
         const stockTotalPosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == 'total');
 
+
         // Choose whirlpool position for a quadrant
         let whirlpoolPosition = (rowAdd, colAdd) => {
+
             let valid = false
             let row = 0;
             let col = 0;
             while (valid === false) {
                 row = Math.floor(Math.random()*15);
                 col = Math.floor(Math.random()*15);
+
                     //console.log(this.boardArray[row + rowAdd][col + colAdd].piece.populatedSquare, this.boardArray[row + rowAdd][col + colAdd].tile.terrain)
-                if (game.boardArray[row + rowAdd][col + colAdd].piece.populatedSquare === false && game.boardArray[row + rowAdd][col + colAdd].tile.terrain === 'sea') {
+                if (game.boardArray[row + rowAdd][col + colAdd].piece.populatedSquare === false
+                    && game.boardArray[row + rowAdd][col + colAdd].tile.terrain === 'sea'
+                    && game.boardArray[row + rowAdd][col + colAdd].tile.subTerrain === 'none'
+                    && game.board.checkNextTo([row + rowAdd, col + colAdd], 'land') === false
+                ){
                     valid = true;
                 }
             }

@@ -161,22 +161,30 @@ let pieceMovement = {
                                     //Keep useful for debugging - console.log('row: ' + (startRow+i) + ' col: ' + (startCol+j) + ' set to: ' + this.findPath[startRow+i][startCol+j].activeStatus + ' with cost: ' + this.findPath[startRow+i][startCol+j].moveCost + ' and distance: ' + this.findPath[startRow+i][startCol+j].distance);
                                 }
 
-                                // Sets Transport tile to inactive to prevent moving there
-                                if (game.boardArray[startRow+i][startCol+j].piece.category == 'Transport') {
-                                    if (game.turn != 'Pirate') {
+                                // Restrictions on Activation of tiles to prevent certain moves
+                                if (game.boardArray[startRow+i][startCol+j].piece.category === 'Transport') {
+                                    // Player moves - sets Transport tile to inactive to prevent players moving there
+                                    if (game.turn !== 'Pirate') {
                                         this.findPath[startRow+i][startCol+j].activeStatus = 'inactive';
                                         game.boardArray[startRow+i][startCol+j].tile.activeStatus = 'inactive';
                                     // Prevents pirate ships being activated on pirate ship moves
-                                    } else if (this.findPath[startRow+i][startCol+j].team == 'Pirate') {
+                                    } else if (this.findPath[startRow+i][startCol+j].team === 'Pirate') {
                                         this.findPath[startRow+i][startCol+j].activeStatus = 'inactive';
                                         game.boardArray[startRow+i][startCol+j].tile.activeStatus = 'inactive';
-                                    } else if (game.boardArray[startRow+i][startCol+j].piece.damageStatus == 0) {
+                                    // Prevents damaged ships being activated on pirate ship moves
+                                    } else if (game.boardArray[startRow+i][startCol+j].piece.damageStatus === 0) {
                                         this.findPath[startRow+i][startCol+j].activeStatus = 'inactive';
                                         game.boardArray[startRow+i][startCol+j].tile.activeStatus = 'inactive';
-                                    } else if (game.boardArray[startRow][startCol].piece.damageStatus == 0) {
+                                    // Prevents damaged pirate ships targeting other ships
+                                    } else if (game.boardArray[startRow][startCol].piece.damageStatus === 0) {
+                                        console.log('here2')
                                         this.findPath[startRow+i][startCol+j].activeStatus = 'inactive';
                                         game.boardArray[startRow+i][startCol+j].tile.activeStatus = 'inactive';
                                     }
+                                // Prevents players or pirates moving into a whirlpool
+                                } else if (game.boardArray[startRow+i][startCol+j].piece.category === 'Hazards') {
+                                    this.findPath[startRow+i][startCol+j].activeStatus = 'inactive';
+                                    game.boardArray[startRow+i][startCol+j].tile.activeStatus = 'inactive';
                                 }
                             }
                         }
@@ -189,26 +197,26 @@ let pieceMovement = {
     // Method adds detail of targets and pieces to tiles within findPath - this information can be generated before findPath
     // ---------------------------------------------------------------------------------------------------------------------
     paintFindPath: function() {
-        for (var i = 0; i < game.cols; i++) {
-            for (var j = 0; j < game.rows; j++) {
+        for (let i = 0; i < game.cols; i+=1) {
+            for (let j = 0; j < game.rows; j+=1) {
 
                 // Target transport ships for pirate attack
-                if (game.boardArray[i][j].piece.category == 'Transport' && game.boardArray[i][j].piece.team != 'Pirate' && game.boardArray[i][j].piece.damageStatus == 5) {
+                if (game.boardArray[i][j].piece.category === 'Transport' && game.boardArray[i][j].piece.team !== 'Pirate' && game.boardArray[i][j].piece.damageStatus === 5) {
                     this.findPath[i][j].target = [{type: [game.boardArray[i][j].piece.type], team: game.boardArray[i][j].piece.team}];
                 }
 
                 // Resource harbours and virgin island harbours
-                if ((game.boardArray[i][j].tile.terrain == 'land' && !game.boardArray[i][j].piece.populatedSquare) ||
-                        (game.boardArray[i][j].piece.category == 'Resources' && game.boardArray[i][j].piece.type != 'desert')) {
+                if ((game.boardArray[i][j].tile.terrain === 'land' && !game.boardArray[i][j].piece.populatedSquare) ||
+                        (game.boardArray[i][j].piece.category === 'Resources' && game.boardArray[i][j].piece.type !== 'desert')) {
                     // Single tile search around the island
-                    for (let k = -1; k < 2; k+=1) {
-                        if(i + k >=0 && i + k <game.rows) {
-                            for (let l = -1; l < 2; l+=1) {
-                                if(j + l >=0 && j + l <game.cols) {
+                    for (let k = -1; k <= 1; k+=1) {
+                        if(i + k >=0 && i + k < game.rows) {
+                            for (let l = -1; l <= 1; l+=1) {
+                                if(j + l >=0 && j + l < game.cols) {
                                     // Reduces search to exclude diagonals
                                     if(k == 0 || l == 0) {
-                                        if(game.boardArray[i+k][j+l].tile.terrain == 'sea') {
-                                            if (game.boardArray[i][j].piece.category == 'Resources' && game.boardArray[i][j].piece.type != 'desert') {
+                                        if(game.boardArray[i+k][j+l].tile.terrain === 'sea') {
+                                            if (game.boardArray[i][j].piece.category === 'Resources' && game.boardArray[i][j].piece.type !== 'desert') {
                                                 this.findPath[i+k][j+l].resourceHarbour.push({type: game.boardArray[i][j].piece.type, detail: game.boardArray[i][j].piece.team, ref: i+'-'+j});
                                             } else {
                                                 this.findPath[i+k][j+l].resourceHarbour.push({type: 'virgin', detail: 'Unclaimed', ref: i+'-'+j});
@@ -222,13 +230,13 @@ let pieceMovement = {
                 }
 
                 // Safe harbour for ship repair or hiding
-                if (game.boardArray[i][j].tile.subTerrain == 'harbour') {
+                if (game.boardArray[i][j].tile.subTerrain === 'harbour') {
                     // Single tile search around the harbour for fort reference
-                    for (let k = -1; k < 2; k+=1) {
-                        if(i + k >=0 && i + k <game.rows) {
-                            for (let l = -1; l < 2; l+=1) {
-                                if(j + l >=0 && j + l <game.cols) {
-                                    if (game.boardArray[i+k][j+l].piece.type == 'fort') {
+                    for (let k = -1; k <= 1; k+=1) {
+                        if(i + k >=0 && i + k < game.rows) {
+                            for (let l = -1; l <= 1; l+=1) {
+                                if(j + l >=0 && j + l < game.cols) {
+                                    if (game.boardArray[i+k][j+l].piece.type === 'fort') {
                                         this.findPath[i][j].harbour.push({type: game.boardArray[i][j].tile.subTerrain, team: game.boardArray[i][j].tile.subTerrainTeam, ref: (i+k)+'-'+(j+l)});
                                     }
                                 }
@@ -237,16 +245,20 @@ let pieceMovement = {
                     }
                 }
 
-                // Tiles where path must end
-                if (game.boardArray[i][j].piece.category == 'Transport') {
+                // Tiles where path must end - cannot move through a ship
+                if (game.boardArray[i][j].piece.category === 'Transport') {
                     this.findPath[i][j].pathStop = [{type: game.boardArray[i][j].piece.type, team: game.boardArray[i][j].piece.team}];
-                } else if (game.boardArray[i][j].tile.subTerrain == 'harbour') {
+                // cannot move through a whirlpool
+                } else if (game.boardArray[i][j].piece.category === 'Hazards') {
+                    this.findPath[i][j].pathStop = [{type: game.boardArray[i][j].piece.type, team: game.boardArray[i][j].piece.team}];
+                // cannot move through a harbour
+                } else if (game.boardArray[i][j].tile.subTerrain === 'harbour') {
                     // Single tile search around the harbour for fort reference
-                    for (let k = -1; k < 2; k+=1) {
-                        if(i + k >=0 && i + k <game.rows) {
-                            for (let l = -1; l < 2; l+=1) {
-                                if(j + l >=0 && j + l <game.cols) {
-                                    if (game.boardArray[i+k][j+l].piece.type == 'fort') {
+                    for (let k = -1; k <= 1; k+=1) {
+                        if(i + k >=0 && i + k < game.rows) {
+                            for (let l = -1; l <= 1; l+=1) {
+                                if(j + l >=0 && j + l < game.cols) {
+                                    if (game.boardArray[i+k][j+l].piece.type === 'fort') {
                                         this.findPath[i][j].pathStop = [{type: game.boardArray[i][j].tile.subTerrain, team: game.boardArray[i][j].tile.subTerrainTeam, ref: (i+k)+'-'+(j+l)}];
                                     }
                                 }

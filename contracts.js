@@ -310,23 +310,22 @@ let tradeContracts = {
 
         let k = 0;
         let found = false;
-        while (found == false && k < localMaxMove) {
+        while (found === false && k < localMaxMove) {
 
             // Loops through i rows and j columns to form the 3x3 etc grids
-            for (var i = -k; i < k+1; i++) {
+            for (let i = -k; i < k+1; i+=1) {
                 // Restrict by map size for rows so not searching off edge of board
-                if(harbour.harbourStartRow+i>=0 && harbour.harbourStartRow+i < game.rows) {
-                    for (var j = -k; j < k+1; j++) {
+                if(harbour.harbourStartRow+i >= 0 && harbour.harbourStartRow+i < game.rows) {
+                    for (let j = -k; j < k+1; j+=1) {
                         // Restrict by map size for columns so not searching off edge of board
                         if(harbour.harbourStartCol+j >=0 && harbour.harbourStartCol+j < game.cols) {
                             // Checks if tile is active. If so runs pathTiles to search for potential tiles to activate around it
-                            if (this.tradePath[harbour.harbourStartRow+i][harbour.harbourStartCol+j].activeStatus == 'active') {
+                            if (this.tradePath[harbour.harbourStartRow+i][harbour.harbourStartCol+j].activeStatus === 'active') {
                                 //keep for debugging - console.log('run: ' + k);
                                 //keep for debugging - console.log('starting from: row: ' + (localStartRow+i) + ' col: ' + (localStartCol+j) + ' prior cost: ' + this.tradePath[localStartRow+i][localStartCol+j].moveCost);
                                 searchFound = this.pathTiles(harbour.harbourStartRow+i, harbour.harbourStartCol+j, this.tradePath[harbour.harbourStartRow+i][harbour.harbourStartCol+j].moveCost, localMaxMove, directionAngle, k, harbour.harbourEndRow, harbour.harbourEndCol);
-                                if (searchFound == true) {
+                                if (searchFound === true) {
                                     found = true;
-
                                 }
                             }
                         }
@@ -354,15 +353,15 @@ let tradeContracts = {
         // Loop through rows
         for (var i = -1; i <= 1; i++) {
             // Restrict by map size for rows
-            if(localStartRowI+i>=0 && localStartRowI+i < game.rows) {
+            if(localStartRowI+i >= 0 && localStartRowI+i < game.rows) {
                 // Loop through columns
                 for (var j = -1; j <= 1; j++) {
                     // Restrict by map size for columns
                     if(localStartColJ+j >=0 && localStartColJ+j < game.cols) {
-                        // Restrict for land squares
-                        if (game.boardArray[localStartRowI+i][localStartColJ+j].tile.terrain == 'sea' || (localStartRowI+i == localEndRow && localStartColJ+j == localEndCol)) {
+                        // Restrict to avoid passing through land squares and whirlpools
+                        if ( (game.boardArray[localStartRowI+i][localStartColJ+j].tile.terrain === 'sea' && game.boardArray[localStartRowI+i][localStartColJ+j].piece.category !== 'Hazards') || (localStartRowI+i === localEndRow && localStartColJ+j === localEndCol)) {
                             // Checks for reaching destination
-                            if (localStartRowI+i == localEndRow && localStartColJ+j == localEndCol) {
+                            if (localStartRowI+i === localEndRow && localStartColJ+j === localEndCol) {
                                 localFound = true;
                             }
                             // Aggregate cost of reaching tile in tileCumulMoveCost - add the existing cost to the cost for reaching the new tile from moveCost
