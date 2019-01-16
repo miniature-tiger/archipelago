@@ -34,7 +34,7 @@ Move.prototype.process = async function() {
         // boardArray changes
         this.board.addPiece([this.startMove.row, this.startMove.col], new Resources('Resources', this.discoveredResource, '0', 'Unclaimed', this.discoveredGoods, this.discoveredStock, this.discoveredProduction, 'none'));
         // Display changes
-        this.boardDisplay.addPiece(this.discoveredResource, 'Unclaimed', this.startMove.row, this.startMove.col, '0', 5);
+        this.boardDisplay.addPiece(this.discoveredResource, 'Unclaimed', this.startMove.row, this.startMove.col, '0', 5, 1);
 
     } else if (this.moveType === 'claim') {
         // boardArray changes
@@ -94,14 +94,14 @@ Move.prototype.process = async function() {
             // boardArray changes
             this.board.addPiece([this.endMove.row, this.endMove.col], new Transport('Transport', 'cargoship', '0', 1, startPiece.team, 'none', 0, 0, 'none'));
             // Display changes
-            this.boardDisplay.addPiece('cargoship', startPiece.team, this.endMove.row, this.endMove.col, '0', 1);
+            this.boardDisplay.addPiece('cargoship', startPiece.team, this.endMove.row, this.endMove.col, '0', 1, 1);
             endPieceSVG = this.boardDisplay.pieces[endPieceID];
             endPieceSVG.repairShip(1);
         } else if (this.endMove.piece.type === 'warship') {
             // boardArray changes
             this.board.addPiece([this.endMove.row, this.endMove.col], new Transport('Transport', 'warship', '0', 3, startPiece.team, 'none', 0, 0, 'none'));
             // Display changes
-            this.boardDisplay.addPiece('warship', startPiece.team, this.endMove.row, this.endMove.col, '0', 3);
+            this.boardDisplay.addPiece('warship', startPiece.team, this.endMove.row, this.endMove.col, '0', 3, 1);
             endPieceSVG = this.boardDisplay.pieces[endPieceID];
             endPieceSVG.repairShip(3);
         }
@@ -121,12 +121,21 @@ Move.prototype.process = async function() {
         // boardArray changes
         this.board.addPiece([this.startMove.row, this.startMove.col], new Hazard('Hazards', 'whirlpool', 0, 'Pirate', 'none', 0, 0, 'none', this.startMove.row, this.startMove.col));
         // Display changes
-        this.boardDisplay.addPiece('whirlpool', 'none', this.startMove.row, this.startMove.col, '0', 5);
+        let whirlpool = this.boardDisplay.addPiece('whirlpool', 'none', this.startMove.row, this.startMove.col, '360', 5, 0.1);
+        whirlpool.svg.focus();
+        // Display transition
+        await whirlpool.spinTransitionUp(2 * settings.gameSpeed);
+        
+        return;
 
     } else if (this.moveType === 'moveWhirlpool') {
         // boardArray changes
         let endPiece = this.board.movePiece([this.startMove.row, this.startMove.col], [this.endMove.row, this.endMove.col]);
-        // Display changes
+        // Display and transition changes
+        await startPieceSVG.spinTransitionDown(2 * settings.gameSpeed);
         this.boardDisplay.movePieceNoTransition(startPieceSVG, endPieceID, this.endMove.row, this.endMove.col);
+        await startPieceSVG.spinTransitionUp(2 * settings.gameSpeed);
+
+        return;
     }
 }

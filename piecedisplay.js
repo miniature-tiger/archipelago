@@ -36,10 +36,65 @@ PieceSVG.prototype.changePosition = function(top, left) {
     this.svg.style.left = this.left + 'px';
 }
 
+// Method to change direction of a piece
+// ---------------------------------------
+PieceSVG.prototype.changeRotation = function(rotation) {
+    this.rotation = rotation;
+    this.svg.style.transform = 'rotate(' + this.rotation + 'deg) scale(' + this.scale + ')';
+}
+
+// Method to change scale of a piece
+// ---------------------------------------
+PieceSVG.prototype.changeScale = function(scale) {
+    this.scale = scale;
+    this.svg.style.transform = 'rotate(' + this.rotation + 'deg) scale(' + this.scale + ')';
+}
+
+// Method for spinning transition with decrease in size
+// ----------------------------------------------------
+PieceSVG.prototype.spinTransitionDown = async function(speed) {
+    const whirlpool = this.svg;
+    const finishedDown = () => new Promise (resolve => {
+        whirlpool.addEventListener('transitionend', function whirlpoolDownHandler() {
+            whirlpool.removeEventListener('transitionend', whirlpoolDownHandler);
+            resolve();
+        });
+    });
+
+    this.svg.style.transition = 'transform ' + speed + 's 0s ease-in-out';
+    this.rotation = this.rotation - 180;
+    this.scale = 0.1;
+    this.svg.style.transform = 'rotate(' + this.rotation + 'deg) scale(' + this.scale + ')';
+
+    await finishedDown();
+    return;
+}
+
+// Method for spinning transition with increase in size
+// ----------------------------------------------------
+PieceSVG.prototype.spinTransitionUp = async function(speed) {
+    const whirlpool = this.svg;
+    const finishedUp = () => new Promise (resolve => {
+        whirlpool.addEventListener('transitionend', function whirlpoolUpHandler() {
+            whirlpool.removeEventListener('transitionend', whirlpoolUpHandler);
+            resolve();
+        });
+    });
+
+    this.svg.style.transition = 'transform ' + speed + 's 0s ease-in-out';
+    this.rotation = this.rotation - 180;
+    this.scale = 1;
+    this.svg.style.transform = 'rotate(' + this.rotation + 'deg) scale(' + this.scale + ')';
+
+    await finishedUp();
+    return;
+}
+
+
 // Method to create a single piece (for addition to board or as icon in dashboards)
 // --------------------------------------------------------------------------------
 PieceSVG.prototype.createPiece = function() {
-    const viewportSize = 25 * this.scale;
+    const viewportSize = 25;
     // Create SVG tile of designated height and width
     this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     this.svg.setAttribute('width', this.gridSize + this.tileBorder);
@@ -48,7 +103,7 @@ PieceSVG.prototype.createPiece = function() {
     // Position tile based on coordinates passed from boardArray
     this.svg.style.top = this.top + 'px';
     this.svg.style.left = this.left + 'px';
-    this.svg.style.transform = 'rotate(' + this.rotation + 'deg)';
+    this.svg.style.transform = 'rotate(' + this.rotation + 'deg) scale(' + this.scale + ')';
 
     // Set view size, class and id
     this.svg.setAttribute('viewBox', '0, 0, ' + viewportSize + ' ' + viewportSize);

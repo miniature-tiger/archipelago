@@ -555,13 +555,13 @@ let tradeContracts = {
 
                             // Icon added
                             if (this.contractsArray[i].contracts[resource.goods].struck == 'open') {
-                                divType.appendChild(new PieceSVG(resource.type, 'Unclaimed', 'dash_' + resource.type, 2, 0, 1.5, 0, 5, game.gridSize, game.tileBorder, game.boardSurround).svg);
+                                divType.appendChild(new PieceSVG(resource.type, 'Unclaimed', 'dash_' + resource.type, 2, 0, 0.7, 0, 5, game.gridSize, game.tileBorder, game.boardSurround).svg);
                                 divForText.innerHTML = this.contractsArray[i].contracts[resource.goods].struck;
                             } else if (this.contractsArray[i].contracts[resource.goods].struck == 'active') {
-                                divType.appendChild(new PieceSVG(resource.type, this.contractsArray[i].contracts[resource.goods].team, 'dash_' + resource.type, 2, 0, 1.5, 0, 5, game.gridSize, game.tileBorder, game.boardSurround).svg);
+                                divType.appendChild(new PieceSVG(resource.type, this.contractsArray[i].contracts[resource.goods].team, 'dash_' + resource.type, 2, 0, 0.7, 0, 5, game.gridSize, game.tileBorder, game.boardSurround).svg);
                                 divForText.innerHTML = 'active';
                             } else if (this.contractsArray[i].contracts[resource.goods].struck == 'closed') {
-                                divType.appendChild(new PieceSVG(resource.type, this.contractsArray[i].contracts[resource.goods].team, 'dash_' + resource.type, 2, 0, 1.5, 0, 5, game.gridSize, game.tileBorder, game.boardSurround).svg);
+                                divType.appendChild(new PieceSVG(resource.type, this.contractsArray[i].contracts[resource.goods].team, 'dash_' + resource.type, 2, 0, 0.7, 0, 5, game.gridSize, game.tileBorder, game.boardSurround).svg);
                                 divForText.innerHTML = 'closed';
                             }
 

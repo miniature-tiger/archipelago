@@ -500,14 +500,9 @@ let pieceMovement = {
         // n is number of transition in chain
         // Transitions to be applied (added here to allow different transitions to be applied dynamically in future)
         startPieceSVG.svg.style.transition = 'transform ' + (0.1 * gameSpeed) + 's 0s ease-in-out, left ' + (0.35 * gameSpeed) + 's ' + (0.1 * gameSpeed) + 's ease-in-out, top ' + (0.35 * gameSpeed) + 's ' + (0.1 * gameSpeed) + 's ease-in-out';
-
         // Delayed application of transformations to give board game style move effect
-        //setTimeout(function() {
-            //console.log(startPieceSVG.style.left, startPieceSVG.style.top);
-            startPieceSVG.svg.style.left = parseFloat(startPieceSVG.svg.style.left) + (leftDirection * (game.gridSize + game.tileBorder*2)) + 'px';
-            startPieceSVG.svg.style.top = parseFloat(startPieceSVG.svg.style.top) + (topDirection * (game.gridSize + game.tileBorder*2)) + 'px';
-            startPieceSVG.svg.style.transform = 'rotate(' + rotateDirection + 'deg)';
-        //}, 500 * gameSpeed);
+        startPieceSVG.changePosition(parseFloat(startPieceSVG.svg.style.top) + (topDirection * (game.gridSize + game.tileBorder*2)), parseFloat(startPieceSVG.svg.style.left) + (leftDirection * (game.gridSize + game.tileBorder*2)));
+        startPieceSVG.changeRotation(rotateDirection);
 
         return n + 1;
     },
@@ -528,12 +523,8 @@ let pieceMovement = {
                             if(game.boardArray[endMove.row+i][endMove.col+j].tile.terrain == 'land' && !game.boardArray[endMove.row+i][endMove.col+j].piece.populatedSquare) {
                                 // If so - picks a reource card type using resourceManagement.pickFromResourceDeck() and updates boardArray to this tile tile with unoccupied team
                                 deckCard = resourceManagement.pickFromResourceDeck();
-                                //randomProduction = Math.floor(Math.random() * (deckCard.maxProduction)) + 1;
                                 let randomStock = Math.floor(Math.random() * 3);
                                 new Move({row: endMove.row+i, col: endMove.col+j}, {row: endMove.row, col: endMove.col}, 'discover', {discoveredResource: deckCard.type, discoveredGoods: deckCard.goods, discoveredStock: randomStock, discoveredProduction: deckCard.production}).process();
-                                //game.boardArray[endMove.row+i][endMove.col+j].pieces = {populatedSquare: true, category: 'Resources', type: deckCard.type, direction: '0', used: 'unused', damageStatus: 5, team: 'Unclaimed', goods: deckCard.goods, stock: randomStock, production: deckCard.production};
-                                // and then creates an SVG resource tile for the land space
-                                //game.boardDisplay.addPiece(game.boardArray[endMove.row+i][endMove.col+j].pieces.type, game.boardArray[endMove.row+i][endMove.col+j].pieces.team, endMove.row+i, endMove.col+j, game.boardArray[endMove.row+i][(endMove.col+j)].pieces.direction);
                             }
                         }
                     }
@@ -644,12 +635,10 @@ let pieceMovement = {
                 if (repeat > 0) {
                     shipPieceSVG.svg.style.transition = 'transform ' + (0.4 * settings.gameSpeed) + 's 0s ease-in-out, left ' + (0.7 * settings.gameSpeed * fireEffect) + 's ' + (0.0 * settings.gameSpeed * fireEffect) + 's ease-in-out, top ' + (0.7 * settings.gameSpeed * fireEffect) + 's ' + (0.0 * settings.gameSpeed * fireEffect) + 's ease-in-out';
                     piratePieceSVG.svg.style.transition = 'transform ' + (0.4 * settings.gameSpeed) + 's 0s ease-in-out, left ' + (0.7 * settings.gameSpeed * fireEffect) + 's ' + (0.0 * settings.gameSpeed * fireEffect) + 's ease-in-out, top ' + (0.7 * settings.gameSpeed * fireEffect) + 's ' + (0.0 * settings.gameSpeed * fireEffect) + 's ease-in-out';
-                    shipPieceSVG.svg.style.transform = 'rotate(' + conflictDirection + 'deg)';
-                    piratePieceSVG.svg.style.transform = 'rotate(' + conflictDirection + 'deg)';
-                    shipPieceSVG.svg.style.left = parseFloat(shipPieceSVG.svg.style.left) - (conflictLeftDirection * reductionDirection * (game.gridSize + game.tileBorder*2)) + 'px';
-                    shipPieceSVG.svg.style.top = parseFloat(shipPieceSVG.svg.style.top) - (conflictTopDirection * reductionDirection * (game.gridSize + game.tileBorder*2)) + 'px';
-                    piratePieceSVG.svg.style.left = parseFloat(piratePieceSVG.svg.style.left) + (conflictLeftDirection * reductionDirection * (game.gridSize + game.tileBorder*2)) + 'px';
-                    piratePieceSVG.svg.style.top = parseFloat(piratePieceSVG.svg.style.top) + (conflictTopDirection * reductionDirection * (game.gridSize + game.tileBorder*2)) + 'px';
+                    shipPieceSVG.changeRotation(conflictDirection);
+                    piratePieceSVG.changeRotation(conflictDirection);
+                    shipPieceSVG.changePosition(parseFloat(shipPieceSVG.svg.style.top) - (conflictTopDirection * reductionDirection * (game.gridSize + game.tileBorder*2)), parseFloat(piratePieceSVG.svg.style.left) + (conflictLeftDirection * reductionDirection * (game.gridSize + game.tileBorder*2)));
+                    piratePieceSVG.changePosition(parseFloat(piratePieceSVG.svg.style.top) + (conflictTopDirection * reductionDirection * (game.gridSize + game.tileBorder*2)), parseFloat(shipPieceSVG.svg.style.left) - (conflictLeftDirection * reductionDirection * (game.gridSize + game.tileBorder*2)));
                     if (reductionDirection == 0.25) {
                         reductionDirection = -0.12;
                     } else if (reductionDirection == 0.12) {
@@ -718,7 +707,7 @@ let pieceMovement = {
                     }
                 }
             }
-            shipPieceSVG.svg.style.transform = 'rotate(' + repairDirection + 'deg)';
+            shipPieceSVG.changeRotation(repairDirection);
 
             // Updates boardArray for new status - cargo ships take longer to repair, working through damageStatus from 1 to 5 rather than just 3 to 5
             if (endPiece.type === 'cargoship') {

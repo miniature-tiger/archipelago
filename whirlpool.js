@@ -14,10 +14,9 @@ let whirlpool = {
 
     // Method to create / move whirlpools
     // ----------------------------------
-    manageWhirlpools: function() {
+    manageWhirlpools: async function() {
         if (settings.workFlow === true) {console.log('Managing whirlpools: ' + (Date.now() - settings.launchTime)); }
         const stockTotalPosition = stockDashboard.pieceTotals.findIndex(fI => fI.team == 'total');
-
 
         // Choose whirlpool position for a quadrant
         let whirlpoolPosition = (rowAdd, colAdd) => {
@@ -45,14 +44,18 @@ let whirlpool = {
             quadrant = this.positions[quadrant];
             const coords = whirlpoolPosition(quadrant.addRow, quadrant.addCol);
 
+            await game.boardDisplay.scrollWindow(coords[0]);
             if (stockDashboard.pieceTotals[stockTotalPosition].pieces.whirlpool.quantity < 4) {
-                new Move({row: coords[0], col: coords[1]}, {row: coords[0], col: coords[1]}, 'addWhirlpool', {}).process();
+                await new Move({row: coords[0], col: coords[1]}, {row: coords[0], col: coords[1]}, 'addWhirlpool', {}).process();
             } else {
-                new Move({row: quadrant.row, col: quadrant.col, piece: null}, {row: coords[0], col: coords[1], piece: null}, 'moveWhirlpool', {}).process();
+                await new Move({row: quadrant.row, col: quadrant.col, piece: null}, {row: coords[0], col: coords[1], piece: null}, 'moveWhirlpool', {}).process();
             }
             [quadrant.row, quadrant.col] = coords;
         }
+        return;
     },
+
+
 
 // LAST BRACKET OF OBJECT
 }
