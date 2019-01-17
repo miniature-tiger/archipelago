@@ -53,6 +53,7 @@ const gameData = {
                   flax: {type: 'flax', name: 'flax', category: 'Resources', maxNo: 1, goods: 'cloth', maxProduction: 2, maxMove: 0, maxHold: 20, battlePerc: 0, deckNumber: 4},
                   clay: {type: 'clay', name: 'clay', category: 'Resources', maxNo: 1, goods: 'pottery', maxProduction: 2, maxMove: 0, maxHold: 20, battlePerc: 0, deckNumber: 4},
                   desert: {type: 'desert', name: 'desert', category: 'Resources', goods: 'none'},
+                  whirlpool: {type: 'whirlpool', name: 'whirlpool', category: 'Hazards'},
     },
 
     // Future update: set up based on user inputs for player names

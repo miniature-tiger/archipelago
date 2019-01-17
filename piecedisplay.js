@@ -27,10 +27,74 @@ PieceSVG.prototype.changeTeam = function(newTeam) {
     this.team = newTeam;
 }
 
+// Method to change position of a piece
+// ---------------------------------------
+PieceSVG.prototype.changePosition = function(top, left) {
+    this.top = top;
+    this.left = left;
+    this.svg.style.top = this.top + 'px';
+    this.svg.style.left = this.left + 'px';
+}
+
+// Method to change direction of a piece
+// ---------------------------------------
+PieceSVG.prototype.changeRotation = function(rotation) {
+    this.rotation = rotation;
+    this.svg.style.transform = 'rotate(' + this.rotation + 'deg) scale(' + this.scale + ')';
+}
+
+// Method to change scale of a piece
+// ---------------------------------------
+PieceSVG.prototype.changeScale = function(scale) {
+    this.scale = scale;
+    this.svg.style.transform = 'rotate(' + this.rotation + 'deg) scale(' + this.scale + ')';
+}
+
+// Method for spinning transition with decrease in size
+// ----------------------------------------------------
+PieceSVG.prototype.spinTransitionDown = async function(speed) {
+    const whirlpool = this.svg;
+    const finishedDown = () => new Promise (resolve => {
+        whirlpool.addEventListener('transitionend', function whirlpoolDownHandler() {
+            whirlpool.removeEventListener('transitionend', whirlpoolDownHandler);
+            resolve();
+        });
+    });
+
+    this.svg.style.transition = 'transform ' + speed + 's 0s ease-in-out';
+    this.rotation = this.rotation - 180;
+    this.scale = 0.1;
+    this.svg.style.transform = 'rotate(' + this.rotation + 'deg) scale(' + this.scale + ')';
+
+    await finishedDown();
+    return;
+}
+
+// Method for spinning transition with increase in size
+// ----------------------------------------------------
+PieceSVG.prototype.spinTransitionUp = async function(speed) {
+    const whirlpool = this.svg;
+    const finishedUp = () => new Promise (resolve => {
+        whirlpool.addEventListener('transitionend', function whirlpoolUpHandler() {
+            whirlpool.removeEventListener('transitionend', whirlpoolUpHandler);
+            resolve();
+        });
+    });
+
+    this.svg.style.transition = 'transform ' + speed + 's 0s ease-in-out';
+    this.rotation = this.rotation - 180;
+    this.scale = 1;
+    this.svg.style.transform = 'rotate(' + this.rotation + 'deg) scale(' + this.scale + ')';
+
+    await finishedUp();
+    return;
+}
+
+
 // Method to create a single piece (for addition to board or as icon in dashboards)
 // --------------------------------------------------------------------------------
 PieceSVG.prototype.createPiece = function() {
-    const viewportSize = 25 * this.scale;
+    const viewportSize = 25;
     // Create SVG tile of designated height and width
     this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     this.svg.setAttribute('width', this.gridSize + this.tileBorder);
@@ -39,7 +103,7 @@ PieceSVG.prototype.createPiece = function() {
     // Position tile based on coordinates passed from boardArray
     this.svg.style.top = this.top + 'px';
     this.svg.style.left = this.left + 'px';
-    this.svg.style.transform = 'rotate(' + this.rotation + 'deg)';
+    this.svg.style.transform = 'rotate(' + this.rotation + 'deg) scale(' + this.scale + ')';
 
     // Set view size, class and id
     this.svg.setAttribute('viewBox', '0, 0, ' + viewportSize + ' ' + viewportSize);
@@ -68,6 +132,8 @@ PieceSVG.prototype.createPiece = function() {
         this.createFlaxTile();
     } else if (this.type === 'clay') {
         this.createClayTile();
+    } else if (this.type === 'whirlpool') {
+        this.createWhirlpoolTile();
     }
 
     return this.svg;
@@ -708,4 +774,35 @@ PieceSVG.prototype.createClayTile = function() {
     this.svg.appendChild(kilnFlame2);
     this.svg.appendChild(kilnFlame3);
 
+}
+
+// Method to create whirlpool tile
+// --------------------------------
+PieceSVG.prototype.createWhirlpoolTile = function() {
+    let totalDegrees = 360*3.125;
+    let startOffset = 1;
+    let width = 11;
+    let step = (width - startOffset) / totalDegrees
+    let lineDefine = '';
+
+    for (let i=0; i < totalDegrees; i+=1) {
+        let radius = i * width / totalDegrees + startOffset;
+        let angle = i * (2 * totalDegrees / 360) * Math.PI / totalDegrees;
+        if (i === 0) {
+            lineDefine = 'M ' + (12.5 + radius * Math.cos(angle)) + ' ' + (12.5 + radius * Math.sin(angle));
+        } else {
+            lineDefine += ' L ' + (12.5 + radius * Math.cos(angle)) + ' ' + (12.5 + radius * Math.sin(angle));
+        }
+    }
+
+    let spiral = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    spiral.setAttribute('d', lineDefine);
+    spiral.setAttribute('stroke-linecap', 'round');
+    spiral.setAttribute('stroke','rgb(138, 87, 50)');
+    spiral.setAttribute('fill', 'none');
+    spiral.setAttribute('fill', 'rgb(235, 215, 195)');
+    spiral.style.strokeWidth = '1.25px';
+
+    // Building the tile
+    this.svg.appendChild(spiral);
 }

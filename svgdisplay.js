@@ -12,7 +12,7 @@ BoardDisplay.prototype.setupPieces = function() {
             if (this.boardArray[i][j].piece.populatedSquare === true) {
                 let piece = this.boardArray[i][j].piece;
                 // Create action tile svg and add to the board
-                this.addPiece(piece.type, piece.team, i, j, piece.direction, piece.damageStatus);
+                this.addPiece(piece.type, piece.team, i, j, piece.direction, piece.damageStatus, 1);
             }
         }
     }
@@ -20,12 +20,13 @@ BoardDisplay.prototype.setupPieces = function() {
 
 // Method to add a single piece to the screen using SVG
 // ---------------------------------------------------
-BoardDisplay.prototype.addPiece = function(type, team, row, col, rotation, damageStatus) {
+BoardDisplay.prototype.addPiece = function(type, team, row, col, rotation, damageStatus, scale) {
     const top = this.boardSurround + this.tileBorder/2 + (this.gridSize + this.tileBorder * 2) * row;
     const left = this.boardSurround + this.tileBorder/2 + (this.gridSize + this.tileBorder * 2) * col;
     const pieceID = 'piece' + ('0' + row).slice(-2) + ('0' + col).slice(-2);
-    this.pieces[pieceID] = new PieceSVG(type, team, pieceID, top, left, 1, rotation, damageStatus, this.gridSize, this.tileBorder, this.boardSurround);
+    this.pieces[pieceID] = new PieceSVG(type, team, pieceID, top, left, scale, rotation, damageStatus, this.gridSize, this.tileBorder, this.boardSurround);
     this.node.appendChild(this.pieces[pieceID].svg);
+    return this.pieces[pieceID];
 }
 
 // Method to move a single SVG piece on the screen
@@ -50,6 +51,25 @@ BoardDisplay.prototype.movePiece = async function(startMove, endMove, startPiece
         this.pieces[endPieceID].svg.setAttribute('id', endPieceID);
     }
 }
+
+// Method to move a single SVG piece on the screen - without transition
+// --------------------------------------------------------------------
+BoardDisplay.prototype.movePieceNoTransition = async function(startPieceSVG, endPieceID, row, col) {
+    // Change piece position
+    const top = this.boardSurround + this.tileBorder/2 + (this.gridSize + this.tileBorder * 2) * row;
+    const left = this.boardSurround + this.tileBorder/2 + (this.gridSize + this.tileBorder * 2) * col;
+    startPieceSVG.changePosition(top, left);
+
+    // Updating piece information
+    let startPieceID = startPieceSVG.pieceID;
+    if (endPieceID !== startPieceID) {
+        this.pieces[endPieceID] = startPieceSVG;
+        delete this.pieces[startPieceID];
+        this.pieces[endPieceID].pieceID = endPieceID;
+        this.pieces[endPieceID].svg.setAttribute('id', endPieceID);
+    }
+}
+
 
 
 // ------------------------------------------

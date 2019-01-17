@@ -27,7 +27,7 @@ Board.prototype.setupBoardArray = function() {
         for (let y = 0; y < this.cols; y+=1) {
             let rowArray = [];
             for (let x = 0; x < this.rows; x+=1) {
-                rowArray.push({tile: {terrain: 'sea', subTerrain: 'none',  subTerrainTeam: 'none', activeStatus: 'inactive'}, piece: {populatedSquare: false}});
+                rowArray.push({tile: {terrain: 'sea', subTerrain: 'none',  subTerrainTeam: 'none', activeStatus: 'inactive'}, piece: {populatedSquare: false, category: 'none'}});
             }
         this.boardArray.push(rowArray);
         }
@@ -256,8 +256,8 @@ Board.prototype.movePiece = function(coordStart, coordEnd) {
 
 // Method to remove piece from boardArray
 // -------------------------------------------
-Board.prototype.removePiece = function(coordStart) {
-    this.boardArray[coordStart[0]][coordStart[1]].piece = {populatedSquare: false};
+Board.prototype.removePiece = function(coords) {
+    this.boardArray[coords[0]][coords[1]].piece = {populatedSquare: false, category: 'none'};
 }
 
 // Method to reset pieces from 'used' to 'unused' once a turn has ended
@@ -271,6 +271,24 @@ Board.prototype.usedPiecesReset = function() {
             }
         }
     }
+}
+
+// Method to check whether a tile is next to a terrain type
+// ------------------------------------------------------------------------------
+Board.prototype.checkNextTo = function(coords, terrain) {
+    let result = false;
+    for (let i=-1; i<=1; i+=1) {
+        if ((coords[0] + i >= 0) && (coords[0] + i < this.rows)) {
+            for (let j=-1; j<=1; j+=1) {
+                if ((coords[1] + j >= 0) && (coords[1] + j < this.cols)) {
+                    if (this.boardArray[coords[0] + i][coords[1] + j].tile.terrain === terrain) {
+                        result = true;
+                    }
+                }
+            }
+        }
+    }
+    return result;
 }
 
 // Method to get array of tiles in findPath which are within defined distance range

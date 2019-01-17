@@ -217,7 +217,7 @@ let stockDashboard = {
                     // Icon setting base on piece type
                     if (pieceData.category == 'Transport') {
                         rotateIcon = 90;
-                        xPosition = -8;
+                        xPosition = 0;
                     } else {
                         rotateIcon = 0;
                         xPosition = 0;
@@ -244,7 +244,7 @@ let stockDashboard = {
                                     divType.setAttribute('class', 'inner_item_holder');
                                     divCat.appendChild(divType);
                                     // Icon added
-                                    divType.appendChild(new PieceSVG(pieceType, game.turn, 'dash_' + pieceType, 2, xPosition, 1.5, rotateIcon, 5, game.gridSize, game.tileBorder, game.boardSurround).svg);
+                                    divType.appendChild(new PieceSVG(pieceType, game.turn, 'dash_' + pieceType, 2, xPosition, 0.7, rotateIcon, 5, game.gridSize, game.tileBorder, game.boardSurround).svg);
                                     let divForText = document.createElement('div');
                                     divForText.setAttribute('class', 'dashboard_text');
                                     divType.appendChild(divForText);
@@ -290,7 +290,7 @@ let stockDashboard = {
                         divType.setAttribute('class', 'inner_item_holder ' + additionalClass);
                         divCat.appendChild(divType);
                         // Icon added
-                        let divTypeIcon = new PieceSVG(pieceType, 'Unclaimed', 'dash_' + pieceType, 2, xPosition, 1.5, rotateIcon, 5, game.gridSize, game.tileBorder, game.boardSurround).svg;
+                        let divTypeIcon = new PieceSVG(pieceType, 'Unclaimed', 'dash_' + pieceType, 2, xPosition, 0.7, rotateIcon, 5, game.gridSize, game.tileBorder, game.boardSurround).svg;
 
                         if (pieceData.category == 'Transport') {
                             //divTypeIcon.setAttribute('class', additionalClass);

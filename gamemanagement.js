@@ -137,11 +137,11 @@ Game.prototype.nextTurn = function() {
     }
 }
 
-Game.prototype.nextTurnTwo = function() {
+Game.prototype.nextTurnTwo = async function() {
     // Move to next player go / next date
     game.nextPlayer();
     game.prepareNextTurn();
-    game.prePlayerEvents();
+    await game.prePlayerEvents();
     game.checkGameEnd();
     if (game.gameEnd === true) {
         // End scroll pop up
@@ -247,7 +247,7 @@ Game.prototype.prepareNextTurn = function() {
 
 // Pre player move events
 // ------------------------------------------------
-Game.prototype.prePlayerEvents = function() {
+Game.prototype.prePlayerEvents = async function() {
     if (game.turn !== 'Pirate') {
         // Chance of new trade contract
         if(settings.workFlow === true) {console.log('Checking for new trade contracts: ' + (Date.now() - settings.launchTime)); }
@@ -267,9 +267,19 @@ Game.prototype.prePlayerEvents = function() {
         if(settings.workFlow === true) {console.log('Updating stock dashboard and contracts dashboard: ' + (Date.now() - settings.launchTime)); }
         stockDashboard.stockTake();
         stockDashboard.drawStock();
+
+    } else { // pirates turn
+        // Create and move whirlpools
+        //if (this.gameDate > 1 * this.phaseCount) { // start at end of first moon along with contracts
+        if (this.gameDate > 0 * this.phaseCount ) { // testing
+            await whirlpool.manageWhirlpools();
+        }
     }
+
     // Repair ships
     pieceMovement.harbourRepair();
+
+    return;
 }
 
 // Method to activate next turn - up to moon change

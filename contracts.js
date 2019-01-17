@@ -54,7 +54,7 @@ let tradeContracts = {
     newContract: function() {
         if(settings.workFlow === true) {console.log('New contract issuance assessed: ' + (Date.now() - settings.launchTime)); }
         // x% chance that a new contract is generated
-        if (Math.random() > 0.75 && game.gameDate > game.phaseCount) { // should be >0.75 and >8
+        if (Math.random() > 0.75 && game.gameDate > 1 * game.phaseCount) { // should be >0.75 and >8
             // Chooses a kingdom settlement at random
             let settlementNumber = Math.floor((Math.random() * this.contractsArray.length));
             let contractIsland = this.contractsArray[settlementNumber];
@@ -198,7 +198,7 @@ let tradeContracts = {
             for (let resourceType of this.resourcePieces) {
                 if (island.contracts[resourceType.goods].team == game.turn) {
                     if(island.contracts[resourceType.goods].struck == 'active') {
-                        if(this.contractObstacle(island.contracts[resourceType.goods].contractPath) == true) {
+                        if(this.contractObstacle(island.contracts[resourceType.goods].contractPath) === true) {
                             IDtradeRoute = resourceType.goods + '_' + island.name;
                             let closedTradeRoute = document.getElementById(IDtradeRoute);
                             closedTradeRoute.remove();
@@ -233,8 +233,8 @@ let tradeContracts = {
     // ------------------------------------------------------------------------------------------
     contractObstacle: function(tradePath) {
         let obstacle = false;
-        for (var i = 0; i < tradePath.length; i++) {
-            if(game.boardArray[tradePath[i].fromRow][tradePath[i].fromCol].piece.team == 'Pirate') {
+        for (let i = 0; i < tradePath.length; i+=1) {
+            if (game.boardArray[tradePath[i].fromRow][tradePath[i].fromCol].piece.type == 'whirlpool') {
                 obstacle = true;
                 //console.log(tradePath[i], 'Pirate');
             } else {
@@ -310,23 +310,22 @@ let tradeContracts = {
 
         let k = 0;
         let found = false;
-        while (found == false && k < localMaxMove) {
+        while (found === false && k < localMaxMove) {
 
             // Loops through i rows and j columns to form the 3x3 etc grids
-            for (var i = -k; i < k+1; i++) {
+            for (let i = -k; i < k+1; i+=1) {
                 // Restrict by map size for rows so not searching off edge of board
-                if(harbour.harbourStartRow+i>=0 && harbour.harbourStartRow+i < game.rows) {
-                    for (var j = -k; j < k+1; j++) {
+                if(harbour.harbourStartRow+i >= 0 && harbour.harbourStartRow+i < game.rows) {
+                    for (let j = -k; j < k+1; j+=1) {
                         // Restrict by map size for columns so not searching off edge of board
                         if(harbour.harbourStartCol+j >=0 && harbour.harbourStartCol+j < game.cols) {
                             // Checks if tile is active. If so runs pathTiles to search for potential tiles to activate around it
-                            if (this.tradePath[harbour.harbourStartRow+i][harbour.harbourStartCol+j].activeStatus == 'active') {
+                            if (this.tradePath[harbour.harbourStartRow+i][harbour.harbourStartCol+j].activeStatus === 'active') {
                                 //keep for debugging - console.log('run: ' + k);
                                 //keep for debugging - console.log('starting from: row: ' + (localStartRow+i) + ' col: ' + (localStartCol+j) + ' prior cost: ' + this.tradePath[localStartRow+i][localStartCol+j].moveCost);
                                 searchFound = this.pathTiles(harbour.harbourStartRow+i, harbour.harbourStartCol+j, this.tradePath[harbour.harbourStartRow+i][harbour.harbourStartCol+j].moveCost, localMaxMove, directionAngle, k, harbour.harbourEndRow, harbour.harbourEndCol);
-                                if (searchFound == true) {
+                                if (searchFound === true) {
                                     found = true;
-
                                 }
                             }
                         }
@@ -354,15 +353,15 @@ let tradeContracts = {
         // Loop through rows
         for (var i = -1; i <= 1; i++) {
             // Restrict by map size for rows
-            if(localStartRowI+i>=0 && localStartRowI+i < game.rows) {
+            if(localStartRowI+i >= 0 && localStartRowI+i < game.rows) {
                 // Loop through columns
                 for (var j = -1; j <= 1; j++) {
                     // Restrict by map size for columns
                     if(localStartColJ+j >=0 && localStartColJ+j < game.cols) {
-                        // Restrict for land squares
-                        if (game.boardArray[localStartRowI+i][localStartColJ+j].tile.terrain == 'sea' || (localStartRowI+i == localEndRow && localStartColJ+j == localEndCol)) {
+                        // Restrict to avoid passing through land squares and whirlpools
+                        if ( (game.boardArray[localStartRowI+i][localStartColJ+j].tile.terrain === 'sea' && game.boardArray[localStartRowI+i][localStartColJ+j].piece.category !== 'Hazards') || (localStartRowI+i === localEndRow && localStartColJ+j === localEndCol)) {
                             // Checks for reaching destination
-                            if (localStartRowI+i == localEndRow && localStartColJ+j == localEndCol) {
+                            if (localStartRowI+i === localEndRow && localStartColJ+j === localEndCol) {
                                 localFound = true;
                             }
                             // Aggregate cost of reaching tile in tileCumulMoveCost - add the existing cost to the cost for reaching the new tile from moveCost
@@ -556,13 +555,13 @@ let tradeContracts = {
 
                             // Icon added
                             if (this.contractsArray[i].contracts[resource.goods].struck == 'open') {
-                                divType.appendChild(new PieceSVG(resource.type, 'Unclaimed', 'dash_' + resource.type, 2, 0, 1.5, 0, 5, game.gridSize, game.tileBorder, game.boardSurround).svg);
+                                divType.appendChild(new PieceSVG(resource.type, 'Unclaimed', 'dash_' + resource.type, 2, 0, 0.7, 0, 5, game.gridSize, game.tileBorder, game.boardSurround).svg);
                                 divForText.innerHTML = this.contractsArray[i].contracts[resource.goods].struck;
                             } else if (this.contractsArray[i].contracts[resource.goods].struck == 'active') {
-                                divType.appendChild(new PieceSVG(resource.type, this.contractsArray[i].contracts[resource.goods].team, 'dash_' + resource.type, 2, 0, 1.5, 0, 5, game.gridSize, game.tileBorder, game.boardSurround).svg);
+                                divType.appendChild(new PieceSVG(resource.type, this.contractsArray[i].contracts[resource.goods].team, 'dash_' + resource.type, 2, 0, 0.7, 0, 5, game.gridSize, game.tileBorder, game.boardSurround).svg);
                                 divForText.innerHTML = 'active';
                             } else if (this.contractsArray[i].contracts[resource.goods].struck == 'closed') {
-                                divType.appendChild(new PieceSVG(resource.type, this.contractsArray[i].contracts[resource.goods].team, 'dash_' + resource.type, 2, 0, 1.5, 0, 5, game.gridSize, game.tileBorder, game.boardSurround).svg);
+                                divType.appendChild(new PieceSVG(resource.type, this.contractsArray[i].contracts[resource.goods].team, 'dash_' + resource.type, 2, 0, 0.7, 0, 5, game.gridSize, game.tileBorder, game.boardSurround).svg);
                                 divForText.innerHTML = 'closed';
                             }
 

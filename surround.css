@@ -72,7 +72,7 @@ html {
 .under_text {
     position: static;
     width: 100%;
-    background-color: rgb(254,252,250);
+    /* background-color: rgb(254,252,250); */
     padding-top: 1%;
 }
 
@@ -84,7 +84,7 @@ html {
     padding: 0%;
     height: 84%;
     top: 8%;
-    background-color: rgba(138, 87, 50, 0.1);
+    background-color: rgba(138, 87, 50, 0.1); 
     overflow: scroll;
 }
 

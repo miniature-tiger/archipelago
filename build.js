@@ -53,7 +53,7 @@ let buildItem = {
         let buildNo = buildItem.buildRecipe.findIndex(y => y.type == build);
 
         // Add icon of ship clicked on
-        let buildIcon = buildItem.building.appendChild(new PieceSVG(build, 'Unclaimed', 'buildPiece', 10, (game.mapWidth - 2*game.surroundSize) * 0.04 - (game.gridSize + 2*game.tileBorder)/2, 1.5,  0, 5, game.gridSize, game.tileBorder, game.boardSurround).svg);
+        let buildIcon = buildItem.building.appendChild(new PieceSVG(build, 'Unclaimed', 'buildPiece', 10, (game.mapWidth - 2*game.surroundSize) * 0.04 - (game.gridSize + 2*game.tileBorder)/2, 0.7,  0, 5, game.gridSize, game.tileBorder, game.boardSurround).svg);
         // Check enough goods to build chosen ship
         let allowConstruction = this.enoughGoodsToBuild(buildNo, game.turn);
 
